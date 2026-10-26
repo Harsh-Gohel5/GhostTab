@@ -1,0 +1,18 @@
+{
+  "name": "ghosttab",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A prepared, evidence-backed workspace for your next development task.",
+  "engines": { "node": ">=22.12.0" },
+  "workspaces": ["apps/web"],
+  "scripts": {
+    "dev": "npm run dev --workspace @ghosttab/web",
+    "dev:api": "node scripts/python.mjs dev",
+    "build": "npm run build --workspace @ghosttab/web",
+    "check": "npm run check:web && npm run check:api",
+    "check:web": "npm run check --workspace @ghosttab/web",
+    "check:api": "node scripts/python.mjs check",
+    "test:api": "node scripts/python.mjs test",
+    "preview": "npm run preview --workspace @ghosttab/web"
+  }
+}
