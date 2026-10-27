@@ -10,8 +10,23 @@ from ghosttab_api.main import create_app
 
 def get(path: str, environment: str = "test"):
     async def request():
+        settings = Settings(
+            environment=environment,
+            _env_file=None,
+            **(
+                {
+                    "auth_mode": "supabase",
+                    "supabase_url": "https://example.supabase.co",
+                    "supabase_publishable_key": "public-test-key",
+                    "frontend_url": "https://example.com",
+                    "database_url": "postgresql+psycopg://localhost/ghosttab_test",
+                }
+                if environment == "production"
+                else {}
+            ),
+        )
         async with AsyncClient(
-            transport=ASGITransport(app=create_app(Settings(environment=environment))),
+            transport=ASGITransport(app=create_app(settings)),
             base_url="http://test",
         ) as client:
             return await client.get(path)

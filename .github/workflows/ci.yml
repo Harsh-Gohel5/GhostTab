@@ -29,6 +29,19 @@ jobs:
   api:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: ghosttab
+          POSTGRES_PASSWORD: ghosttab-test-only
+          POSTGRES_DB: ghosttab_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -41,3 +54,11 @@ jobs:
       - run: python -m ruff check apps/api
       - run: python -m ruff format --check apps/api
       - run: python -m pytest apps/api/tests
+      - name: Verify PostgreSQL behavior
+        run: python -m pytest apps/api/tests
+        env:
+          GHOSTTAB_TEST_DATABASE_URL: postgresql+psycopg://ghosttab:ghosttab-test-only@localhost:5432/ghosttab_test
+      - name: Verify PostgreSQL migrations
+        run: python -m alembic upgrade head
+        env:
+          GHOSTTAB_DATABASE_URL: postgresql+psycopg://ghosttab:ghosttab-test-only@localhost:5432/ghosttab_test
