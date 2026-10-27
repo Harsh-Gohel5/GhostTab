@@ -23,6 +23,8 @@ export const taskSchema = z.object({
   generation: z.number(),
   created_at: z.number(),
   from_calendar: z.boolean(),
+  calendar_event_id: z.string().nullable(),
+  source_count: z.number().int().nonnegative(),
   freshness: z.enum(["unprepared", "current", "stale"]),
   job: jobSchema.nullable(),
 });

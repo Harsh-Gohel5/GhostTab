@@ -5,6 +5,8 @@ import type { Session } from "@supabase/supabase-js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api, configSchema } from "./api";
 import { PreparationStatus } from "./PreparationStatus";
+import { ReadinessOverview } from "./ReadinessOverview";
+import { readiness } from "./readiness";
 import type {
   Config,
   Evidence,
@@ -211,6 +213,11 @@ function Home({
   const tasks = useQuery({
     queryKey: ["tasks", owner],
     queryFn: () => api.tasks(),
+    refetchInterval: (query) =>
+      page === "Today" &&
+      query.state.data?.some((task) => readiness(task).kind === "preparing")
+        ? 2000
+        : false,
   });
   const connections = useQuery({
     queryKey: ["connections", owner],
@@ -297,6 +304,7 @@ function Home({
               aria-current={page === item ? "page" : undefined}
               onClick={() => {
                 setPage(item);
+                if (item === "Today") refresh();
                 if (item === "Workspaces") setSelected(null);
               }}
             >
@@ -416,6 +424,20 @@ function Home({
                   </span>
                 </section>
               </div>
+              {tasks.isPending ? (
+                <p role="status">Checking saved workspace readiness…</p>
+              ) : (
+                tasks.data && (
+                  <ReadinessOverview
+                    tasks={tasks.data}
+                    onOpen={open}
+                    onViewAll={() => {
+                      setPage("Workspaces");
+                      setSelected(null);
+                    }}
+                  />
+                )
+              )}
               <div className="section-heading">
                 <h2>On your calendar</h2>
                 <span>Next 14 days · up to 25 events</span>
@@ -443,31 +465,49 @@ function Home({
                 <p role="status">Reading upcoming events…</p>
               ) : events.data?.events.length ? (
                 <div className="meeting-list">
-                  {events.data.events.map((event) => (
-                    <article key={event.id} className="meeting-row">
-                      <div className="event-symbol" aria-hidden="true">
-                        ◷
-                      </div>
-                      <div>
-                        <h3>{event.title}</h3>
-                        <p>
-                          {event.start.dateTime
-                            ? new Intl.DateTimeFormat(undefined, {
-                                dateStyle: "medium",
-                                timeStyle: "short",
-                              }).format(new Date(event.start.dateTime))
-                            : `${event.start.date} · All day`}
-                        </p>
-                      </div>
-                      <button
-                        className="secondary"
-                        disabled={importMeeting.isPending}
-                        onClick={() => importMeeting.mutate(event.id)}
-                      >
-                        Open workspace →
-                      </button>
-                    </article>
-                  ))}
+                  {events.data.events.map((event) => {
+                    const linked = tasks.data?.find(
+                      (task) => task.calendar_event_id === event.id,
+                    );
+                    return (
+                      <article key={event.id} className="meeting-row">
+                        <div className="event-symbol" aria-hidden="true">
+                          ◷
+                        </div>
+                        <div>
+                          <h3>{event.title}</h3>
+                          <p>
+                            {event.start.dateTime
+                              ? new Intl.DateTimeFormat(undefined, {
+                                  dateStyle: "medium",
+                                  timeStyle: "short",
+                                }).format(new Date(event.start.dateTime))
+                              : `${event.start.date} · All day`}
+                          </p>
+                        </div>
+                        <span
+                          className={`badge ${linked ? readiness(linked).tone : ""}`}
+                        >
+                          {!tasks.data
+                            ? "Status unavailable"
+                            : linked
+                              ? readiness(linked).label
+                              : "Not saved yet"}
+                        </span>
+                        <button
+                          className="secondary"
+                          disabled={importMeeting.isPending || !tasks.data}
+                          onClick={() =>
+                            linked
+                              ? open(linked)
+                              : importMeeting.mutate(event.id)
+                          }
+                        >
+                          {linked ? "Open workspace →" : "Choose meeting →"}
+                        </button>
+                      </article>
+                    );
+                  })}
                   {events.data.has_more && (
                     <p className="muted">
                       Showing the first 25 events. More events exist in this
@@ -483,23 +523,6 @@ function Home({
                     this period.
                   </p>
                 </div>
-              )}
-              {!!tasks.data?.length && (
-                <>
-                  <div className="section-heading">
-                    <h2>Pick up where you left off</h2>
-                    <button
-                      className="text-button"
-                      onClick={() => {
-                        setPage("Workspaces");
-                        setSelected(null);
-                      }}
-                    >
-                      View all →
-                    </button>
-                  </div>
-                  <TaskList tasks={tasks.data.slice(0, 3)} onOpen={open} />
-                </>
               )}
             </>
           )}
@@ -711,17 +734,8 @@ function TaskList({
             <strong>{task.title}</strong>
             <span>{task.goal}</span>
           </span>
-          <span
-            className={`badge ${task.freshness === "stale" ? "stale" : ""}`}
-          >
-            {task.job?.generation === task.generation &&
-            (task.job.status === "queued" || task.job.status === "running")
-              ? "Preparing…"
-              : task.freshness === "current"
-                ? "Brief ready"
-                : task.freshness === "stale"
-                  ? "Update needed"
-                  : "Add context & prepare"}
+          <span className={`badge ${readiness(task).tone}`}>
+            {readiness(task).label}
           </span>
           <span aria-hidden="true">↗</span>
         </button>

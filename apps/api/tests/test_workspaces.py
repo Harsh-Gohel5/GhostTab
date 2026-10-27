@@ -207,6 +207,20 @@ def test_removed_source_blocks_derived_brief(system):
     assert data["snapshot"] is None and data["evidence"] == []
 
 
+def test_readiness_metadata_counts_only_active_owned_sources(system):
+    empty = system.request("POST", "/tasks", {"title": "Same meeting", "goal": "Prepare"}).json()
+    assert empty["source_count"] == 0
+    assert empty["calendar_event_id"] is None
+    task, evidence = seeded(system)
+    item = next(x for x in system.request("GET", "/tasks").json() if x["id"] == task)
+    assert item["source_count"] == 1
+    system.request("DELETE", f"/tasks/{task}/evidence/{evidence}")
+    item = next(x for x in system.request("GET", "/tasks").json() if x["id"] == task)
+    assert item["source_count"] == 0
+    system.app.dependency_overrides[current_user] = lambda: Principal("bob")
+    assert system.request("GET", "/tasks").json() == []
+
+
 def test_input_change_during_inference_cannot_publish_old_result(system):
     task, evidence = seeded(system)
     system.request("POST", f"/tasks/{task}/prepare")
@@ -393,6 +407,8 @@ def test_calendar_selection_sync_and_disconnect_block_derived_content(system, mo
     monkeypatch.setattr(calendar, "calendar_request", lambda *_: (event, "grant"))
     result = system.request("POST", "/tasks/from-calendar", {"event_id": "event1"})
     assert result.status_code == 201
+    assert result.json()["calendar_event_id"] == "event1"
+    assert result.json()["source_count"] == 1
     task = result.json()["id"]
     assert (
         system.request("POST", "/tasks/from-calendar", {"event_id": "event1"}).json()["id"] == task
@@ -406,6 +422,8 @@ def test_calendar_selection_sync_and_disconnect_block_derived_content(system, mo
     data = system.request("GET", f"/tasks/{task}/workspace").json()
     assert data["snapshot"] is None and data["evidence"] == []
     assert data["task"]["title"] == "Disconnected meeting"
+    assert data["task"]["calendar_event_id"] is None
+    assert data["task"]["source_count"] == 0
 
 
 def test_calendar_refresh_preserves_offline_token(system, monkeypatch):

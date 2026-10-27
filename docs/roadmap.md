@@ -14,6 +14,15 @@ broader audience and eventual cross-tool product remain unchanged. The two-servi
 release gate below still needs an additional authorized source; do not imply that
 one calendar plus manually added notes already proves two live integrations.
 
+**Oct 27 checkpoint:** Calendar OAuth, selected-event import/manual refresh, immutable
+source revisions, stale-brief regeneration, and preparation through the normal UI
+have been verified locally. Three synthetic live preparations succeeded. The owner
+has confirmed Calendar only for now. Readiness and draft review proceed without a
+second account; the broader two-service release gate remains unmet. No hosted
+application or Supabase identity is verified. Meta has active promotional credits;
+the local application budget is $1, with provider expiry/overage still unconfirmed.
+The older baseline status below records the original planning assumptions.
+
 ## Release promise
 
 GhostTab prepares a task workspace for people whose work crosses messages,

@@ -481,6 +481,99 @@ p {
   display: grid;
   gap: 10px;
 }
+.readiness-overview {
+  margin: 32px 0;
+}
+.readiness-overview .section-heading {
+  margin-bottom: 6px;
+}
+.readiness-explanation {
+  color: var(--muted);
+  font-size: 12px;
+  max-width: 80ch;
+}
+.readiness-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+.readiness-filters button {
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  color: var(--muted);
+  padding: 8px 13px;
+  font-size: 12px;
+}
+.readiness-filters button[aria-pressed="true"] {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--line-strong);
+}
+.readiness-filters button span {
+  display: inline-block;
+  margin-left: 8px;
+  font-weight: 700;
+}
+.readiness-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 18px 20px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.readiness-row:hover {
+  border-color: var(--line-strong);
+  background: var(--surface-hover);
+}
+.readiness-row .task-copy > span {
+  white-space: normal;
+}
+.readiness-action {
+  color: var(--accent);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.readiness-row .task-copy strong,
+.meeting-row h3 {
+  overflow-wrap: anywhere;
+}
+.readiness-empty {
+  padding: 24px;
+  border: 1px dashed var(--line);
+  border-radius: 11px;
+}
+.readiness-empty p {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.badge.working {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+@media (max-width: 760px) {
+  .readiness-row {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 16px;
+  }
+  .readiness-row .task-copy {
+    flex-basis: 100%;
+  }
+  .readiness-action {
+    margin-left: auto;
+  }
+  .meeting-row {
+    flex-wrap: wrap;
+  }
+}
 .task-row,
 .meeting-row {
   display: flex;

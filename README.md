@@ -23,15 +23,23 @@ This repository contains the first local task/meeting workspace slice:
 - Frontend type checking and linting, backend linting and tests, and GitHub Actions CI.
 - Environment examples, dependency locks, and project architecture notes.
 
-**Live Google authorization and Meta inference are not verified yet.** Provider
-adapters have tests with synthetic data and mocked responses. Meta requests are
-disabled by default, even if a key is supplied. No paid resource or model call was
-created during implementation. See [setup](docs/setup.md).
+**Live Google authorization and controlled Meta preparation are verified locally.**
+Calendar reads/imports and manual refresh work. Synthetic briefs have passed the
+worker, schema/citation checks and app-button flow. Provider tests still use mocked
+responses. Meta requests are disabled by default; the owner's ignored local setup
+is enabled with a $1 cumulative application budget. That estimate-based budget is
+not a provider billing guarantee. Credit expiry and overage behavior remain
+unconfirmed. See [setup](docs/setup.md).
 
 Google Calendar is the first confirmed connector. Mail, chat, document retrieval,
 scheduled synchronization, hosted deployment, and the local Git bridge remain
 future work. Calendar events are imported only when selected. **Check Calendar**
 is a manual action; no real-time synchronization is claimed.
+
+Today shows saved workspace readiness and links upcoming Calendar events to their
+workspace by event ID. Filter Needs attention, Ready to review, or All, then open
+the next action. Readiness reflects saved sources, not continuous Calendar polling
+or proof that an AI-generated brief is correct.
 
 ## Requirements
 
