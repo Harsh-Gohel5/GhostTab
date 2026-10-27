@@ -7,6 +7,7 @@ import { Api, configSchema } from "./api";
 import { PreparationStatus } from "./PreparationStatus";
 import { ReadinessOverview } from "./ReadinessOverview";
 import { readiness } from "./readiness";
+import { downloadBrief } from "./briefExport";
 import type {
   Config,
   Evidence,
@@ -1167,6 +1168,17 @@ function SourceForm({
 
 function DraftEditor({ api, data }: { api: Api; data: Workspace }) {
   const [draft, setDraft] = useState(data.snapshot?.draft ?? "");
+  const [takeaway, setTakeaway] = useState("");
+  const copyDraft = async () => {
+    try {
+      await navigator.clipboard.writeText(draft);
+      setTakeaway("Draft copied · nothing sent");
+    } catch {
+      setTakeaway(
+        "Could not copy automatically. Select the draft text and copy it manually.",
+      );
+    }
+  };
   const save = useMutation({
     mutationFn: () => api.saveDraft(data.task.id, data.snapshot!.id, draft),
   });
@@ -1186,20 +1198,52 @@ function DraftEditor({ api, data }: { api: Api; data: Workspace }) {
         onChange={(event) => {
           setDraft(event.target.value);
           save.reset();
+          setTakeaway("");
         }}
       />
       <div className="draft-actions">
         <button
           className="secondary"
           disabled={save.isPending}
-          onClick={() => save.mutate()}
+          onClick={() => {
+            setTakeaway("");
+            save.mutate();
+          }}
         >
           {save.isPending ? "Saving…" : "Save draft"}
         </button>
+        <button
+          className="secondary"
+          disabled={!draft.trim()}
+          onClick={() => void copyDraft()}
+        >
+          Copy draft
+        </button>
+        <button
+          className="secondary"
+          onClick={() => {
+            try {
+              downloadBrief(data, draft);
+              setTakeaway("Brief download requested · nothing sent");
+            } catch {
+              setTakeaway(
+                "The brief could not be downloaded. Please try again.",
+              );
+            }
+          }}
+        >
+          Download brief
+        </button>
         <span role="status">
-          {save.isSuccess ? "Draft saved · unsent" : "For your review"}
+          {takeaway ||
+            (save.isSuccess ? "Draft saved · unsent" : "For your review")}
         </span>
       </div>
+      <p className="muted small">
+        Copy and download use the text currently in this editor. Download
+        includes the brief and its supporting quotes as a Markdown file. Save
+        draft to keep edits in GhostTab.
+      </p>
       <ErrorNotice error={save.error} />
     </Panel>
   );

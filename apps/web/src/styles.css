@@ -991,13 +991,18 @@ summary {
 }
 .draft-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 15px;
   margin-top: 12px;
 }
 .draft-actions > span {
+  flex-basis: 100%;
   font-size: 11px;
   color: var(--muted);
+}
+.draft-actions + p {
+  margin-top: 10px;
 }
 input,
 textarea {

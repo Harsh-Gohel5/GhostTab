@@ -57,3 +57,16 @@ Calendar rows use the exact event ID to locate an imported workspace. Unselected
 events are labeled Not saved yet. Status describes saved context and explicitly
 directs users to Check Calendar for newer event data. Five matching workspaces
 are shown before the All workspaces link; the API currently loads at most 100.
+
+## Take the result with you
+
+Draft actions distinguish Save draft (persist in GhostTab), Copy draft (current
+editor text to clipboard), and Download brief (current editor text plus the saved
+brief and supporting quotes as Markdown). Copy and download never send a message
+or start inference. Copy failures provide manual-copy instructions.
+
+Downloads use the snapshot's cited quotes, not newer source text, and mark stale
+briefs as outdated. Full source bodies are not exported. Untrusted text is escaped
+or fenced so it cannot introduce embedded Markdown media or HTML. The draft fence
+is longer than any backtick sequence in its contents. Download feedback states
+that the download was requested; browser settings still control saving the file.

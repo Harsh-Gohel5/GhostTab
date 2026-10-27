@@ -41,6 +41,11 @@ workspace by event ID. Filter Needs attention, Ready to review, or All, then ope
 the next action. Readiness reflects saved sources, not continuous Calendar polling
 or proof that an AI-generated brief is correct.
 
+Saved workspaces support copying the current draft and downloading a Markdown
+brief with source quotes. Neither action sends messages or starts inference.
+Follow the [repeatable local demo](docs/demo-walkthrough.md) for the complete
+Calendar → preparation → review → source-change flow.
+
 ## Requirements
 
 - Node.js 22.12 or later (Node 22 recommended) and npm.
@@ -105,7 +110,8 @@ npm.cmd run check
 npm.cmd run build
 ```
 
-`check` runs TypeScript, ESLint, Ruff lint/format checks, and the API test suite.
+`check` runs TypeScript, ESLint, export regression tests, Ruff lint/format checks,
+and the API test suite.
 The production frontend bundle is generated in `apps/web/dist`. Deployment
 and production routing will be configured in a later milestone;
 these development commands are not a deployment recipe.

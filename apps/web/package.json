@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "check": "tsc --noEmit && eslint .",
+    "check": "tsc --noEmit && eslint . && node --experimental-strip-types --test tests/briefExport.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
