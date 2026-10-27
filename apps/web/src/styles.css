@@ -685,6 +685,9 @@ p {
 .preparation-status > button {
   margin-top: 16px;
 }
+.brief-column {
+  scroll-margin-top: 24px;
+}
 @media (max-width: 540px) {
   .preparation-status {
     padding: 16px;

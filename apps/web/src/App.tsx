@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { createClient } from "@supabase/supabase-js";
 import type { Session } from "@supabase/supabase-js";
@@ -744,6 +744,7 @@ function WorkspaceView({
   onBack: () => void;
 }) {
   const queryClient = useQueryClient();
+  const briefRef = useRef<HTMLDivElement>(null);
   const [editing, setEditing] = useState<Evidence | "new" | null>(null);
   const [citation, setCitation] = useState<{
     title: string;
@@ -816,6 +817,16 @@ function WorkspaceView({
     currentJob?.status === "failed" &&
     currentJob.attempts >= 3 &&
     currentJob.generation === data.task.generation;
+  const canReview = !!data.snapshot && data.task.freshness === "current";
+  const reviewBrief = () => {
+    briefRef.current?.focus({ preventScroll: true });
+    briefRef.current?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+      block: "start",
+    });
+  };
   const showCitation = (point: Point, index: number) => {
     const ref = point.citations[index];
     const version = data.snapshot?.citations.find(
@@ -870,20 +881,21 @@ function WorkspaceView({
           <button
             className="primary"
             disabled={
-              !config.model_configured ||
-              !data.evidence.length ||
               busy ||
               prepare.isPending ||
-              exhausted
+              (!canReview &&
+                (!config.model_configured ||
+                  !data.evidence.length ||
+                  exhausted))
             }
-            onClick={() => prepare.mutate()}
+            onClick={() => (canReview ? reviewBrief() : prepare.mutate())}
           >
             {busy || prepare.isPending
               ? "Preparing…"
               : data.task.freshness === "stale"
                 ? "Update brief"
-                : data.snapshot
-                  ? "Prepare again"
+                : canReview
+                  ? "Review brief"
                   : "Prepare brief"}
           </button>
         </div>
@@ -904,9 +916,16 @@ function WorkspaceView({
         enabled={config.model_configured}
         starting={prepare.isPending}
         onRetry={() => prepare.mutate()}
+        onReview={reviewBrief}
       />
       <div className="workspace-grid">
-        <div className="brief-column">
+        <div
+          className="brief-column"
+          ref={briefRef}
+          tabIndex={-1}
+          role="region"
+          aria-label="Prepared brief"
+        >
           {data.snapshot ? (
             <>
               <Panel

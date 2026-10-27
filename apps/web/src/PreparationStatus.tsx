@@ -35,6 +35,7 @@ export function PreparationStatus({
   enabled,
   starting,
   onRetry,
+  onReview,
 }: {
   task: Task;
   hasBrief: boolean;
@@ -42,6 +43,7 @@ export function PreparationStatus({
   enabled: boolean;
   starting: boolean;
   onRetry: () => void;
+  onReview: () => void;
 }) {
   const job = task.job?.generation === task.generation ? task.job : null;
   const busy =
@@ -151,7 +153,14 @@ export function PreparationStatus({
           </small>
         </li>
         <li className={hasBrief && !stale && !busy ? "active" : ""}>
-          <span aria-hidden="true">3</span>Review & edit
+          <span aria-hidden="true">3</span>
+          {hasBrief ? (
+            <button className="text-button" onClick={onReview}>
+              {stale ? "Review previous brief ↓" : "Review & edit ↓"}
+            </button>
+          ) : (
+            "Review & edit"
+          )}
           <small>You decide what to use</small>
         </li>
       </ol>
