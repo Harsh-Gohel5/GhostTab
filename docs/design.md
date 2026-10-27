@@ -19,3 +19,21 @@ visible. Small labels have a minimum size of 11px; key action labels use 12px or
 
 This milestone changes presentation, not provider access. Google authorization and
 live model verification remain separate steps. Meta requests stay disabled by default.
+
+## Brief preparation feedback
+
+The workspace shows Save context → Prepare brief → Review & edit. These steps
+describe real states, without an estimated percentage or completion time. Queued
+and running requests show different messages; users can leave and return to a
+durable job. The workspace polls active jobs every two seconds while open.
+
+Changed sources show an amber Update needed state and label the saved output
+Previous brief. Earlier citation revisions remain available for review. The
+primary action becomes Update brief. Only a job for the current source generation
+can show an active preparation or failure for that revision.
+
+Failures use plain-language recovery instructions for connection, access, budget,
+output validation and attempt-limit problems. Retry is offered for recoverable
+failures when preparation is enabled. When preparation is paused, notes, sources
+and saved drafts remain available. Status messages use live regions, and the
+three-step layout stacks on small screens.

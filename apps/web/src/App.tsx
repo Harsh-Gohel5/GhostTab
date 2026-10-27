@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { Session } from "@supabase/supabase-js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api, configSchema } from "./api";
+import { PreparationStatus } from "./PreparationStatus";
 import type {
   Config,
   Evidence,
@@ -713,12 +714,13 @@ function TaskList({
           <span
             className={`badge ${task.freshness === "stale" ? "stale" : ""}`}
           >
-            {task.job?.status === "queued" || task.job?.status === "running"
+            {task.job?.generation === task.generation &&
+            (task.job.status === "queued" || task.job.status === "running")
               ? "Preparing…"
               : task.freshness === "current"
-                ? "Context ready"
+                ? "Brief ready"
                 : task.freshness === "stale"
-                  ? "Context changed"
+                  ? "Update needed"
                   : "Add context & prepare"}
           </span>
           <span aria-hidden="true">↗</span>
@@ -763,7 +765,12 @@ function WorkspaceView({
   };
   const prepare = useMutation({
     mutationFn: () => api.prepare(id),
-    onSuccess: refresh,
+    onSuccess: (job) => {
+      queryClient.setQueryData<Workspace>(["workspace", owner, id], (saved) =>
+        saved ? { ...saved, task: { ...saved.task, job } } : saved,
+      );
+      refresh();
+    },
   });
   const sync = useMutation({
     mutationFn: () => api.sync(id),
@@ -802,8 +809,9 @@ function WorkspaceView({
         <button onClick={() => void workspace.refetch()}>Retry</button>
       </>
     );
-  const busy = ["queued", "running"].includes(data.task.job?.status ?? "");
-  const currentJob = data.task.job;
+  const currentJob =
+    data.task.job?.generation === data.task.generation ? data.task.job : null;
+  const busy = ["queued", "running"].includes(currentJob?.status ?? "");
   const exhausted =
     currentJob?.status === "failed" &&
     currentJob.attempts >= 3 &&
@@ -870,11 +878,13 @@ function WorkspaceView({
             }
             onClick={() => prepare.mutate()}
           >
-            {busy
+            {busy || prepare.isPending
               ? "Preparing…"
-              : data.snapshot
-                ? "Refresh brief"
-                : "Prepare with Meta"}
+              : data.task.freshness === "stale"
+                ? "Update brief"
+                : data.snapshot
+                  ? "Prepare again"
+                  : "Prepare brief"}
           </button>
         </div>
       </div>
@@ -887,39 +897,25 @@ function WorkspaceView({
           sync.error
         }
       />
-      {data.task.freshness === "stale" && (
-        <p className="notice stale" role="status">
-          Your context changed. The brief below uses an earlier source version.
-          Refresh it before relying on it.
-        </p>
-      )}
-      {busy && (
-        <p className="notice" role="status">
-          {currentJob?.status === "queued"
-            ? "Preparation queued. The background worker will pick it up."
-            : "Preparing your brief from the selected context…"}
-        </p>
-      )}
-      {currentJob?.status === "failed" && (
-        <p className="notice error" role="alert">
-          Preparation could not finish (
-          {currentJob.error_code?.replaceAll("_", " ")}).{" "}
-          {exhausted
-            ? "The three-attempt limit was reached. Review the source context before trying a new revision."
-            : "You can retry after checking the connection and configuration."}
-        </p>
-      )}
-      {!config.model_configured && (
-        <p className="notice">
-          You can collect and save context now. Meta preparation will be
-          available after credits and API access are verified.
-        </p>
-      )}
+      <PreparationStatus
+        task={data.task}
+        hasBrief={!!data.snapshot}
+        sourceCount={data.evidence.length}
+        enabled={config.model_configured}
+        starting={prepare.isPending}
+        onRetry={() => prepare.mutate()}
+      />
       <div className="workspace-grid">
         <div className="brief-column">
           {data.snapshot ? (
             <>
-              <Panel title="The brief">
+              <Panel
+                title={
+                  data.task.freshness === "stale"
+                    ? "Previous brief"
+                    : "The brief"
+                }
+              >
                 {point(data.snapshot.brief.summary, "summary")}
                 <p className="muted small">
                   Prepared{" "}
