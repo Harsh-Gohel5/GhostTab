@@ -150,6 +150,9 @@ See [architecture](docs/architecture.md), [roadmap](docs/roadmap.md),
 [model and budget plan](docs/model-budget.md), [demo plan](docs/demo-plan.md), and
 [whiteboard guide](docs/whiteboard.md).
 
+The approved interface uses a light neutral base with indigo actions and teal
+highlights. See [design direction](docs/design.md) for palette and interaction guidance.
+
 Measure time to a usable workspace, citation validity, relevant-file selection,
 and freshness lag on realistic tasks. Do not treat an inferred reproduction or
 suspected cause as a verified result.
