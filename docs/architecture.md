@@ -1,9 +1,16 @@
 # GhostTab architecture
 
-Updated October 26, 2026. **Current slice:** task/evidence storage, durable jobs,
+Updated October 27, 2026. **Current slice:** task/evidence storage, durable jobs,
 Meta adapter, Google Calendar adapter, and the broader interface are implemented
-locally. Live provider credentials and cloud deployment are not verified. Sections
-below describe the wider target; [setup.md](setup.md) records current limits.
+locally. Live Calendar and synthetic Meta flows are verified; cloud deployment is
+not. Sections below describe the wider target; [setup.md](setup.md) records current limits.
+
+**Oct 27 verification:** local Google OAuth, event import/manual refresh and
+controlled Meta preparations using synthetic sources have succeeded. Cloud
+deployment and hosted identity remain unverified. Today readiness uses owner-scoped
+task metadata (`source_count` for active evidence and `calendar_event_id` for exact
+event association); displaying readiness performs no inference. Calendar statuses
+reflect saved context, not an automatic freshness check against Google.
 
 GhostTab prepares the context for a person's next task across messages,
 documents, meetings, and work systems. A campaign approval, client meeting,
@@ -37,8 +44,8 @@ are implemented but have not been exercised with a live Supabase project.
 Google Calendar is the first confirmed source. Its adapter provides read-only OAuth
 with encrypted tokens, event selection and manual refresh. Mail/chat/docs, scheduled
 polling and push delivery are future work. Meta requests are disabled by default.
-Provider tests use mocked responses; no real inference or OAuth success is claimed.
-No cloud resource was provisioned, and development must remain free.
+Provider tests use mocked responses; live OAuth and synthetic inference were separately verified on Oct 27.
+No paid hosting resource was provisioned; development remains local with credit-backed inference.
 
 The worker uses one structured Meta request per attempt, at most three attempts
 per generation. It reserves estimated cost atomically, renews leases, validates

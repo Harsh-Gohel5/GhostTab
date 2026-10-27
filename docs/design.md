@@ -44,3 +44,16 @@ also navigates to the content (including an explicitly labeled previous brief
 when stale). Reviewing remains available when AI preparation is paused. After a
 source change, Update brief submits the new revision; repeated preparation of an
 unchanged successful revision is deduplicated by the API.
+
+## Today readiness
+
+Today groups saved workspaces into Needs attention, Ready to review and All. Rows
+distinguish missing sources, an unprepared source packet, changed context, active
+preparation and failed jobs. The action opens the workspace; it never starts a
+model call from the overview. Preparing jobs are polled every two seconds while
+Today is open. Returning to Today refreshes saved task state.
+
+Calendar rows use the exact event ID to locate an imported workspace. Unselected
+events are labeled Not saved yet. Status describes saved context and explicitly
+directs users to Check Calendar for newer event data. Five matching workspaces
+are shown before the All workspaces link; the API currently loads at most 100.

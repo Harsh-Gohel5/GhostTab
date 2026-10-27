@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy import select, update
+from sqlalchemy import func, select, update
 
 from ghosttab_api.models import Evidence, EvidenceVersion, Job, Snapshot, Task, new_id
 
@@ -85,6 +85,12 @@ def task_view(session, task):
         "generation": task.generation,
         "created_at": task.created_at,
         "from_calendar": bool(task.calendar_event_id),
+        "calendar_event_id": task.calendar_event_id,
+        "source_count": session.scalar(
+            select(func.count())
+            .select_from(Evidence)
+            .where(Evidence.task_id == task.id, Evidence.removed.is_(False))
+        ),
         "freshness": "unprepared"
         if not snapshot
         else ("current" if snapshot.generation == task.generation else "stale"),
