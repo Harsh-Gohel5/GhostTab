@@ -37,3 +37,10 @@ output validation and attempt-limit problems. Retry is offered for recoverable
 failures when preparation is enabled. When preparation is paused, notes, sources
 and saved drafts remain available. Status messages use live regions, and the
 three-step layout stacks on small screens.
+
+An unchanged, prepared workspace offers Review brief, which scrolls to and focuses
+the saved brief without submitting another model request. The Review & edit step
+also navigates to the content (including an explicitly labeled previous brief
+when stale). Reviewing remains available when AI preparation is paused. After a
+source change, Update brief submits the new revision; repeated preparation of an
+unchanged successful revision is deduplicated by the API.
