@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { createClient } from "@supabase/supabase-js";
 import type { Session } from "@supabase/supabase-js";
@@ -7,6 +7,15 @@ import { Api, configSchema } from "./api";
 import { PreparationStatus } from "./PreparationStatus";
 import { ReadinessOverview } from "./ReadinessOverview";
 import { readiness } from "./readiness";
+import { DraftEditor } from "./DraftEditor";
+import { ConfirmDialog } from "./ConfirmDialog";
+import {
+  readableDates,
+  readableTimestamp,
+  readableDay,
+  readableCalendar,
+  preparedDate,
+} from "./dates";
 import type {
   Config,
   Evidence,
@@ -205,6 +214,17 @@ function Home({
   const [page, setPage] = useState<Page>("Today");
   const [selected, setSelected] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const unsavedDraft = useRef(false);
+  const reportUnsaved = useCallback((value: boolean) => {
+    unsavedDraft.current = value;
+  }, []);
+  const [pendingNavigation, setPendingNavigation] = useState<
+    (() => void) | null
+  >(null);
+  const leave = (action: () => void) => {
+    if (unsavedDraft.current) setPendingNavigation(() => action);
+    else action();
+  };
   const [feedback, setFeedback] = useState(() =>
     new URLSearchParams(location.search).get("calendar") === "connection_failed"
       ? "Calendar was not connected. Check the setup and try again."
@@ -239,10 +259,12 @@ function Home({
     mutationFn: ({ title, goal }: { title: string; goal: string }) =>
       api.createTask(title, goal),
     onSuccess: (task) => {
-      setSelected(task.id);
-      setCreating(false);
-      setPage("Workspaces");
-      refresh();
+      leave(() => {
+        setSelected(task.id);
+        setCreating(false);
+        setPage("Workspaces");
+        refresh();
+      });
     },
   });
   const importMeeting = useMutation({
@@ -271,8 +293,10 @@ function Home({
     },
   });
   const open = (task: Task) => {
-    setSelected(task.id);
-    setPage("Workspaces");
+    leave(() => {
+      setSelected(task.id);
+      setPage("Workspaces");
+    });
   };
   const date = new Intl.DateTimeFormat(undefined, {
     weekday: "long",
@@ -287,7 +311,7 @@ function Home({
           href="#"
           onClick={(event) => {
             event.preventDefault();
-            setPage("Today");
+            leave(() => setPage("Today"));
           }}
         >
           <span className="brand-mark">
@@ -303,9 +327,11 @@ function Home({
               className={`nav-item ${page === item ? "selected" : ""}`}
               aria-current={page === item ? "page" : undefined}
               onClick={() => {
-                setPage(item);
-                if (item === "Today") refresh();
-                if (item === "Workspaces") setSelected(null);
+                leave(() => {
+                  setPage(item);
+                  if (item === "Today") refresh();
+                  if (item === "Workspaces") setSelected(null);
+                });
               }}
             >
               <span aria-hidden="true">{["◷", "▦", "⌁"][i]}</span>
@@ -336,7 +362,12 @@ function Home({
             </small>
           </div>
           {onSignOut && (
-            <button className="text-button" onClick={onSignOut}>
+            <button
+              className="text-button"
+              onClick={() => {
+                leave(onSignOut);
+              }}
+            >
               Sign out
             </button>
           )}
@@ -352,6 +383,18 @@ function Home({
           </span>
         </header>
         <main className="content">
+          {pendingNavigation && (
+            <ConfirmDialog
+              message="Leaving will discard your unsaved draft edits. Keep editing to save or copy them first."
+              confirmLabel="Discard and leave"
+              onCancel={() => setPendingNavigation(null)}
+              onConfirm={() => {
+                const action = pendingNavigation;
+                setPendingNavigation(null);
+                action();
+              }}
+            />
+          )}
           <ErrorNotice error={tasks.error || connections.error} />
           {feedback && (
             <p className="notice" role="status">
@@ -478,11 +521,8 @@ function Home({
                           <h3>{event.title}</h3>
                           <p>
                             {event.start.dateTime
-                              ? new Intl.DateTimeFormat(undefined, {
-                                  dateStyle: "medium",
-                                  timeStyle: "short",
-                                }).format(new Date(event.start.dateTime))
-                              : `${event.start.date} · All day`}
+                              ? readableTimestamp(event.start.dateTime)
+                              : `${readableDay(event.start.date ?? "")} · All day`}
                           </p>
                         </div>
                         <span
@@ -534,9 +574,12 @@ function Home({
                 api={api}
                 config={config}
                 owner={owner}
+                onUnsavedChange={reportUnsaved}
                 onBack={() => {
-                  setSelected(null);
-                  refresh();
+                  leave(() => {
+                    setSelected(null);
+                    refresh();
+                  });
                 }}
               />
             ) : (
@@ -750,15 +793,25 @@ function WorkspaceView({
   config,
   owner,
   onBack,
+  onUnsavedChange,
 }: {
   id: string;
   api: Api;
   config: Config;
   owner: string;
   onBack: () => void;
+  onUnsavedChange: (value: boolean) => void;
 }) {
   const queryClient = useQueryClient();
   const briefRef = useRef<HTMLDivElement>(null);
+  const [draftUnsaved, setDraftUnsaved] = useState(false);
+  const reportDraftChanges = useCallback(
+    (value: boolean) => {
+      setDraftUnsaved(value);
+      onUnsavedChange(value);
+    },
+    [onUnsavedChange],
+  );
   const [editing, setEditing] = useState<Evidence | "new" | null>(null);
   const [citation, setCitation] = useState<{
     title: string;
@@ -856,7 +909,7 @@ function WorkspaceView({
   };
   const point = (value: Point, key: string | number) => (
     <div className="grounded-point" key={key}>
-      <p>{value.text}</p>
+      <p>{readableDates(value.text)}</p>
       <div className="citations">
         {value.citations.map((ref, i) => (
           <button
@@ -886,7 +939,7 @@ function WorkspaceView({
           {data.task.from_calendar && (
             <button
               className="secondary"
-              disabled={sync.isPending}
+              disabled={sync.isPending || draftUnsaved}
               onClick={() => sync.mutate()}
             >
               {sync.isPending ? "Checking…" : "Check Calendar"}
@@ -898,7 +951,8 @@ function WorkspaceView({
               busy ||
               prepare.isPending ||
               (!canReview &&
-                (!config.model_configured ||
+                (draftUnsaved ||
+                  !config.model_configured ||
                   !data.evidence.length ||
                   exhausted))
             }
@@ -928,10 +982,17 @@ function WorkspaceView({
         hasBrief={!!data.snapshot}
         sourceCount={data.evidence.length}
         enabled={config.model_configured}
+        blocked={draftUnsaved}
         starting={prepare.isPending}
         onRetry={() => prepare.mutate()}
         onReview={reviewBrief}
       />
+      {draftUnsaved && (
+        <p className="notice" role="status">
+          Save or discard your draft edits before checking Calendar, removing a
+          source, or updating the brief.
+        </p>
+      )}
       <div className="workspace-grid">
         <div
           className="brief-column"
@@ -951,9 +1012,8 @@ function WorkspaceView({
               >
                 {point(data.snapshot.brief.summary, "summary")}
                 <p className="muted small">
-                  Prepared{" "}
-                  {new Date(data.snapshot.created_at * 1000).toLocaleString()} ·
-                  Review against the sources
+                  Prepared {preparedDate(data.snapshot.created_at)} · Review
+                  against the sources
                 </p>
               </Panel>
               <Panel title="What we know">
@@ -976,7 +1036,7 @@ function WorkspaceView({
                 {data.snapshot.brief.unknowns.length ? (
                   <ul className="question-list">
                     {data.snapshot.brief.unknowns.map((text, i) => (
-                      <li key={i}>{text}</li>
+                      <li key={i}>{readableDates(text)}</li>
                     ))}
                   </ul>
                 ) : (
@@ -986,7 +1046,12 @@ function WorkspaceView({
                   </p>
                 )}
               </Panel>
-              <DraftEditor key={data.snapshot.id} api={api} data={data} />
+              <DraftEditor
+                api={api}
+                data={{ ...data, snapshot: data.snapshot }}
+                owner={owner}
+                onUnsavedChange={reportDraftChanges}
+              />
             </>
           ) : (
             <section className="empty-state brief-empty">
@@ -1023,10 +1088,26 @@ function WorkspaceView({
                   : "MANUALLY ADDED NOTES"}
               </span>
               <h3>{item.title}</h3>
-              <p className="source-excerpt">{item.content}</p>
+              <p
+                className={`source-excerpt ${item.origin === "google_calendar" ? "calendar-excerpt" : ""}`}
+              >
+                {item.origin === "google_calendar"
+                  ? readableCalendar(item.content)
+                  : item.content}
+              </p>
               <details>
                 <summary>Read full source</summary>
-                <p className="source-content">{item.content}</p>
+                <p className="source-content">
+                  {item.origin === "google_calendar"
+                    ? readableCalendar(item.content)
+                    : item.content}
+                </p>
+                {item.origin === "google_calendar" && (
+                  <details>
+                    <summary>Original source text</summary>
+                    <p className="source-content">{item.content}</p>
+                  </details>
+                )}
                 {item.url.startsWith("https://") && (
                   <a href={item.url} target="_blank" rel="noreferrer">
                     Open original ↗
@@ -1044,7 +1125,7 @@ function WorkspaceView({
                 )}
                 <button
                   className="text-button"
-                  disabled={remove.isPending}
+                  disabled={remove.isPending || draftUnsaved}
                   onClick={() => remove.mutate(item.id)}
                 >
                   Remove
@@ -1162,45 +1243,5 @@ function SourceForm({
         {busy ? "Saving…" : "Save context"}
       </button>
     </form>
-  );
-}
-
-function DraftEditor({ api, data }: { api: Api; data: Workspace }) {
-  const [draft, setDraft] = useState(data.snapshot?.draft ?? "");
-  const save = useMutation({
-    mutationFn: () => api.saveDraft(data.task.id, data.snapshot!.id, draft),
-  });
-  return (
-    <Panel title="A draft to make your own">
-      <p className="muted">
-        Review and edit before using it. This message stays unsent.
-      </p>
-      <label className="sr-only" htmlFor="draft">
-        Editable draft
-      </label>
-      <textarea
-        id="draft"
-        rows={7}
-        maxLength={6000}
-        value={draft}
-        onChange={(event) => {
-          setDraft(event.target.value);
-          save.reset();
-        }}
-      />
-      <div className="draft-actions">
-        <button
-          className="secondary"
-          disabled={save.isPending}
-          onClick={() => save.mutate()}
-        >
-          {save.isPending ? "Saving…" : "Save draft"}
-        </button>
-        <span role="status">
-          {save.isSuccess ? "Draft saved · unsent" : "For your review"}
-        </span>
-      </div>
-      <ErrorNotice error={save.error} />
-    </Panel>
   );
 }

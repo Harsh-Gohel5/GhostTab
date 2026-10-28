@@ -54,6 +54,14 @@ It does not auto-enqueue replacement preparation after a source change: the user
 requests refresh. Removed evidence blocks dependent snapshots immediately. Historic
 source versions remain stored; physical purge/retention is future work.
 
+Draft saves require `draft` and `expected_draft`, plus the visible `snapshot_id`
+query parameter. The task lock serializes comparison and saving; mismatched saved
+text returns 409 without overwriting it. Retrying the same desired saved text is
+idempotent. Draft whitespace is preserved exactly. No schema migration is needed.
+The editor retains unsaved text on refetch/new briefs, requires explicit conflict
+resolution, and warns before leaving. No private drafts are written to browser
+storage. See [development priorities and browser QA](development-plan.md).
+
 There is no production deployment, local Git bridge or general connector catalog yet.
 `/api/health` proves process liveness, not connector or worker readiness. The
 interactive design concept shown in chat is not application functionality.

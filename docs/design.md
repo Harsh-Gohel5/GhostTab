@@ -57,3 +57,34 @@ Calendar rows use the exact event ID to locate an imported workspace. Unselected
 events are labeled Not saved yet. Status describes saved context and explicitly
 directs users to Check Calendar for newer event data. Five matching workspaces
 are shown before the All workspaces link; the API currently loads at most 100.
+
+## Take the result with you
+
+Dates in generated prose and Calendar previews use full month names, AM/PM times
+and the source's explicit UTC offset. Same-day Calendar ranges show the date once.
+All-day dates are formatted without timezone conversion. Prepared timestamps use
+the viewer's timezone and include its abbreviation. Original source text and exact
+citation quotes remain unchanged. Existing editable drafts offer Make dates readable;
+this is an explicit unsaved edit, preserving the person's text until they choose it.
+
+Unsaved draft edits have an explicit status. Leaving the workspace opens a
+keyboard-accessible confirmation with Keep editing focused; Escape cancels.
+The browser is also asked to warn on reload/close while edits or a save are pending.
+Save/discard before checking Calendar, removing sources or updating the brief.
+
+If a newer brief or another tab's saved draft arrives, keep local edits visible,
+show the latest saved draft for comparison, and require an explicit keep/latest
+choice before saving or exporting. Typing during a save remains unsaved until
+those additional edits are saved. Copy remains available during a conflict.
+Access removal still blocks the draft; no recovery copy is stored in browser storage.
+
+Draft actions distinguish Save draft (persist in GhostTab), Copy draft (current
+editor text to clipboard), and Download brief (current editor text plus the saved
+brief and supporting quotes as Markdown). Copy and download never send a message
+or start inference. Copy failures provide manual-copy instructions.
+
+Downloads use the snapshot's cited quotes, not newer source text, and mark stale
+briefs as outdated. Full source bodies are not exported. Untrusted text is escaped
+or fenced so it cannot introduce embedded Markdown media or HTML. The draft fence
+is longer than any backtick sequence in its contents. Download feedback states
+that the download was requested; browser settings still control saving the file.

@@ -36,6 +36,7 @@ export function PreparationStatus({
   starting,
   onRetry,
   onReview,
+  blocked = false,
 }: {
   task: Task;
   hasBrief: boolean;
@@ -44,6 +45,7 @@ export function PreparationStatus({
   starting: boolean;
   onRetry: () => void;
   onReview: () => void;
+  blocked?: boolean;
 }) {
   const job = task.job?.generation === task.generation ? task.job : null;
   const busy =
@@ -165,7 +167,7 @@ export function PreparationStatus({
         </li>
       </ol>
       {retryable && enabled && sourceCount > 0 && (
-        <button className="secondary" onClick={onRetry}>
+        <button className="secondary" onClick={onRetry} disabled={blocked}>
           Try preparation again
         </button>
       )}

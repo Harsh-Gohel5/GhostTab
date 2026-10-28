@@ -303,6 +303,14 @@ def save_draft(task_id: str, body: DraftInput, request: Request, user: User, sna
         owned_task(session, task_id, user.id, lock=True)
         snapshot = visible_snapshot(session, task_id)
         if not snapshot or snapshot.id != snapshot_id:
-            raise HTTPException(409, "The workspace changed; copy your edits, then reload")
+            raise HTTPException(
+                409, "The brief changed or source access was removed. Your edits were not saved."
+            )
+        if snapshot.draft != body.expected_draft and snapshot.draft != body.draft:
+            raise HTTPException(
+                409,
+                "The saved draft changed elsewhere. "
+                "Your edits were not saved; compare the latest draft.",
+            )
         snapshot.draft = body.draft
         return {"saved": True}
