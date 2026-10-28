@@ -22,4 +22,7 @@
 - Start each feature/fix from current main on a descriptive branch. Open a focused PR,
   review its diff, pass required web/api CI and resolve conversations before squash merging.
 - Fast-forward local main only from the protected remote. Merge through GitHub's PR workflow.
+- After an owner-authorized PR is opened, promptly squash-merge it to close it once
+  the diff is reviewed, required CI passes and conversations are resolved. Do not
+  leave a correct, approved PR open unnecessarily or bypass protected-main rules.
 - The approved UI palette is light neutral, indigo and teal; use shared semantic CSS tokens.

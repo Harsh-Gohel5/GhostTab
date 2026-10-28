@@ -1,4 +1,5 @@
 import type { Workspace } from "./api";
+import { readableDates, preparedDate } from "./dates.ts";
 
 // Export source text as text, never as executable HTML or embedded Markdown media.
 const plain = (value: string) =>
@@ -27,7 +28,7 @@ export function briefMarkdown(data: Workspace, draft: string): string {
     usedSources.map((source, i) => [source.id, i + 1]),
   );
   const point = (item: typeof brief.summary) =>
-    `${plain(item.text)} ${Array.from(
+    `${plain(readableDates(item.text))} ${Array.from(
       new Set(item.citations.map((ref) => sourceNumber.get(ref.evidence_id))),
     )
       .map((number) => `(Source ${number ?? "unavailable"})`)
@@ -39,7 +40,7 @@ export function briefMarkdown(data: Workspace, draft: string): string {
       data.task.freshness === "stale"
         ? "STATUS: OUTDATED — source context changed. This brief and its quotes use earlier revisions."
         : "Status: matches the saved source revisions. Calendar may have changed since the last manual check.",
-      `Prepared: ${new Date(snapshot.created_at * 1000).toISOString()}`,
+      `Prepared: ${preparedDate(snapshot.created_at)}`,
       "## Goal",
       plain(data.task.goal),
       "## Brief",

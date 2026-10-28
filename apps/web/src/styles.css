@@ -42,6 +42,23 @@
 * {
   box-sizing: border-box;
 }
+.confirm-dialog {
+  width: min(440px, calc(100% - 32px));
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.confirm-dialog::backdrop {
+  background: color-mix(in srgb, var(--ink) 35%, transparent);
+}
+.notice.draft-conflict {
+  display: block;
+}
+.draft-conflict .button-group {
+  margin-top: 12px;
+}
 body {
   margin: 0;
 }
@@ -920,6 +937,9 @@ p {
   font-size: 12px;
   color: var(--muted);
   margin: 12px 0;
+}
+.source-excerpt.calendar-excerpt {
+  -webkit-line-clamp: 8;
 }
 .source-actions {
   display: flex;

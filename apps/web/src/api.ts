@@ -101,6 +101,15 @@ export type Workspace = z.infer<typeof workspaceSchema>;
 export type Point = z.infer<typeof pointSchema>;
 export type SourceInput = { title: string; content: string; url: string };
 
+export class ApiError extends Error {
+  status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 export class Api {
   constructor(private token?: () => Promise<string | undefined>) {}
   async request<T>(
@@ -135,7 +144,8 @@ export class Api {
       } catch {
         /* Safe fallback below. */
       }
-      throw new Error(
+      throw new ApiError(
+        response.status,
         typeof detail === "string"
           ? detail
           : `Request could not complete (${response.status}).`,
@@ -193,12 +203,17 @@ export class Api {
   sync(id: string) {
     return this.request(`/tasks/${id}/sync`, taskSchema, "POST");
   }
-  saveDraft(id: string, snapshot: string, draft: string) {
+  saveDraft(
+    id: string,
+    snapshot: string,
+    draft: string,
+    expectedDraft: string,
+  ) {
     return this.request(
       `/tasks/${id}/draft?snapshot_id=${encodeURIComponent(snapshot)}`,
       z.object({ saved: z.boolean() }),
       "PUT",
-      { draft },
+      { draft, expected_draft: expectedDraft },
     );
   }
   connect() {

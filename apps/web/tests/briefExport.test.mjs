@@ -58,6 +58,19 @@ test("stale export preserves cited revision, warns and includes current unsaved 
   );
   assert.match(markdown, /Source 1/);
 });
+test("readable exported claims preserve exact ISO citation quotes", () => {
+  const data = workspace();
+  const original = "2026-10-29T13:30:00-07:00";
+  data.snapshot.brief.summary.text = `Meeting starts at ${original}.`;
+  data.snapshot.brief.summary.citations[0].quote = original;
+  const result = briefMarkdown(data, "User draft remains exact");
+  assert.match(
+    result,
+    /Thursday, October 29, 2026 on|Thursday, October 29, 2026 at/,
+  );
+  assert.ok(result.includes(original));
+  assert.ok(result.includes("User draft remains exact"));
+});
 
 test("untrusted Markdown cannot close the draft block or embed source-title media", () => {
   const data = workspace();

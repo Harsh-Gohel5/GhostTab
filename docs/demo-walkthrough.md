@@ -46,6 +46,8 @@ edit the event for you.
 6. In Google Calendar, change the description's deadline from noon to 3 PM. In
    GhostTab, click **Check Calendar**. Show **Update needed** and the previous
    brief's original quote. Updates are detected by this manual check.
+   Save or discard any draft edits first; checking Calendar and updating a brief
+   are paused while draft edits are unsaved.
 7. Click **Update brief** once. Confirm the new deadline is reflected and the
    source quote matches. Review any revised draft before using it.
 8. Return to Today. Show the workspace under **Ready to review**. **Review brief**

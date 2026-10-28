@@ -42,7 +42,9 @@ class PreparedBrief(ClosedModel):
 
 
 class DraftInput(ClosedModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=False)
     draft: str = Field(max_length=6000)
+    expected_draft: str = Field(max_length=6000)
 
 
 class EventInput(ClosedModel):

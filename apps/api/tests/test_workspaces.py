@@ -144,7 +144,9 @@ def test_preparation_is_durable_deduplicated_and_editable(system):
     snapshot = data["snapshot"]["id"]
     assert (
         system.request(
-            "PUT", f"/tasks/{task}/draft?snapshot_id={snapshot}", {"draft": "My reviewed draft"}
+            "PUT",
+            f"/tasks/{task}/draft?snapshot_id={snapshot}",
+            {"draft": "My reviewed draft", "expected_draft": data["snapshot"]["draft"]},
         ).status_code
         == 200
     )
@@ -156,6 +158,69 @@ def test_preparation_is_durable_deduplicated_and_editable(system):
         run = session.scalar(select(ModelRun))
         assert run.status == "validated" and run.cost_microusd == 1850
         assert session.get(Budget, 1).charged_microusd == 1850
+
+
+def test_draft_conflicts_preserve_saved_text_and_allow_idempotent_retry(system):
+    task, _ = seeded(system)
+    system.request("POST", f"/tasks/{task}/prepare")
+    run_once(system.factory, system.settings, FakeModel())
+    snapshot = system.request("GET", f"/tasks/{task}/workspace").json()["snapshot"]
+    path = f"/tasks/{task}/draft?snapshot_id={snapshot['id']}"
+    body = {"draft": "  Reviewed draft\n\n", "expected_draft": snapshot["draft"]}
+    assert system.request("PUT", path, body).status_code == 200
+    assert system.request("PUT", path, body).status_code == 200
+    conflict = system.request("PUT", path, {**body, "draft": "Stale tab overwrite"})
+    assert conflict.status_code == 409
+    saved = system.request("GET", f"/tasks/{task}/workspace").json()["snapshot"]
+    assert saved["draft"] == body["draft"]
+    assert (
+        system.request("PUT", path, {"draft": "", "expected_draft": saved["draft"]}).status_code
+        == 200
+    )
+    assert system.request("GET", f"/tasks/{task}/workspace").json()["snapshot"]["draft"] == ""
+    assert system.request("PUT", path, {"draft": "Missing precondition"}).status_code == 422
+
+
+def test_concurrent_draft_saves_cannot_overwrite_each_other(system):
+    task, _ = seeded(system)
+    system.request("POST", f"/tasks/{task}/prepare")
+    run_once(system.factory, system.settings, FakeModel())
+    snapshot = system.request("GET", f"/tasks/{task}/workspace").json()["snapshot"]
+    path = f"/tasks/{task}/draft?snapshot_id={snapshot['id']}"
+
+    def save(text):
+        return system.request("PUT", path, {"draft": text, "expected_draft": snapshot["draft"]})
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        responses = list(pool.map(save, ["First tab", "Second tab"]))
+    assert sorted(response.status_code for response in responses) == [200, 409]
+    winner = "First tab" if responses[0].status_code == 200 else "Second tab"
+    assert system.request("GET", f"/tasks/{task}/workspace").json()["snapshot"]["draft"] == winner
+
+
+def test_draft_save_rejects_replaced_or_blocked_snapshot(system):
+    task, evidence = seeded(system)
+    system.request("POST", f"/tasks/{task}/prepare")
+    run_once(system.factory, system.settings, FakeModel())
+    snapshot = system.request("GET", f"/tasks/{task}/workspace").json()["snapshot"]
+    path = f"/tasks/{task}/draft?snapshot_id={snapshot['id']}"
+    body = {"draft": "My earlier edits", "expected_draft": snapshot["draft"]}
+    system.request(
+        "PUT",
+        f"/tasks/{task}/evidence/{evidence}",
+        {"title": "Meeting request", "content": "Review the launch plan on Friday."},
+    )
+    system.request("POST", f"/tasks/{task}/prepare")
+    run_once(system.factory, system.settings, FakeModel())
+    assert system.request("PUT", path, body).status_code == 409
+    current = system.request("GET", f"/tasks/{task}/workspace").json()["snapshot"]
+    assert current["id"] != snapshot["id"]
+    assert current["draft"] == snapshot["draft"]
+    system.request("DELETE", f"/tasks/{task}/evidence/{evidence}")
+    assert (
+        system.request("PUT", f"/tasks/{task}/draft?snapshot_id={current['id']}", body).status_code
+        == 409
+    )
 
 
 def test_ownership_is_checked_on_every_resource(system):
@@ -172,7 +237,11 @@ def test_ownership_is_checked_on_every_resource(system):
         ("POST", f"/tasks/{task}/evidence", {"title": "x", "content": "x"}),
         ("PUT", f"/tasks/{task}/evidence/{evidence}", {"title": "x", "content": "x"}),
         ("DELETE", f"/tasks/{task}/evidence/{evidence}", None),
-        ("PUT", f"/tasks/{task}/draft?snapshot_id={snapshot}", {"draft": "stolen"}),
+        (
+            "PUT",
+            f"/tasks/{task}/draft?snapshot_id={snapshot}",
+            {"draft": "stolen", "expected_draft": ""},
+        ),
         ("POST", f"/tasks/{task}/sync", None),
     ]:
         assert system.request(method, path, body).status_code == 404, path

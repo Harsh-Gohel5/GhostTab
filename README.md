@@ -46,6 +46,19 @@ brief with source quotes. Neither action sends messages or starts inference.
 Follow the [repeatable local demo](docs/demo-walkthrough.md) for the complete
 Calendar → preparation → review → source-change flow.
 
+Draft editing warns before leaving with unsaved changes and requests a browser
+warning on reload/close. Save before updating a brief, checking Calendar or
+removing a source. Concurrent saves are checked against the loaded draft; newer
+briefs or drafts preserve unsaved text for explicit comparison and recovery.
+Unsaved text is held in memory, not backed up across a closed tab or browser crash.
+See the [development assessment and priorities](docs/development-plan.md).
+
+Meeting dates use full month names, AM/PM times and explicit UTC offsets, keeping
+the source's timezone rather than silently converting to the viewer's timezone.
+Calendar source previews group the date and time range; original source text and
+exact citation quotes remain available. Drafts containing ISO timestamps offer
+Make dates readable as an explicit edit that can be reviewed and saved.
+
 ## Requirements
 
 - Node.js 22.12 or later (Node 22 recommended) and npm.
@@ -110,7 +123,7 @@ npm.cmd run check
 npm.cmd run build
 ```
 
-`check` runs TypeScript, ESLint, export regression tests, Ruff lint/format checks,
+`check` runs TypeScript, ESLint, export/draft regression tests, Ruff lint/format checks,
 and the API test suite.
 The production frontend bundle is generated in `apps/web/dist`. Deployment
 and production routing will be configured in a later milestone;
@@ -146,8 +159,9 @@ connectors or a preparation worker are ready.
 See [setup.md](docs/setup.md) for Calendar authorization, Meta credit verification,
 and optional hosted identity. Keep credentials out of source files, issues, screenshots, or chat. Browser
 variables prefixed with `VITE_` are public, so they must never contain secrets.
-The adapter targets `https://api.meta.ai/v1` with `muse-spark-1.3`; account access
-remains to be checked. `GHOSTTAB_ALLOW_MODEL_REQUESTS=false` prevents admission
+The adapter targets `https://api.meta.ai/v1` with `muse-spark-1.3`; local catalog
+access and synthetic preparations were verified. Credit expiry and overage
+behavior remain unconfirmed. `GHOSTTAB_ALLOW_MODEL_REQUESTS=false` prevents admission
 and provider submission. Enable it only after credit/billing verification.
 
 ## Product direction
