@@ -2,6 +2,7 @@ import asyncio
 import hashlib
 import json
 import os
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
@@ -14,6 +15,7 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives.asymmetric import ec
 from fastapi import HTTPException
 from httpx import ASGITransport, AsyncClient
+from pydantic import SecretStr
 from sqlalchemy import create_engine, select, text
 
 from ghosttab_api import calendar
@@ -22,7 +24,8 @@ from ghosttab_api.config import Settings
 from ghosttab_api.database import make_engine, sessions
 from ghosttab_api.main import create_app
 from ghosttab_api.meta import MetaClient, ModelFailure, ModelResult
-from ghosttab_api.models import Base, Budget, Connection, Job, ModelRun, OAuthState
+from ghosttab_api.models import Base, Budget, Connection, Job, ModelRun, OAuthState, WorkerHeartbeat
+from ghosttab_api.readiness import HEARTBEAT_TTL, touch_worker, worker_presence
 from ghosttab_api.worker import claim_job, run_once
 
 
@@ -72,6 +75,91 @@ def system(tmp_path):
         with admin.begin() as connection:
             connection.execute(text(f'DROP SCHEMA "{schema}" CASCADE'))
         admin.dispose()
+
+
+def test_readiness_distinguishes_configuration_budget_and_worker_presence(system):
+    def status():
+        return system.request("GET", "/preparation/status").json()
+
+    assert status() == {"state": "offline", "worker_available": False}
+    with worker_presence(system.factory):
+        assert status() == {"state": "ready", "worker_available": True}
+        system.settings.allow_model_requests = False
+        assert status()["state"] == "disabled"
+        system.settings.allow_model_requests = True
+        system.settings.model_api_key = SecretStr("")
+        assert status()["state"] == "unconfigured"
+        system.settings.model_api_key = SecretStr("test-key")
+        with system.factory.begin() as session:
+            session.get(Budget, 1).charged_microusd = int(
+                system.settings.model_budget_usd * 1_000_000
+            )
+        assert status()["state"] == "budget_exhausted"
+    assert status()["worker_available"] is False
+
+
+def test_worker_presence_expires_and_multiple_workers_remain_independent(system):
+    with worker_presence(system.factory) as first:
+        with worker_presence(system.factory):
+            with system.factory.begin() as session:
+                session.get(WorkerHeartbeat, first).seen_at = time.time() - HEARTBEAT_TTL - 1
+            assert system.request("GET", "/preparation/status").json()["worker_available"]
+        assert not system.request("GET", "/preparation/status").json()["worker_available"]
+        touch_worker(system.factory, first)
+        assert system.request("GET", "/preparation/status").json()["worker_available"]
+    assert system.request("GET", "/preparation/status").json()["state"] == "offline"
+    assert system.request("GET", "/health").json()["status"] == "ok"
+
+
+def test_worker_restart_resumes_queued_work_without_duplicate_preparation(system):
+    task, _ = seeded(system)
+    job = system.request("POST", f"/tasks/{task}/prepare").json()["id"]
+    assert system.request("GET", "/preparation/status").json()["state"] == "offline"
+    model = FakeModel()
+    with worker_presence(system.factory):
+        assert run_once(sessions(system.engine), system.settings, model)
+        assert not run_once(system.factory, system.settings, model)
+        assert system.request("POST", f"/tasks/{task}/prepare").json()["id"] == job
+    assert model.calls == 1
+    assert system.request("GET", f"/tasks/{task}/workspace").json()["snapshot"] is not None
+
+
+def test_worker_reports_presence_during_blocking_preparation(system, monkeypatch):
+    monkeypatch.setattr("ghosttab_api.readiness.HEARTBEAT_INTERVAL", 0.02)
+    task, _ = seeded(system)
+    system.request("POST", f"/tasks/{task}/prepare")
+    entered, release = threading.Event(), threading.Event()
+
+    class BlockingModel(FakeModel):
+        def complete(self, body):
+            entered.set()
+            assert release.wait(3)
+            return super().complete(body)
+
+    with worker_presence(system.factory) as worker_id:
+        with system.factory() as session:
+            initial = session.get(WorkerHeartbeat, worker_id).seen_at
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            result = executor.submit(run_once, system.factory, system.settings, BlockingModel())
+            try:
+                assert entered.wait(2)
+                deadline = time.monotonic() + 2
+                while time.monotonic() < deadline:
+                    with system.factory() as session:
+                        if session.get(WorkerHeartbeat, worker_id).seen_at > initial:
+                            break
+                    time.sleep(0.02)
+                else:
+                    pytest.fail("Worker presence stopped during model preparation")
+                assert system.request("GET", "/preparation/status").json()["state"] == "ready"
+            finally:
+                release.set()
+            assert result.result(timeout=3)
+
+
+def test_preparation_readiness_requires_identity(system):
+    system.app.dependency_overrides.clear()
+    assert system.request("GET", "/preparation/status").status_code == 401
 
 
 def seeded(system):

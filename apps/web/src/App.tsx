@@ -9,6 +9,8 @@ import { ReadinessOverview } from "./ReadinessOverview";
 import { readiness } from "./readiness";
 import { DraftEditor } from "./DraftEditor";
 import { ConfirmDialog } from "./ConfirmDialog";
+import { PreparationAccess } from "./PreparationAccess";
+import { usePreparationReadiness } from "./usePreparationReadiness";
 import {
   readableDates,
   readableTimestamp,
@@ -211,6 +213,7 @@ function Home({
   onSignOut?: () => void;
 }) {
   const queryClient = useQueryClient();
+  const preparationReadiness = usePreparationReadiness(api, owner);
   const [page, setPage] = useState<Page>("Today");
   const [selected, setSelected] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
@@ -688,6 +691,19 @@ function Home({
                 </Panel>
               </div>
               <Panel title="Preparation access">
+                <PreparationAccess
+                  status={preparationReadiness.data}
+                  error={preparationReadiness.error}
+                  onCheck={() => void preparationReadiness.refetch()}
+                />
+                {config.auth_mode === "local" &&
+                  preparationReadiness.data?.state === "offline" && (
+                    <p className="muted">
+                      On this computer, start the preparation service with{" "}
+                      <code>npm run dev:worker</code> after checking saved
+                      requests and the configured budget. See docs/setup.md.
+                    </p>
+                  )}
                 <p>
                   {config.model_configured
                     ? "Meta preparation is enabled with the configured server key."
@@ -803,6 +819,10 @@ function WorkspaceView({
   onUnsavedChange: (value: boolean) => void;
 }) {
   const queryClient = useQueryClient();
+  const preparationReadiness = usePreparationReadiness(api, owner);
+  const serviceReady =
+    !preparationReadiness.isError &&
+    preparationReadiness.data?.state === "ready";
   const briefRef = useRef<HTMLDivElement>(null);
   const [draftUnsaved, setDraftUnsaved] = useState(false);
   const reportDraftChanges = useCallback(
@@ -952,6 +972,7 @@ function WorkspaceView({
               prepare.isPending ||
               (!canReview &&
                 (draftUnsaved ||
+                  !serviceReady ||
                   !config.model_configured ||
                   !data.evidence.length ||
                   exhausted))
@@ -982,10 +1003,16 @@ function WorkspaceView({
         hasBrief={!!data.snapshot}
         sourceCount={data.evidence.length}
         enabled={config.model_configured}
-        blocked={draftUnsaved}
+        availability={preparationReadiness.data?.state}
+        blocked={draftUnsaved || !serviceReady}
         starting={prepare.isPending}
         onRetry={() => prepare.mutate()}
         onReview={reviewBrief}
+      />
+      <PreparationAccess
+        status={preparationReadiness.data}
+        error={preparationReadiness.error}
+        onCheck={() => void preparationReadiness.refetch()}
       />
       {draftUnsaved && (
         <p className="notice" role="status">

@@ -16,6 +16,7 @@ from ghosttab_api.contracts import EvidenceInput
 from ghosttab_api.database import make_engine, sessions
 from ghosttab_api.main import create_app
 from ghosttab_api.models import Base, Budget, Task
+from ghosttab_api.readiness import worker_presence
 from ghosttab_api.worker import run_once
 from ghosttab_api.workspaces import put_evidence
 
@@ -70,7 +71,8 @@ def main():
 
         app.mount("/", StaticFiles(directory=dist, html=True))
         try:
-            uvicorn.run(app, host="127.0.0.1", port=8010, log_level="warning", access_log=False)
+            with worker_presence(factory):
+                uvicorn.run(app, host="127.0.0.1", port=8010, log_level="warning", access_log=False)
         finally:
             engine.dispose()
 
