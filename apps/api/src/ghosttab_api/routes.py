@@ -9,6 +9,7 @@ from ghosttab_api import calendar
 from ghosttab_api.auth import Principal, current_user
 from ghosttab_api.contracts import DraftInput, EventInput, EvidenceInput, TaskInput
 from ghosttab_api.models import Budget, Connection, Evidence, EvidenceVersion, Job, Task
+from ghosttab_api.readiness import preparation_status
 from ghosttab_api.workspaces import (
     evidence_packet,
     job_view,
@@ -45,6 +46,12 @@ def connections(request: Request, user: User):
             "estimated_usage_usd": (budget.charged_microusd / 1_000_000) if budget else 0,
             "budget_usd": request.app.state.settings.model_budget_usd,
         }
+
+
+@router.get("/preparation/status")
+def preparation_readiness(request: Request, user: User):
+    with request.app.state.sessions() as session:
+        return preparation_status(session, request.app.state.settings)
 
 
 @router.post("/connections/google/start")

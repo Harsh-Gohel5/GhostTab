@@ -59,6 +59,12 @@ Calendar source previews group the date and time range; original source text and
 exact citation quotes remain available. Drafts containing ISO timestamps offer
 Make dates readable as an explicit edit that can be reviewed and saved.
 
+Workspaces and Connections check preparation availability every five seconds.
+The worker reports a database heartbeat every ten seconds; a missing heartbeat
+expires after 45 seconds. This distinguishes a running API from an available
+preparation service without contacting Meta. Saved requests survive a worker
+restart. Availability is not a provider-access or billing guarantee.
+
 ## Requirements
 
 - Node.js 22.12 or later (Node 22 recommended) and npm.

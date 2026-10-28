@@ -63,6 +63,19 @@ resolution, and warns before leaving. No private drafts are written to browser
 storage. See [development priorities and browser QA](development-plan.md).
 
 There is no production deployment, local Git bridge or general connector catalog yet.
+Migration `0002` adds a server-only `worker_heartbeats` table. Each worker reports
+every ten seconds on a separate thread, including during inference, and removes
+its own row on normal shutdown. Stale rows expire after 45 seconds; rows older
+than a day are pruned. Multiple worker identities remain independent. Job leases
+still control recovery/publication; a service heartbeat never renews a job lease.
+
+Authenticated `GET /api/preparation/status` returns aggregate readiness only:
+ready, offline, disabled, unconfigured or budget_exhausted. It exposes no worker
+IDs, source contents or secrets and performs no provider calls. The UI polls at
+five seconds, pauses new/retry actions while unavailable and preserves review,
+editing and durable queued work. Direct API admission still accepts durable work
+for recovery; worker presence is an observation, not an authorization check.
+
 `/api/health` proves process liveness, not connector or worker readiness. The
 interactive design concept shown in chat is not application functionality.
 

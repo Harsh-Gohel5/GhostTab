@@ -74,6 +74,17 @@ export const connectionsSchema = z.object({
   estimated_usage_usd: z.number(),
   budget_usd: z.number(),
 });
+export const preparationStatusSchema = z.object({
+  state: z.enum([
+    "ready",
+    "offline",
+    "disabled",
+    "unconfigured",
+    "budget_exhausted",
+  ]),
+  worker_available: z.boolean(),
+});
+export type PreparationReadiness = z.infer<typeof preparationStatusSchema>;
 export const eventsSchema = z.object({
   has_more: z.boolean(),
   events: z.array(
@@ -162,6 +173,9 @@ export class Api {
   }
   connections() {
     return this.request("/connections", connectionsSchema);
+  }
+  preparationStatus() {
+    return this.request("/preparation/status", preparationStatusSchema);
   }
   events() {
     return this.request("/calendar/events", eventsSchema);

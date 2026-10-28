@@ -1,5 +1,24 @@
 # Run the first working slice
 
+## Preparation availability and recovery
+
+Apply pending migrations with `npm run db:migrate` before restarting the API and
+worker. Migration 0002 adds only the worker heartbeat table. Preserve the existing
+database and encryption key. Workspaces and Connections show recent worker
+presence separately from API health; no inference runs to check availability.
+
+If preparation has not reported recently, check queued/running requests and the
+configured application budget, then start the worker with `npm run dev:worker`.
+Existing requests resume automatically; do not submit duplicates. Abrupt stops
+can take 45 seconds to be detected; a running job can wait for its 180-second
+lease before recovery. The three-attempt bound and billing reservations still
+apply. A heartbeat does not verify the Meta key, credits or provider health.
+
+Disabled/unconfigured states require server configuration by the owner, followed
+by API and worker restart. Budget exhaustion requires reviewing the ledger and
+provider controls; do not automatically increase the cap. Saved notes, authorized
+briefs and draft editing remain usable while preparation is unavailable.
+
 ## Cost boundary
 
 The owner requires no charges during setup and development. Keep everything local.

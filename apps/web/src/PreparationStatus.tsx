@@ -1,14 +1,15 @@
 import type { Task } from "./api";
+import type { PreparationState } from "./preparationReadiness";
 
 const failures: Record<string, string> = {
   budget_exhausted:
     "The preparation budget has been reached. Check preparation access before trying again.",
   model_access_denied:
-    "Meta could not authorize this request. Check preparation access in Connections.",
+    "Meta could not authorize this request. Ask the workspace owner to check the server's Meta access.",
   model_requests_disabled:
     "AI preparation is paused. Your saved context is still available.",
   model_not_configured:
-    "AI preparation needs to be set up in Connections first.",
+    "AI preparation needs server configuration. Ask the workspace owner to check the Meta setup.",
   model_connection_failed:
     "GhostTab could not reach Meta. Check the connection, then try again.",
   model_temporarily_unavailable:
@@ -37,6 +38,7 @@ export function PreparationStatus({
   onRetry,
   onReview,
   blocked = false,
+  availability,
 }: {
   task: Task;
   hasBrief: boolean;
@@ -46,6 +48,7 @@ export function PreparationStatus({
   onRetry: () => void;
   onReview: () => void;
   blocked?: boolean;
+  availability?: PreparationState;
 }) {
   const job = task.job?.generation === task.generation ? task.job : null;
   const busy =
@@ -87,6 +90,18 @@ export function PreparationStatus({
         : "Reading your saved context and checking the response against its sources. You can leave this workspace and return later.";
     if (stale) message += " The previous brief below still needs an update.";
     tone = "working";
+  }
+  if (job?.status === "queued" && availability === "offline") {
+    heading = "Waiting for the preparation service";
+    message =
+      "Your request is saved. It can resume automatically when the service returns; no need to submit it again.";
+    tone = "stale";
+  }
+  if (job?.status === "running" && availability === "offline") {
+    heading = "Preparation may be interrupted";
+    message =
+      "The service has not reported recently. Your request remains saved for recovery. A saved brief is still available if access permits.";
+    tone = "stale";
   }
   if (failed) {
     heading = "Preparation did not finish";

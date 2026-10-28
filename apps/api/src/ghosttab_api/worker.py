@@ -19,6 +19,7 @@ from ghosttab_api.meta import (
     validate_brief,
 )
 from ghosttab_api.models import Budget, Job, ModelRun, Snapshot, Task, new_id
+from ghosttab_api.readiness import worker_presence
 from ghosttab_api.workspaces import evidence_packet
 
 LEASE_SECONDS = 180
@@ -207,9 +208,10 @@ def main():
     logging.basicConfig(level=logging.INFO)
     logging.info("Preparation worker ready (no source content is logged)")
     try:
-        while True:
-            if not run_once(factory, settings):
-                time.sleep(2)
+        with worker_presence(factory):
+            while True:
+                if not run_once(factory, settings):
+                    time.sleep(2)
     except KeyboardInterrupt:
         pass
 

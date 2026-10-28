@@ -103,3 +103,9 @@ class OAuthState(Base):
     owner_id: Mapped[str] = mapped_column(String(100))
     encrypted_verifier: Mapped[str] = mapped_column(Text)
     expires_at: Mapped[float] = mapped_column(Float)
+
+
+class WorkerHeartbeat(Base):
+    __tablename__ = "worker_heartbeats"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    seen_at: Mapped[float] = mapped_column(Float, index=True)
