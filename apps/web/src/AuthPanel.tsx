@@ -11,12 +11,18 @@ export function AuthPanel({
   initialError,
   onRecovered,
   synthetic,
+  googleState,
+  onCheckGoogle,
+  checkingGoogle,
 }: {
   auth: AuthMethods;
   recovery: boolean;
   initialError: string;
   onRecovered: () => void;
   synthetic: boolean;
+  googleState: "checking" | "enabled" | "disabled" | "unavailable";
+  onCheckGoogle: () => void;
+  checkingGoogle: boolean;
 }) {
   const [mode, setMode] = useState<AuthMode>("signin");
   const [busy, setBusy] = useState(false);
@@ -149,7 +155,7 @@ export function AuthPanel({
           <>
             <button
               className="secondary google-signin"
-              disabled={busy}
+              disabled={busy || googleState !== "enabled"}
               onClick={() => void googleSignIn()}
             >
               <span aria-hidden="true">G</span> Continue with Google
@@ -157,6 +163,29 @@ export function AuthPanel({
             <p className="muted auth-provider-note">
               Sign in to GhostTab. Connect your work tools separately.
             </p>
+            {googleState !== "enabled" && (
+              <div className="auth-provider-note" role="status">
+                <p>
+                  {googleState === "checking"
+                    ? "Checking Google sign-in…"
+                    : googleState === "disabled"
+                      ? "Google sign-in is not available yet. You can use email sign-in."
+                      : "Google sign-in availability could not be checked. You can use email or retry."}
+                </p>
+                {googleState !== "checking" && (
+                  <button
+                    type="button"
+                    className="text-button"
+                    disabled={busy || checkingGoogle}
+                    onClick={onCheckGoogle}
+                  >
+                    {checkingGoogle
+                      ? "Checking…"
+                      : "Check Google sign-in again"}
+                  </button>
+                )}
+              </div>
+            )}
           </>
         )}
         {!recovery && (

@@ -3,7 +3,7 @@ import type { FormEvent, ReactNode } from "react";
 import { createClient } from "@supabase/supabase-js";
 import type { Session } from "@supabase/supabase-js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Api, configSchema } from "./api";
+import { Api, configSchema, authProvidersSchema } from "./api";
 import { PreparationStatus } from "./PreparationStatus";
 import { ReadinessOverview } from "./ReadinessOverview";
 import { WorkspaceList } from "./WorkspaceList";
@@ -166,6 +166,13 @@ function SessionGate({ config }: { config: Config }) {
       ),
     [client],
   );
+  const providers = useQuery({
+    queryKey: ["auth-providers", config.supabase_url],
+    queryFn: () => new Api().request("/auth/providers", authProvidersSchema),
+    enabled: !!client && !session,
+    staleTime: 30_000,
+    retry: 1,
+  });
   if (!ready)
     return (
       <main className="startup" role="status">
@@ -180,6 +187,13 @@ function SessionGate({ config }: { config: Config }) {
         auth={client.auth}
         recovery={recovering && !!session}
         initialError={authError}
+        googleState={
+          providers.isError
+            ? "unavailable"
+            : (providers.data?.google ?? "checking")
+        }
+        onCheckGoogle={() => void providers.refetch()}
+        checkingGoogle={providers.isFetching}
         onRecovered={() => {
           setRecovering(false);
           history.replaceState(null, "", location.pathname);
