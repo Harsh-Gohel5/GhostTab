@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     jira_client_id: str = ""
     jira_client_secret: SecretStr = SecretStr("")
     jira_redirect_uri: str = "http://127.0.0.1:8000/api/integrations/jira/callback"
+    teams_client_id: str = ""
+    teams_client_secret: SecretStr = SecretStr("")
+    teams_tenant_id: str = ""
+    teams_redirect_uri: str = "http://127.0.0.1:8000/api/integrations/teams/callback"
     token_encryption_key: SecretStr = SecretStr("")
     model_api_key: SecretStr = Field(default=SecretStr(""), validation_alias="MODEL_API_KEY")
     meta_model_id: Literal["muse-spark-1.3", "muse-wonder-1.0"] = Field(

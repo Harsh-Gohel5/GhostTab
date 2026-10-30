@@ -74,7 +74,10 @@ def request(client, url, *, request_timeout=20, **params):
                 raise ConnectorFailure("provider_unavailable", retryable=True)
             if reasons & {"accessNotConfigured", "serviceDisabled"}:
                 raise ConnectorFailure("provider_setup_required")
-        if response.status_code == 401 and response.request.url.host == "api.atlassian.com":
+        if response.status_code == 401 and response.request.url.host in (
+            "api.atlassian.com",
+            "graph.microsoft.com",
+        ):
             raise ConnectorFailure("connection_revoked")
         if response.status_code in (401, 403):
             raise ConnectorFailure("access_denied")
@@ -281,17 +284,40 @@ def _read_selected(client, provider, item_id, *, container_id=""):
         identifier(item_id, r"19:[A-Za-z0-9_.@-]+")
         encoded = quote(item_id, safe="")
         data = request(
-            client, f"https://graph.microsoft.com/v1.0/chats/{encoded}/messages", **{"$top": 50}
+            client,
+            f"https://graph.microsoft.com/v1.0/me/chats/{encoded}/messages",
+            **{"$top": 50, "$orderby": "createdDateTime desc"},
         )
-        content = "\n\n".join(
-            (
-                html_text(str(x.get("body", {}).get("content", "")))
-                if x.get("body", {}).get("contentType") == "html"
-                else str(x.get("body", {}).get("content", ""))
-            )
-            for x in data.get("value", [])
-            if not x.get("deletedDateTime")
-        )
+        messages = data.get("value")
+        if not isinstance(messages, list) or len(messages) > 50:
+            raise ConnectorFailure("invalid_response")
+        parts = []
+        for message in reversed(messages):
+            if not isinstance(message, dict):
+                raise ConnectorFailure("invalid_response")
+            if message.get("deletedDateTime") or message.get("messageType", "message") != "message":
+                continue
+            if not isinstance(message.get("body"), dict):
+                raise ConnectorFailure("invalid_response")
+            body = message["body"]
+            if body.get("contentType") not in ("text", "html") or not isinstance(
+                body.get("content"), str
+            ):
+                raise ConnectorFailure("invalid_response")
+            text = html_text(body["content"]) if body["contentType"] == "html" else body["content"]
+            sender = message.get("from") or {}
+            if not isinstance(sender, dict):
+                raise ConnectorFailure("invalid_response")
+            identity = sender.get("user") or sender.get("application") or {}
+            if not isinstance(identity, dict):
+                raise ConnectorFailure("invalid_response")
+            name = identity.get("displayName") or "Sender not provided"
+            stamp = message.get("createdDateTime") or "Time not provided"
+            if not isinstance(name, str) or not isinstance(stamp, str):
+                raise ConnectorFailure("invalid_response")
+            if text.strip():
+                parts.append(f"{name[:200]} · {stamp[:100]}\n{text}")
+        content = "\n\n".join(parts)
         return source(
             provider,
             item_id,

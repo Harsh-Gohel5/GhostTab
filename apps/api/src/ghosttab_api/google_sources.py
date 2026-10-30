@@ -375,6 +375,10 @@ def refresh_source(task_id: str, evidence_id: str, req: Request, user: User):
         from ghosttab_api.slack_sources import refresh_thread
 
         return refresh_thread(factory, settings, user.id, task_id, evidence_id)
+    if provider == "teams":
+        from ghosttab_api.teams_sources import refresh_chat
+
+        return refresh_chat(factory, settings, user.id, task_id, evidence_id)
     if provider == "jira":
         from ghosttab_api.jira_sources import refresh_issue
 

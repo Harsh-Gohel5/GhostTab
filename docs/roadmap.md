@@ -1,5 +1,10 @@
 # Hackathon delivery roadmap
 
+**Teams checkpoint:** frontend/backend selected-chat workflow is mock/browser
+verified; live consent remains pending. Additional connectors are no longer the
+next build priority. Focus on model grounding quality, live two-service/account
+verification and submission rehearsal. Calendar remains live connected.
+
 **October 29 connector checkpoint:** Calendar is live verified; Docs/Gmail/Slack/
 Jira now have UI and backend connection/import/refresh/disconnect flows tested
 with simulated providers. Teams authorization/import remains next. Account UI

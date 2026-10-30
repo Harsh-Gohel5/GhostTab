@@ -214,6 +214,30 @@ export class Api {
       z.object({ connected: z.boolean(), configured: z.boolean() }),
     );
   }
+  teamsConnection() {
+    return this.request(
+      "/integrations/teams",
+      z.object({ connected: z.boolean(), configured: z.boolean() }),
+    );
+  }
+  connectTeams() {
+    return this.request(
+      "/integrations/teams/start",
+      z.object({ url: z.string().url() }),
+      "POST",
+    );
+  }
+  disconnectTeams() {
+    return this.request("/integrations/teams", z.undefined(), "DELETE");
+  }
+  importTeams(task: string, selection: { chat_id: string }) {
+    return this.request(
+      `/tasks/${task}/imports/teams`,
+      z.object({ id: z.string() }),
+      "POST",
+      selection,
+    );
+  }
   connectJira() {
     return this.request(
       "/integrations/jira/start",

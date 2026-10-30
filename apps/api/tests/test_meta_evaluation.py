@@ -73,3 +73,25 @@ def test_device_profile_name_is_only_exposed_in_local_mode(system, monkeypatch):
     assert system.request("GET", "/config").json()["display_name"] == "Fictional Person"
     system.settings.auth_mode = "supabase"
     assert system.request("GET", "/config").json()["display_name"] == ""
+
+
+def test_teams_evaluation_uses_fictional_sources_and_budgeted_worker(system, monkeypatch, tmp_path):
+    from evaluate_teams import CASES, sources
+
+    monkeypatch.setattr(
+        evaluate_meta,
+        "run_once",
+        lambda factory, settings: run_once(factory, settings, SampleModel()),
+    )
+    path = tmp_path / "teams.json"
+    evaluate_meta.evaluate(
+        system.settings,
+        system.factory,
+        path,
+        cases=CASES,
+        evidence_builder=sources,
+        task_title="Fictional Teams task",
+    )
+    report = json.loads(path.read_text())
+    assert len(report["cases"]) == 2
+    assert all(case["status"] == "succeeded" for case in report["cases"])

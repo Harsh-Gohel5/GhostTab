@@ -14,6 +14,7 @@ import { GhostMark } from "./GhostMark";
 import { AuthPanel } from "./AuthPanel";
 import { SlackConnection, SlackImport } from "./SlackSource";
 import { JiraConnection, JiraImport } from "./JiraSource";
+import { TeamsConnection, TeamsImport } from "./TeamsSource";
 import { readiness } from "./readiness";
 import { DraftEditor } from "./DraftEditor";
 import { ConfirmDialog } from "./ConfirmDialog";
@@ -722,6 +723,7 @@ function Home({
               <GoogleConnections api={api} owner={owner} />
               <SlackConnection api={api} owner={owner} />
               <JiraConnection api={api} owner={owner} />
+              <TeamsConnection api={api} owner={owner} />
               <div className="privacy-grid">
                 <Panel title="A connection you control">
                   <p>
@@ -1075,6 +1077,13 @@ function WorkspaceView({
         blocked={draftUnsaved}
         onImported={refresh}
       />
+      <TeamsImport
+        api={api}
+        owner={owner}
+        task={id}
+        blocked={draftUnsaved}
+        onImported={refresh}
+      />
       <div className="workspace-grid">
         <div
           className="brief-column"
@@ -1193,7 +1202,7 @@ function WorkspaceView({
                 )}
               </details>
               <div className="source-actions">
-                {["google_docs", "gmail", "slack", "jira"].includes(
+                {["google_docs", "gmail", "slack", "jira", "teams"].includes(
                   item.origin,
                 ) && (
                   <button

@@ -16,7 +16,8 @@ is still pending. Slack's public-thread OAuth/import/refresh/disconnect flow is
 implemented and mock-tested, with live installation deferred. See
 [Slack setup and limits](docs/slack-source.md). Jira now has a read-only OAuth/site/issue import, refresh and disconnect flow;
 live consent remains deferred. See [Jira setup and limits](docs/jira-source.md).
-Teams remains a reader adapter without production connection/import UI.
+Teams now has selected-chat OAuth/import/refresh/disconnect UI and backend flow,
+verified with simulated providers; live consent is deferred. See [Teams setup](docs/teams-source.md).
 
 Email sign-up/sign-in/confirmation/recovery UI now uses the existing Supabase path;
 live provider setup and email delivery remain pending. See
@@ -62,8 +63,8 @@ bridge remain future work. Calendar events are imported only when selected. **Ch
 is a manual action; no real-time synchronization is claimed.
 
 Selected-item reader adapters for Docs, Gmail, Slack, Jira and Teams are tested
-with synthetic responses. Jira has selected-issue connection/import routes and UI; Teams still has no
-production import routes or authorization UI. The isolated browser fixture demonstrates their shared evidence
+with synthetic responses. Jira and Teams now have selected-item connection/import routes and UI, tested
+with simulated providers. Their live authorization remains deferred. The isolated browser fixture demonstrates their shared evidence
 workflow with explicit sample labels. See [connector development](docs/connector-development.md)
 for implemented boundaries and the remaining authorization work.
 

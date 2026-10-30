@@ -15,7 +15,7 @@ from cryptography.fernet import Fernet
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from ghosttab_api import calendar, google_sources, jira_sources, slack_sources
+from ghosttab_api import calendar, google_sources, jira_sources, slack_sources, teams_sources
 from ghosttab_api.config import Settings
 from ghosttab_api.contracts import EvidenceInput
 from ghosttab_api.database import make_engine, sessions
@@ -40,6 +40,9 @@ def main():
             google_client_id="synthetic-client",
             google_client_secret="synthetic-secret",
             jira_client_id="synthetic-jira-client",
+            teams_client_id="synthetic-teams-client",
+            teams_client_secret="synthetic-teams-secret",
+            teams_tenant_id="11111111-1111-4111-8111-111111111111",
             jira_client_secret="synthetic-jira-secret",
             slack_client_id="synthetic-slack-client",
             slack_client_secret="synthetic-slack-secret",
@@ -55,6 +58,22 @@ def main():
         factory = sessions(engine)
         with factory.begin() as session:
             session.add(Budget(id=1, charged_microusd=0))
+            session.add(
+                SourceConnection(
+                    owner_id="local-owner",
+                    provider="teams",
+                    encrypted_tokens=calendar.encrypt(
+                        settings,
+                        {
+                            "access_token": "synthetic-teams",
+                            "refresh_token": "synthetic-refresh",
+                            "expires_at": time.time() + 86400,
+                            "scope": "Chat.Read",
+                            "tenant_id": settings.teams_tenant_id,
+                        },
+                    ),
+                )
+            )
             session.add(
                 SourceConnection(
                     owner_id="local-owner",
@@ -122,6 +141,15 @@ def main():
         app = create_app(settings, engine=engine)
 
         def respond(req):
+            if req.url.host == "graph.microsoft.com" and not req.url.path.endswith("/messages"):
+                return httpx.Response(
+                    200,
+                    json={
+                        "id": "19:synthetic@thread.v2",
+                        "chatType": "group",
+                        "topic": "Fictional handoff chat",
+                    },
+                )
             if req.url.path.endswith("accessible-resources"):
                 return httpx.Response(
                     200,
@@ -154,6 +182,9 @@ def main():
         )
 
         jira_sources.client_for = lambda token: httpx.Client(transport=httpx.MockTransport(respond))
+        teams_sources.client_for = lambda token: httpx.Client(
+            transport=httpx.MockTransport(respond)
+        )
 
         @app.middleware("http")
         async def fake_preparation(request, call_next):

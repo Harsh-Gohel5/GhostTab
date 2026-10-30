@@ -1,5 +1,11 @@
 # GhostTab architecture
 
+**Teams addition:** confidential single-tenant work/school OAuth with PKCE and
+`Chat.Read` reuses encrypted source grants. Explicit chat selection reads metadata
+and at most 50 recent messages through Graph `/me/chats`; owner/grant checks fence
+publication, manual refresh versions evidence, and disconnect blocks dependent
+briefs. No schema migration. Live consent is deferred. See [Teams](teams-source.md).
+
 **Jira addition:** confidential 3LO, rotating encrypted refresh tokens and explicit
 site/issue selection reuse source grants and immutable evidence. Fresh site lists
 rotate the local grant epoch when membership changes, fencing in-flight reads and

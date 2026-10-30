@@ -1,5 +1,13 @@
 # Development assessment and next milestones
 
+**Teams checkpoint:** implemented OAuth/PKCE, selected-chat import, manual check
+and disconnect. Browser rehearsal passed with simulated providers. Checks passed
+33 frontend and 122 API tests (155 total), lint/type checks and production build;
+existing bundle/Alembic warnings remain. Three real Spark calls added $0.033185
+estimated usage. See [evaluation](teams-evaluation.md), including a partial
+semantic pass requiring follow-up. Next: targeted model-quality regression, then
+live second-source/account verification and a repeatable two-service demo.
+
 **Jira checkpoint, October 29:** selected-issue 3LO connection, explicit site
 selection, import, manual refresh and disconnect are implemented. The normal UI
 shows setup pending until the owner configures Jira. Mock API and isolated browser

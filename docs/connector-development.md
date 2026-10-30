@@ -1,5 +1,10 @@
 # Credential-free connector milestone
 
+**Teams checkpoint:** selected-chat connection/import/refresh/disconnect now has
+UI/API flow with simulated provider verification. All five additional readers now
+have corresponding connection flows; live Docs/Gmail/Slack/Jira/Teams consent is
+still pending. Calendar remains the sole live-verified connector. See [Teams](teams-source.md).
+
 **Jira checkpoint, October 29:** selected-issue 3LO connection, explicit site
 selection, import, manual refresh and disconnect are implemented. The normal UI
 shows setup pending until the owner configures Jira. Mock API and isolated browser

@@ -1,5 +1,11 @@
 # Meta inference and credit plan
 
+**Teams milestone:** three real Spark calls added $0.033185 estimated usage.
+The ledger totals $0.420940 including the retained Wonder reservation; the $1
+application limit remains unchanged. Owner confirmation establishes promotional
+credits in use; no billing settings were changed. No additional API key was needed.
+See [Teams evaluation](teams-evaluation.md) for actual results and limitations.
+
 **Jira milestone, October 29:** two Spark Jira/email trials added $0.017387
 estimated usage. A Wonder code review failed with `model_output_incomplete`;
 its $0.189828 reservation was conservatively retained, not reconciled to actual

@@ -146,7 +146,7 @@ def test_teams_text_content_is_not_interpreted_as_html_and_deleted_items_are_omi
         transport=httpx.MockTransport(lambda req: httpx.Response(200, json=data))
     ) as client:
         result = read_selected(client, "teams", "19:synthetic@thread.v2")
-    assert result.evidence.content == "Owner: <unassigned>"
+    assert result.evidence.content == "Sender not provided · Time not provided\nOwner: <unassigned>"
 
 
 def test_nested_google_docs_tabs_and_tables_keep_text():
@@ -196,3 +196,26 @@ def test_nested_google_docs_tabs_and_tables_keep_text():
     ) as client:
         result = read_selected(client, "google_docs", "synthetic_doc")
     assert "Table text" in result.evidence.content and "Nested tab text" in result.evidence.content
+
+
+def test_teams_omits_bodyless_deleted_events_and_preserves_chronological_speakers():
+    messages = [
+        {"deletedDateTime": "2026-11-02", "body": None},
+        {"messageType": "systemEventMessage", "body": None},
+        {
+            "body": {"contentType": "text", "content": "New decision"},
+            "from": {"user": {"displayName": "Lee"}},
+            "createdDateTime": "2026-11-02T11:00:00Z",
+        },
+        {
+            "body": {"contentType": "text", "content": "Earlier request"},
+            "from": {"user": {"displayName": "Maya"}},
+            "createdDateTime": "2026-11-02T10:00:00Z",
+        },
+    ]
+    with httpx.Client(
+        transport=httpx.MockTransport(lambda req: httpx.Response(200, json={"value": messages}))
+    ) as client:
+        content = read_selected(client, "teams", "19:synthetic@thread.v2").evidence.content
+    assert content.index("Maya") < content.index("Lee")
+    assert "Earlier request" in content and "New decision" in content
