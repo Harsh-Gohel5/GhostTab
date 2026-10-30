@@ -1,5 +1,12 @@
 # Meta inference and credit plan
 
+**October 30 grounding correction:** `meeting-brief-v3` prevents the observed
+unsupported whole-handoff readiness inference in the final targeted trial and
+keeps source instructions out of business conflicts. Eight final live regression
+cases met narrow expectations in coding-agent inspection after an initial partial
+failure. See [grounding evaluation](grounding-evaluation.md) for costs and limitations.
+
+
 **Teams milestone:** three real Spark calls added $0.033185 estimated usage.
 The ledger totals $0.420940 including the retained Wonder reservation; the $1
 application limit remains unchanged. Owner confirmation establishes promotional
