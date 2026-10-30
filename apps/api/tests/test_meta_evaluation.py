@@ -40,6 +40,34 @@ def test_evaluation_does_not_bypass_existing_budget(system, tmp_path):
         assert session.get(Budget, 1).charged_microusd == 900_000
 
 
+def test_custom_evaluation_keeps_the_same_budget_and_worker_validation(
+    system, monkeypatch, tmp_path
+):
+    from evaluate_jira import CASES, workflow_sources
+
+    monkeypatch.setattr(
+        evaluate_meta,
+        "run_once",
+        lambda factory, settings: run_once(factory, settings, SampleModel()),
+    )
+    path = tmp_path / "jira.json"
+    evaluate_meta.evaluate(
+        system.settings,
+        system.factory,
+        path,
+        cases=CASES,
+        evidence_builder=workflow_sources,
+        task_title="Fictional Jira task",
+    )
+    report = json.loads(path.read_text())
+    assert [case["case"] for case in report["cases"]] == ["jira_conflict", "jira_revision"]
+    assert all(case["status"] == "succeeded" for case in report["cases"])
+    with system.factory() as session:
+        assert session.get(Budget, 1).charged_microusd == round(
+            report["estimated_total_usd"] * 1_000_000
+        )
+
+
 def test_device_profile_name_is_only_exposed_in_local_mode(system, monkeypatch):
     monkeypatch.setattr("ghosttab_api.routes.getpass.getuser", lambda: "Fictional Person")
     assert system.request("GET", "/config").json()["display_name"] == "Fictional Person"

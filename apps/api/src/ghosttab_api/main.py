@@ -9,6 +9,7 @@ from ghosttab_api import __version__
 from ghosttab_api.config import Settings
 from ghosttab_api.database import make_engine, sessions
 from ghosttab_api.google_sources import router as google_sources_router
+from ghosttab_api.jira_sources import router as jira_router
 from ghosttab_api.routes import router
 from ghosttab_api.slack_sources import router as slack_router
 
@@ -43,6 +44,7 @@ def create_app(settings: Settings | None = None, *, engine=None) -> FastAPI:
             timeout=5,
         )
     app.include_router(router)
+    app.include_router(jira_router)
     app.include_router(slack_router)
     app.include_router(google_sources_router)
 

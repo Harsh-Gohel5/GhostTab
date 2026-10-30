@@ -208,6 +208,45 @@ export class Api {
       z.object({ connected: z.boolean(), configured: z.boolean() }),
     );
   }
+  jiraConnection() {
+    return this.request(
+      "/integrations/jira",
+      z.object({ connected: z.boolean(), configured: z.boolean() }),
+    );
+  }
+  connectJira() {
+    return this.request(
+      "/integrations/jira/start",
+      z.object({ url: z.string().url() }),
+      "POST",
+    );
+  }
+  disconnectJira() {
+    return this.request("/integrations/jira", z.undefined(), "DELETE");
+  }
+  jiraSites() {
+    return this.request(
+      "/integrations/jira/sites",
+      z.object({
+        sites: z.array(
+          z.object({
+            id: z.string().uuid(),
+            name: z.string(),
+            url: z.string().url(),
+          }),
+        ),
+        has_more: z.boolean(),
+      }),
+    );
+  }
+  importJira(task: string, selection: { cloud_id: string; issue_key: string }) {
+    return this.request(
+      `/tasks/${task}/imports/jira`,
+      z.object({ id: z.string() }),
+      "POST",
+      selection,
+    );
+  }
   connectSlack() {
     return this.request(
       "/integrations/slack/start",

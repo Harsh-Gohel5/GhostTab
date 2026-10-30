@@ -74,7 +74,18 @@ CASES = [
 ]
 
 
-def evaluate(settings, main_factory, report_path, *, case_names=None):
+def evaluate(
+    settings,
+    main_factory,
+    report_path,
+    *,
+    case_names=None,
+    cases=None,
+    evidence_builder=None,
+    task_title="Fictional launch planning",
+    task_goal="Prepare a grounded brief and unsent draft. Keep unknowns and conflicts explicit.",
+    source_description="fictional; not live connectors",
+):
     hold = 200_000
     parent, parent_job, parent_run = new_id(), new_id(), new_id()
     with main_factory.begin() as session:
@@ -113,7 +124,7 @@ def evaluate(settings, main_factory, report_path, *, case_names=None):
     report = {
         "model": settings.meta_model_id,
         "prompt_version": PROMPT_VERSION,
-        "sources": "fictional; not live connectors",
+        "sources": source_description,
         "hold_usd": hold / 1_000_000,
         "cases": [],
         "semantic_assessment": "requires human review",
@@ -127,32 +138,34 @@ def evaluate(settings, main_factory, report_path, *, case_names=None):
         with factory.begin() as session:
             session.add(Budget(id=1, charged_microusd=0))
         try:
-            for name, email, document, expectation in CASES:
+            for name, email, document, expectation in CASES if cases is None else cases:
                 if case_names is not None and name not in case_names:
                     continue
                 with factory.begin() as session:
                     task = Task(
                         owner_id="synthetic-evaluation",
-                        title="Fictional launch planning",
-                        goal=(
-                            "Prepare a grounded brief and unsent draft. "
-                            "Keep unknowns and conflicts explicit."
-                        ),
+                        title=task_title,
+                        goal=task_goal,
                     )
                     session.add(task)
                     session.flush()
-                    for provider, title, content in [
-                        (
-                            "google_calendar",
-                            "Fictional meeting",
+                    sources = (
+                        evidence_builder(email, document)
+                        if evidence_builder
+                        else [
                             (
-                                "Meeting: launch planning. Starts November 1, 2026 at 1:30 PM "
-                                "America/Phoenix. Ends at 2 PM. Location not provided."
+                                "google_calendar",
+                                "Fictional meeting",
+                                (
+                                    "Meeting: launch planning. Starts November 1, 2026 at 1:30 PM "
+                                    "America/Phoenix. Ends at 2 PM. Location not provided."
+                                ),
                             ),
-                        ),
-                        ("google_docs", "Fictional planning document", document),
-                        ("gmail", "Fictional approval email", email),
-                    ]:
+                            ("google_docs", "Fictional planning document", document),
+                            ("gmail", "Fictional approval email", email),
+                        ]
+                    )
+                    for provider, title, content in sources:
                         put_evidence(
                             session,
                             task,

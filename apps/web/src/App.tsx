@@ -13,6 +13,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { GhostMark } from "./GhostMark";
 import { AuthPanel } from "./AuthPanel";
 import { SlackConnection, SlackImport } from "./SlackSource";
+import { JiraConnection, JiraImport } from "./JiraSource";
 import { readiness } from "./readiness";
 import { DraftEditor } from "./DraftEditor";
 import { ConfirmDialog } from "./ConfirmDialog";
@@ -720,6 +721,7 @@ function Home({
               )}
               <GoogleConnections api={api} owner={owner} />
               <SlackConnection api={api} owner={owner} />
+              <JiraConnection api={api} owner={owner} />
               <div className="privacy-grid">
                 <Panel title="A connection you control">
                   <p>
@@ -1066,6 +1068,13 @@ function WorkspaceView({
         blocked={draftUnsaved}
         onImported={refresh}
       />
+      <JiraImport
+        api={api}
+        owner={owner}
+        task={id}
+        blocked={draftUnsaved}
+        onImported={refresh}
+      />
       <div className="workspace-grid">
         <div
           className="brief-column"
@@ -1184,7 +1193,9 @@ function WorkspaceView({
                 )}
               </details>
               <div className="source-actions">
-                {["google_docs", "gmail", "slack"].includes(item.origin) && (
+                {["google_docs", "gmail", "slack", "jira"].includes(
+                  item.origin,
+                ) && (
                   <button
                     className="text-button"
                     disabled={checkSource.isPending || draftUnsaved}

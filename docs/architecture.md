@@ -1,5 +1,11 @@
 # GhostTab architecture
 
+**Jira addition:** confidential 3LO, rotating encrypted refresh tokens and explicit
+site/issue selection reuse source grants and immutable evidence. Fresh site lists
+rotate the local grant epoch when membership changes, fencing in-flight reads and
+blocking affected evidence/briefs while retaining other sites. No new tables or
+worker architecture. Live consent remains deferred. See [Jira](jira-source.md).
+
 **Slack/identity addition:** Google identity login uses Supabase's SDK with basic
 identity scopes and does not create source grants. Slack's confidential web OAuth
 and selected-public-thread routes reuse the source-grant tables and immutable

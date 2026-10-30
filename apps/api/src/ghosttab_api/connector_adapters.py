@@ -8,6 +8,7 @@ No credentials, arbitrary URLs, model calls or external writes are accepted here
 import base64
 import binascii
 import re
+import time
 from dataclasses import dataclass
 from html.parser import HTMLParser
 from urllib.parse import quote
@@ -30,6 +31,19 @@ class RetrievedSource:
     external_id: str
     evidence: EvidenceInput
     incomplete: bool = False
+
+
+class BoundedRead:
+    def __init__(self, client):
+        self.client = client
+        self.deadline = time.monotonic() + 20
+
+    def get(self, url, **kwargs):
+        remaining = self.deadline - time.monotonic()
+        if remaining <= 0:
+            raise httpx.TimeoutException("Source read deadline reached")
+        kwargs["timeout"] = min(remaining, kwargs.get("timeout", 20))
+        return self.client.get(url, **kwargs)
 
 
 def identifier(value, pattern=r"[A-Za-z0-9_-]+"):
@@ -60,6 +74,8 @@ def request(client, url, *, request_timeout=20, **params):
                 raise ConnectorFailure("provider_unavailable", retryable=True)
             if reasons & {"accessNotConfigured", "serviceDisabled"}:
                 raise ConnectorFailure("provider_setup_required")
+        if response.status_code == 401 and response.request.url.host == "api.atlassian.com":
+            raise ConnectorFailure("connection_revoked")
         if response.status_code in (401, 403):
             raise ConnectorFailure("access_denied")
         if response.status_code in (404, 410):

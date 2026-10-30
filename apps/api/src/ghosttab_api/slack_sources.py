@@ -14,7 +14,13 @@ from sqlalchemy import delete, select
 
 from ghosttab_api import calendar, google_sources
 from ghosttab_api.auth import Principal, current_user
-from ghosttab_api.connector_adapters import ConnectorFailure, identifier, read_selected, request
+from ghosttab_api.connector_adapters import (
+    BoundedRead,
+    ConnectorFailure,
+    identifier,
+    read_selected,
+    request,
+)
 from ghosttab_api.models import Evidence, SourceConnection, SourceOAuthState, SourceReference
 from ghosttab_api.workspaces import owned_task, put_evidence
 
@@ -172,19 +178,6 @@ def client_for(token):
     return httpx.Client(
         headers={"Authorization": "Bearer " + token}, timeout=20, follow_redirects=False
     )
-
-
-class BoundedRead:
-    def __init__(self, client):
-        self.client = client
-        self.deadline = time.monotonic() + 20
-
-    def get(self, url, **kwargs):
-        remaining = self.deadline - time.monotonic()
-        if remaining <= 0:
-            raise httpx.TimeoutException("Source read deadline reached")
-        kwargs["timeout"] = min(remaining, kwargs.get("timeout", 20))
-        return self.client.get(url, **kwargs)
 
 
 def read_thread(tokens, channel, timestamp):

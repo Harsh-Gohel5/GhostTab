@@ -375,6 +375,10 @@ def refresh_source(task_id: str, evidence_id: str, req: Request, user: User):
         from ghosttab_api.slack_sources import refresh_thread
 
         return refresh_thread(factory, settings, user.id, task_id, evidence_id)
+    if provider == "jira":
+        from ghosttab_api.jira_sources import refresh_issue
+
+        return refresh_issue(factory, settings, user.id, task_id, evidence_id)
     token, grant_id = access(factory, settings, user.id, provider)
     if grant_id != expected:
         raise HTTPException(409, "Source belongs to an earlier connection; remove and import again")

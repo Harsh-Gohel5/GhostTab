@@ -15,7 +15,7 @@ from cryptography.fernet import Fernet
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from ghosttab_api import calendar, google_sources, slack_sources
+from ghosttab_api import calendar, google_sources, jira_sources, slack_sources
 from ghosttab_api.config import Settings
 from ghosttab_api.contracts import EvidenceInput
 from ghosttab_api.database import make_engine, sessions
@@ -39,6 +39,8 @@ def main():
             supabase_publishable_key="",
             google_client_id="synthetic-client",
             google_client_secret="synthetic-secret",
+            jira_client_id="synthetic-jira-client",
+            jira_client_secret="synthetic-jira-secret",
             slack_client_id="synthetic-slack-client",
             slack_client_secret="synthetic-slack-secret",
             token_encryption_key=Fernet.generate_key().decode(),
@@ -65,6 +67,22 @@ def main():
                             "expires_at": None,
                             "scope": "channels:read,channels:history",
                             "team_id": "TDEMO123",
+                        },
+                    ),
+                )
+            )
+            session.add(
+                SourceConnection(
+                    owner_id="local-owner",
+                    provider="jira",
+                    encrypted_tokens=calendar.encrypt(
+                        settings,
+                        {
+                            "access_token": "synthetic-jira",
+                            "refresh_token": "synthetic-refresh",
+                            "expires_at": time.time() + 86400,
+                            "scope": "read:jira-work",
+                            "site_ids": ["11111111-1111-4111-8111-111111111111"],
                         },
                     ),
                 )
@@ -104,6 +122,18 @@ def main():
         app = create_app(settings, engine=engine)
 
         def respond(req):
+            if req.url.path.endswith("accessible-resources"):
+                return httpx.Response(
+                    200,
+                    json=[
+                        {
+                            "id": "11111111-1111-4111-8111-111111111111",
+                            "name": "Fictional Jira",
+                            "url": "https://demo.atlassian.net",
+                            "scopes": ["read:jira-work"],
+                        }
+                    ],
+                )
             if req.url.host == "slack.com" and req.url.path.endswith("conversations.info"):
                 return httpx.Response(
                     200,
@@ -122,6 +152,8 @@ def main():
         slack_sources.client_for = lambda token: httpx.Client(
             transport=httpx.MockTransport(respond)
         )
+
+        jira_sources.client_for = lambda token: httpx.Client(transport=httpx.MockTransport(respond))
 
         @app.middleware("http")
         async def fake_preparation(request, call_next):

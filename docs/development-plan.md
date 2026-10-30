@@ -1,5 +1,18 @@
 # Development assessment and next milestones
 
+**Jira checkpoint, October 29:** selected-issue 3LO connection, explicit site
+selection, import, manual refresh and disconnect are implemented. The normal UI
+shows setup pending until the owner configures Jira. Mock API and isolated browser
+checks passed; no live consent or real Jira reads. See [Jira](jira-source.md).
+Calendar remains connected with five existing local workspaces. Teams is the next
+connector milestone; live additional-source and hosted identity gates remain.
+New work is committed/pushed on the feature branch; main remains unchanged.
+Final verification: 32 frontend tests and 100 API tests pass (132 total), along
+with lint/type checks and the production build. Existing bundle-size and Alembic
+warnings remain. Jira browser import, preparation, exact quotes, unchanged check
+and disconnect blocking passed with simulated providers.
+
+
 **Google login/Slack checkpoint:** Google identity OAuth and Slack public-thread
 connection/import/refresh/disconnect are implemented and tested with simulated
 providers. No live consent was obtained. Browser checks passed Google return and

@@ -1,5 +1,11 @@
 # Meta inference and credit plan
 
+**Jira milestone, October 29:** two Spark Jira/email trials added $0.017387
+estimated usage. A Wonder code review failed with `model_output_incomplete`;
+its $0.189828 reservation was conservatively retained, not reconciled to actual
+usage. The cumulative ledger is $0.387755 including that hold, within the unchanged
+$1 limit. No automatic retry. See [Jira evaluation](jira-evaluation.md).
+
 **Later October 29:** two authorized Wonder comparisons added an estimated
 $0.079264. Cumulative estimate: $0.180540. Model-aware rates/reservations now cover
 Spark and Wonder; Spark remains the default. See [model comparison](model-comparison.md).

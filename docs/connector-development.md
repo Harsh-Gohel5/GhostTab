@@ -1,5 +1,14 @@
 # Credential-free connector milestone
 
+**Jira checkpoint, October 29:** selected-issue 3LO connection, explicit site
+selection, import, manual refresh and disconnect are implemented. The normal UI
+shows setup pending until the owner configures Jira. Mock API and isolated browser
+checks passed; no live consent or real Jira reads. See [Jira](jira-source.md).
+Calendar remains connected with five existing local workspaces. Teams is the next
+connector milestone; live additional-source and hosted identity gates remain.
+New work is committed/pushed on the feature branch; main remains unchanged.
+
+
 **Slack update:** public-thread connection/import/refresh/disconnect UI/API now
 exists and reuses the source-grant tables. It is mock-tested, not live-authorized.
 Private channels/DMs are excluded. See [slack-source.md](slack-source.md). The older

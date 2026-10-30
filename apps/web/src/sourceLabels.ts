@@ -13,6 +13,7 @@ export function sourceLabel(origin: string): string {
   if (origin === "google_docs") return "GOOGLE DOCS · READ ONLY";
   if (origin === "gmail") return "GMAIL · READ ONLY";
   if (origin === "slack") return "SLACK PUBLIC THREAD · READ ONLY";
+  if (origin === "jira") return "JIRA CLOUD · READ ONLY";
   if (origin === "manual") return "MANUALLY ADDED NOTES";
   return "SOURCE IMPORT";
 }
