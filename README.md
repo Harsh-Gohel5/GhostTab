@@ -1,5 +1,12 @@
 # GhostTab
 
+**October 30 grounding correction:** `meeting-brief-v3` prevents the observed
+unsupported whole-handoff readiness inference in the final targeted trial and
+keeps source instructions out of business conflicts. Eight final live regression
+cases met narrow expectations in coding-agent inspection after an initial partial
+failure. See [grounding evaluation](docs/grounding-evaluation.md) for costs and limitations.
+
+
 **Your next task, already in context.**
 
 GhostTab prepares workspaces for people whose work spans messages, documents,

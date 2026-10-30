@@ -1,5 +1,12 @@
 # Development assessment and next milestones
 
+**October 30 grounding correction:** `meeting-brief-v3` prevents the observed
+unsupported whole-handoff readiness inference in the final targeted trial and
+keeps source instructions out of business conflicts. Eight final live regression
+cases met narrow expectations in coding-agent inspection after an initial partial
+failure. See [grounding evaluation](grounding-evaluation.md) for costs and limitations.
+
+
 **Teams checkpoint:** implemented OAuth/PKCE, selected-chat import, manual check
 and disconnect. Browser rehearsal passed with simulated providers. Checks passed
 33 frontend and 122 API tests (155 total), lint/type checks and production build;
