@@ -1,6 +1,18 @@
 import type { Task } from "./api";
 
 export function readiness(task: Task) {
+  if (task.lifecycle === "completed")
+    return {
+      kind: "completed",
+      label: task.changed_since_completion
+        ? "Completed · context changed"
+        : "Completed",
+      action: "Open workspace",
+      hint: task.changed_since_completion
+        ? "Sources changed after completion. Open to inspect or reopen this task."
+        : "You marked this task complete. Reopen it whenever you need to continue.",
+      tone: task.changed_since_completion ? "stale" : "ready",
+    };
   const job = task.job?.generation === task.generation ? task.job : null;
   if (!task.source_count)
     return {
@@ -35,13 +47,21 @@ export function readiness(task: Task) {
       tone: "stale",
     };
   if (task.freshness === "current")
-    return {
-      kind: "ready",
-      label: "Ready to review",
-      action: "Review brief",
-      hint: "A brief and an editable draft are waiting for your review.",
-      tone: "ready",
-    };
+    return task.review_current
+      ? {
+          kind: "reviewed",
+          label: "Reviewed",
+          action: "Open workspace",
+          hint: "You reviewed the current saved brief and draft. Mark complete when your work is finished.",
+          tone: "ready",
+        }
+      : {
+          kind: "ready",
+          label: "Ready to review",
+          action: "Review brief",
+          hint: "A brief and an editable draft are waiting for your review.",
+          tone: "ready",
+        };
   return {
     kind: "unprepared",
     label: "Ready to prepare",

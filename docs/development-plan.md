@@ -1,5 +1,88 @@
 # Development assessment and next milestones
 
+**Teams checkpoint:** implemented OAuth/PKCE, selected-chat import, manual check
+and disconnect. Browser rehearsal passed with simulated providers. Checks passed
+33 frontend and 122 API tests (155 total), lint/type checks and production build;
+existing bundle/Alembic warnings remain. Three real Spark calls added $0.033185
+estimated usage. See [evaluation](teams-evaluation.md), including a partial
+semantic pass requiring follow-up. Next: targeted model-quality regression, then
+live second-source/account verification and a repeatable two-service demo.
+
+**Jira checkpoint, October 29:** selected-issue 3LO connection, explicit site
+selection, import, manual refresh and disconnect are implemented. The normal UI
+shows setup pending until the owner configures Jira. Mock API and isolated browser
+checks passed; no live consent or real Jira reads. See [Jira](jira-source.md).
+Calendar remains connected with five existing local workspaces. Teams is the next
+connector milestone; live additional-source and hosted identity gates remain.
+New work is committed/pushed on the feature branch; main remains unchanged.
+Final verification: 32 frontend tests and 100 API tests pass (132 total), along
+with lint/type checks and the production build. Existing bundle-size and Alembic
+warnings remain. Jira browser import, preparation, exact quotes, unchanged check
+and disconnect blocking passed with simulated providers.
+
+
+**Google login/Slack checkpoint:** Google identity OAuth and Slack public-thread
+connection/import/refresh/disconnect are implemented and tested with simulated
+providers. No live consent was obtained. Browser checks passed Google return and
+cancelled-login feedback, Slack message-link import, cited fake preparation,
+unchanged refresh and disconnect blocking. Calendar and five local workspaces
+remain intact. Jira/Teams connection/import UI and live provider checks remain.
+Final checks passed 31 frontend and 81 API tests (112 total), lint/type checks and
+the production build, with the existing bundle-size/Alembic warnings. No additional
+model requests or schema migration were needed.
+
+**Account/animation checkpoint:** finite ghost greetings and the email account
+UI/SDK flow (signup, confirmation, sign-in, recovery/update, sign-out) are
+implemented. The isolated browser rehearsal passed; live Supabase configuration,
+delivery and hosted identity checks remain pending. Checks pass 28 frontend/73 API
+tests and the production build (existing chunk warning). Two real Wonder cases
+passed narrow criteria without a clear advantage over Spark, which remains default.
+See [account access](account-access.md) and [model comparison](model-comparison.md).
+
+**October 29:** theme/profile/logo refinement and five real synthetic Meta trials
+are implemented. The $1 budget remains unchanged; the evaluation added an estimated
+$0.048114. All five met the written narrow expectations in agent inspection, with
+schema/quote validation. See [meta-evaluation.md](meta-evaluation.md); independent
+owner review, live additional connectors and final delivery gates remain pending.
+
+## October 28 local checkpoint
+
+PRs #7 and #8 are merged; draft safety/date presentation and preparation-service
+readiness are now on protected main. The current uncommitted connector branch
+preserves that baseline and adds synthetic-only selected-item readers for Docs,
+Gmail, Slack, Jira and Teams (see `connector-development.md`). Live authorization
+and production import flows for those providers are still pending.
+
+The Workspaces list now searches loaded titles/goals and filters by the existing
+saved readiness states, with result counts, no-match recovery and a load retry.
+Search is local to the latest 100 loaded workspaces and resets on leaving the list.
+No model calls, database migrations or additional account grants are needed.
+Verification: `npm run check` passed 19 frontend and 54 API tests plus lint/type
+checks; `npm run build` passed with the existing large-chunk warning. Browser
+checks passed mixed-case/multiword title-and-goal search, combined readiness
+filtering, empty-result recovery, and opening/returning from a filtered workspace.
+The list had no horizontal overflow at the checked 758px viewport. The load-retry
+control is type/lint checked; a browser network failure was not simulated.
+
+**Google integration checkpoint:** Docs/Gmail UI and backend flows are now present;
+live consent is deferred. Migration 0003 adds separate grants and source identity.
+The normal app preserves Calendar and shows the new services awaiting authorization.
+Local checks pass 19 frontend/62 API tests; the build passes with the existing
+large-chunk warning. The isolated browser workflow passed document and message
+import, cited fake preparation, unchanged refresh and disconnect blocking.
+See [google-sources.md](google-sources.md) for setup and remaining live gates.
+
+**Lifecycle checkpoint:** persisted review/completion/reopen is implemented,
+including source/draft invalidation and Active/Reviewed/Completed filters. Migration
+0004 preserves existing tasks and grants. Checks pass 23 frontend/68 API tests and
+the production build. See [task-lifecycle.md](task-lifecycle.md).
+
+Next priorities: bounded Meta
+cross-source evaluation on synthetic data. Live second-source verification remains
+dependent on owner authorization. No PR is created for this local work yet.
+
+The assessment below is the historical October 27 checkpoint.
+
 Reviewed October 27, 2026 against source, Git history, GitHub and local runtime.
 Preserve the shared task/evidence model, React/FastAPI architecture and approved
 palette. A developer audience can use this workflow without a developer-only rewrite.

@@ -1,5 +1,18 @@
 # Hackathon delivery roadmap
 
+**Teams checkpoint:** frontend/backend selected-chat workflow is mock/browser
+verified; live consent remains pending. Additional connectors are no longer the
+next build priority. Focus on model grounding quality, live two-service/account
+verification and submission rehearsal. Calendar remains live connected.
+
+**October 29 connector checkpoint:** Calendar is live verified; Docs/Gmail/Slack/
+Jira now have UI and backend connection/import/refresh/disconnect flows tested
+with simulated providers. Teams authorization/import remains next. Account UI
+and Google identity SDK wiring are present; live Supabase/provider setup remains.
+One authentic two-service workflow is still the release gate. After Teams, prioritize
+that verification and demo rehearsal over adding more connectors. The historical
+day-by-day baseline below is not a claim that every date gate was met.
+
 Planning baseline: October 26, 2026. Harsh is building solo for approximately
 6–8 hours per day. Eight build days through November 2 provide roughly 48–64
 hours; November 3–4 are reserved for recording, submission, and repairs.

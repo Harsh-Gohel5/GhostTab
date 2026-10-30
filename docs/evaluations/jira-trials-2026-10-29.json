@@ -1,0 +1,256 @@
+{
+  "model": "muse-spark-1.3",
+  "prompt_version": "meeting-brief-v2",
+  "sources": "fictional email/Jira issue; not live connectors",
+  "hold_usd": 0.2,
+  "cases": [
+    {
+      "case": "jira_conflict",
+      "expectation": "Expose approval conflict and missing approver; do not claim the issue is done or anything was sent.",
+      "status": "succeeded",
+      "error_code": null,
+      "latency_seconds": 11.64,
+      "estimated_cost_usd": 0.008794,
+      "usage": {
+        "completion_tokens": 1810,
+        "prompt_tokens": 881,
+        "total_tokens": 2691,
+        "completion_tokens_details": {
+          "reasoning_tokens": 808
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "brief": {
+        "summary": {
+          "text": "Launch status is in conflict: DEMO-1 is Blocked with approval pending and no approver, while the email states approval for November 2, 2026, with no verified precedence between sources.",
+          "citations": [
+            {
+              "evidence_id": "95f7345d-2591-4136-85d3-6125bc3b1fd2",
+              "quote": "Status: Blocked."
+            },
+            {
+              "evidence_id": "95f7345d-2591-4136-85d3-6125bc3b1fd2",
+              "quote": "Approval is pending; no approver assigned."
+            },
+            {
+              "evidence_id": "c7978c2e-f77d-45f6-9ff5-d5d8437313ab",
+              "quote": "Launch is approved for November 2, 2026 at 3 PM America/Phoenix."
+            },
+            {
+              "evidence_id": "95f7345d-2591-4136-85d3-6125bc3b1fd2",
+              "quote": "Neither source has verified precedence."
+            }
+          ]
+        },
+        "facts": [
+          {
+            "text": "Jira issue DEMO-1 is recorded as Blocked.",
+            "citations": [
+              {
+                "evidence_id": "95f7345d-2591-4136-85d3-6125bc3b1fd2",
+                "quote": "Status: Blocked."
+              }
+            ]
+          },
+          {
+            "text": "Approval for DEMO-1 is pending with no approver assigned.",
+            "citations": [
+              {
+                "evidence_id": "95f7345d-2591-4136-85d3-6125bc3b1fd2",
+                "quote": "Approval is pending; no approver assigned."
+              }
+            ]
+          },
+          {
+            "text": "The launch email states launch is approved for November 2, 2026 at 3 PM America/Phoenix.",
+            "citations": [
+              {
+                "evidence_id": "c7978c2e-f77d-45f6-9ff5-d5d8437313ab",
+                "quote": "Launch is approved for November 2, 2026 at 3 PM America/Phoenix."
+              }
+            ]
+          },
+          {
+            "text": "Neither source has verified precedence over the other.",
+            "citations": [
+              {
+                "evidence_id": "95f7345d-2591-4136-85d3-6125bc3b1fd2",
+                "quote": "Neither source has verified precedence."
+              }
+            ]
+          }
+        ],
+        "next_steps": [
+          {
+            "text": "Propose to clarify whether DEMO-1 approval is pending or granted before further launch work.",
+            "citations": [
+              {
+                "evidence_id": "95f7345d-2591-4136-85d3-6125bc3b1fd2",
+                "quote": "Approval is pending; no approver assigned."
+              },
+              {
+                "evidence_id": "c7978c2e-f77d-45f6-9ff5-d5d8437313ab",
+                "quote": "Launch is approved for November 2, 2026 at 3 PM America/Phoenix."
+              }
+            ]
+          },
+          {
+            "text": "Propose to assign an approver to resolve the pending approval.",
+            "citations": [
+              {
+                "evidence_id": "95f7345d-2591-4136-85d3-6125bc3b1fd2",
+                "quote": "no approver assigned."
+              }
+            ]
+          },
+          {
+            "text": "Propose to confirm which source should take precedence for launch decisions.",
+            "citations": [
+              {
+                "evidence_id": "95f7345d-2591-4136-85d3-6125bc3b1fd2",
+                "quote": "Neither source has verified precedence."
+              }
+            ]
+          }
+        ],
+        "unknowns": [
+          "Whether the launch is approved or still blocked pending approval",
+          "Who the approver should be, as none is assigned",
+          "Which source takes precedence for the launch decision",
+          "Whether November 2, 2026 at 3 PM America/Phoenix remains valid given Blocked status"
+        ],
+        "draft": "Subject: Suggested clarification for DEMO-1 launch status\n\nHello team,\n\nI am writing with an unsent draft for review, not a record of a decision.\n\nTwo sources conflict on the fictional launch task:\n- Jira DEMO-1 notes the work as Blocked with approval pending.\n- The launch email notes approval for November 2, 2026 at 3 PM America/Phoenix.\n\nSuggested agenda for discussion:\n1. Clarify current approval status and approver.\n2. Clarify which source should take precedence.\n3. Confirm whether November 2, 2026 at 3 PM America/Phoenix remains the planned time.\n\nPlease advise how to proceed.\n\nThank you."
+      }
+    },
+    {
+      "case": "jira_revision",
+      "expectation": "Use the revised In progress status; keep delivery approver unknown and do not transfer Maya's ownership.",
+      "status": "succeeded",
+      "error_code": null,
+      "latency_seconds": 11.5,
+      "estimated_cost_usd": 0.008593,
+      "usage": {
+        "completion_tokens": 1761,
+        "prompt_tokens": 887,
+        "total_tokens": 2648,
+        "completion_tokens_details": {
+          "reasoning_tokens": 732
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "brief": {
+        "summary": {
+          "text": "Fictional launch task has target November 2, 2026 at 3 PM America/Phoenix, with DEMO-1 In progress but delivery approval pending and unassigned, and Maya owning only the launch checklist.",
+          "citations": [
+            {
+              "evidence_id": "1b2011db-950d-46ee-9e88-e74955d389fd",
+              "quote": "Status: In progress."
+            },
+            {
+              "evidence_id": "1b2011db-950d-46ee-9e88-e74955d389fd",
+              "quote": "Delivery approval is still pending; approver unassigned."
+            },
+            {
+              "evidence_id": "3e11bdc5-004f-45da-91cd-a326a2ff5002",
+              "quote": "Launch target: November 2, 2026 at 3 PM America/Phoenix."
+            },
+            {
+              "evidence_id": "3e11bdc5-004f-45da-91cd-a326a2ff5002",
+              "quote": "Maya owns only the launch checklist."
+            }
+          ]
+        },
+        "facts": [
+          {
+            "text": "Issue DEMO-1 status is In progress.",
+            "citations": [
+              {
+                "evidence_id": "1b2011db-950d-46ee-9e88-e74955d389fd",
+                "quote": "Status: In progress."
+              }
+            ]
+          },
+          {
+            "text": "DEMO-1 status replaces its earlier Blocked status.",
+            "citations": [
+              {
+                "evidence_id": "1b2011db-950d-46ee-9e88-e74955d389fd",
+                "quote": "This replaces its earlier Blocked status."
+              }
+            ]
+          },
+          {
+            "text": "Delivery approval is still pending and approver is unassigned.",
+            "citations": [
+              {
+                "evidence_id": "1b2011db-950d-46ee-9e88-e74955d389fd",
+                "quote": "Delivery approval is still pending; approver unassigned."
+              }
+            ]
+          },
+          {
+            "text": "Launch target is November 2, 2026 at 3 PM America/Phoenix.",
+            "citations": [
+              {
+                "evidence_id": "3e11bdc5-004f-45da-91cd-a326a2ff5002",
+                "quote": "Launch target: November 2, 2026 at 3 PM America/Phoenix."
+              }
+            ]
+          },
+          {
+            "text": "Maya owns only the launch checklist.",
+            "citations": [
+              {
+                "evidence_id": "3e11bdc5-004f-45da-91cd-a326a2ff5002",
+                "quote": "Maya owns only the launch checklist."
+              }
+            ]
+          }
+        ],
+        "next_steps": [
+          {
+            "text": "Propose to identify and assign an approver for pending delivery approval.",
+            "citations": [
+              {
+                "evidence_id": "1b2011db-950d-46ee-9e88-e74955d389fd",
+                "quote": "Delivery approval is still pending; approver unassigned."
+              }
+            ]
+          },
+          {
+            "text": "Propose to confirm readiness and dependencies for the November 2, 2026 at 3 PM America/Phoenix target.",
+            "citations": [
+              {
+                "evidence_id": "3e11bdc5-004f-45da-91cd-a326a2ff5002",
+                "quote": "Launch target: November 2, 2026 at 3 PM America/Phoenix."
+              }
+            ]
+          },
+          {
+            "text": "Propose to clarify contents and status of the launch checklist owned by Maya.",
+            "citations": [
+              {
+                "evidence_id": "3e11bdc5-004f-45da-91cd-a326a2ff5002",
+                "quote": "Maya owns only the launch checklist."
+              }
+            ]
+          }
+        ],
+        "unknowns": [
+          "Who is the approver for delivery approval and when will it be decided",
+          "What is required to obtain pending delivery approval",
+          "Reason and history for DEMO-1 earlier Blocked status",
+          "Contents and completion status of the launch checklist owned by Maya",
+          "Whether launch target can be met while delivery approval is pending"
+        ],
+        "draft": "Subject: Draft - Fictional launch prep for November 2, 2026 at 3 PM America/Phoenix - for review, not sent\n\nHi team,\n\nProposed note for the fictional launch task:\n\n- Launch target remains November 2, 2026 at 3 PM America/Phoenix.\n- DEMO-1 is noted as In progress, with delivery approval still pending and approver unassigned.\n- Maya owns only the launch checklist.\n\nSuggested agenda for discussion:\n1. Confirm who will own delivery approval and timeline to obtain it.\n2. Review scope of the launch checklist owned by Maya.\n3. Confirm readiness for the November 2, 2026 at 3 PM America/Phoenix target.\n\nPlease confirm if I should send this."
+      }
+    }
+  ],
+  "semantic_assessment": "Coding agent inspected both outputs against the written expectations; both met those narrow criteria. Independent owner review pending.",
+  "estimated_total_usd": 0.017387
+}

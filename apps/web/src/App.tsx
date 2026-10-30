@@ -6,11 +6,21 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api, configSchema } from "./api";
 import { PreparationStatus } from "./PreparationStatus";
 import { ReadinessOverview } from "./ReadinessOverview";
+import { WorkspaceList } from "./WorkspaceList";
+import { GoogleConnections, GoogleSourceImport } from "./GoogleSources";
+import { TaskLifecycle } from "./TaskLifecycle";
+import { ThemeToggle } from "./ThemeToggle";
+import { GhostMark } from "./GhostMark";
+import { AuthPanel } from "./AuthPanel";
+import { SlackConnection, SlackImport } from "./SlackSource";
+import { JiraConnection, JiraImport } from "./JiraSource";
+import { TeamsConnection, TeamsImport } from "./TeamsSource";
 import { readiness } from "./readiness";
 import { DraftEditor } from "./DraftEditor";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { PreparationAccess } from "./PreparationAccess";
 import { usePreparationReadiness } from "./usePreparationReadiness";
+import { sourceLabel } from "./sourceLabels";
 import {
   readableDates,
   readableTimestamp,
@@ -27,20 +37,6 @@ import type {
   Workspace,
 } from "./api";
 
-function GhostMark() {
-  return (
-    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <path
-        d="M7 26V14a9 9 0 0 1 18 0v12l-4-3-5 3-5-3-4 3Z"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      <circle cx="12.5" cy="14" r="1.5" fill="currentColor" />
-      <circle cx="19.5" cy="14" r="1.5" fill="currentColor" />
-    </svg>
-  );
-}
 function ErrorNotice({ error }: { error: unknown }) {
   return error ? (
     <p className="notice error" role="alert">
@@ -93,25 +89,56 @@ function SessionGate({ config }: { config: Config }) {
       config.auth_mode === "supabase"
         ? createClient(config.supabase_url, config.supabase_publishable_key)
         : null,
-    [config],
+    [config.auth_mode, config.supabase_url, config.supabase_publishable_key],
   );
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(!client);
-  const [authError, setAuthError] = useState("");
+  const [authError, setAuthError] = useState(() => {
+    const query = new URLSearchParams(location.search);
+    const fragment = new URLSearchParams(location.hash.slice(1));
+    return query.has("error") || fragment.has("error")
+      ? "Sign-in was cancelled or could not finish. Please retry."
+      : "";
+  });
+  const [recovering, setRecovering] = useState(
+    () => new URLSearchParams(location.search).get("auth") === "recovery",
+  );
   const queryClient = useQueryClient();
   useEffect(() => {
     if (!client) return;
     let active = true;
+    let observedAuthEvent = false;
     let previousUser: string | undefined;
-    void client.auth.getSession().then(({ data, error }) => {
-      if (active) {
-        setSession(data.session);
-        setReady(true);
-        if (error) setAuthError(error.message);
-      }
-    });
-    const { data } = client.auth.onAuthStateChange((_event, value) => {
+    void client.auth
+      .getSession()
+      .then(({ data, error }) => {
+        if (active && !observedAuthEvent) {
+          setSession(data.session);
+          setReady(true);
+          if (error)
+            setAuthError(
+              "Your session could not be restored. Please sign in again.",
+            );
+        }
+      })
+      .catch(() => {
+        if (active && !observedAuthEvent) {
+          setReady(true);
+          setAuthError(
+            "Your session could not be restored. Please sign in again.",
+          );
+        }
+      });
+    const { data } = client.auth.onAuthStateChange((event, value) => {
+      if (!active) return;
+      observedAuthEvent = true;
+      if (value) setAuthError("");
+      if (event === "PASSWORD_RECOVERY") setRecovering(true);
+      if (event === "SIGNED_OUT") setRecovering(false);
       if (previousUser !== value?.user.id) {
+        void queryClient.cancelQueries({
+          predicate: (query) => query.queryKey[0] !== "config",
+        });
         queryClient.removeQueries({
           predicate: (query) => query.queryKey[0] !== "config",
         });
@@ -145,54 +172,47 @@ function SessionGate({ config }: { config: Config }) {
         Restoring your session…
       </main>
     );
-  if (client && !session)
+  if (client && (!session || recovering))
     return (
-      <main className="startup">
-        <span className="brand-mark">
-          <GhostMark />
-        </span>
-        <h1>Welcome to GhostTab.</h1>
-        <p>Sign in to your private workspace.</p>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            const form = new FormData(event.currentTarget);
-            void client.auth
-              .signInWithPassword({
-                email: String(form.get("email")),
-                password: String(form.get("password")),
-              })
-              .then(({ error }) => setAuthError(error?.message ?? ""));
-          }}
-        >
-          <label>
-            Email
-            <input name="email" type="email" autoComplete="username" required />
-          </label>
-          <label>
-            Password
-            <input
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-            />
-          </label>
-          <button className="primary">Sign in</button>
-        </form>
-        {authError && <p role="alert">{authError}</p>}
-      </main>
+      <AuthPanel
+        key={recovering && session ? "recovery" : "account"}
+        synthetic={config.synthetic_demo}
+        auth={client.auth}
+        recovery={recovering && !!session}
+        initialError={authError}
+        onRecovered={() => {
+          setRecovering(false);
+          history.replaceState(null, "", location.pathname);
+        }}
+      />
     );
   return (
     <Home
       key={session?.user.id ?? "local"}
       api={api}
       config={config}
+      sessionError={authError}
       owner={session?.user.id ?? "local"}
+      displayName={String(
+        session?.user.user_metadata?.full_name ??
+          session?.user.user_metadata?.name ??
+          session?.user.email?.split("@")[0] ??
+          config.display_name ??
+          "",
+      ).slice(0, 80)}
       onSignOut={
         client
           ? () => {
-              void client.auth.signOut();
+              setAuthError("");
+              void client.auth
+                .signOut()
+                .then(({ error }) => {
+                  if (error)
+                    setAuthError("Sign out could not finish. Please retry.");
+                })
+                .catch(() =>
+                  setAuthError("Sign out could not finish. Please retry."),
+                );
             }
           : undefined
       }
@@ -205,16 +225,24 @@ function Home({
   api,
   config,
   owner,
+  displayName,
+  sessionError,
   onSignOut,
 }: {
   api: Api;
   config: Config;
   owner: string;
+  displayName: string;
+  sessionError?: string;
   onSignOut?: () => void;
 }) {
   const queryClient = useQueryClient();
   const preparationReadiness = usePreparationReadiness(api, owner);
-  const [page, setPage] = useState<Page>("Today");
+  const [page, setPage] = useState<Page>(() =>
+    new URLSearchParams(location.search).has("source")
+      ? "Connections"
+      : "Today",
+  );
   const [selected, setSelected] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const unsavedDraft = useRef(false);
@@ -229,9 +257,14 @@ function Home({
     else action();
   };
   const [feedback, setFeedback] = useState(() =>
-    new URLSearchParams(location.search).get("calendar") === "connection_failed"
-      ? "Calendar was not connected. Check the setup and try again."
-      : "",
+    new URLSearchParams(location.search).get("result") === "connection_failed"
+      ? "Source was not connected. Check setup and read-only consent, then try again."
+      : new URLSearchParams(location.search).get("result") === "connected"
+        ? "Source connected. Open a workspace to import the items you choose."
+        : new URLSearchParams(location.search).get("calendar") ===
+            "connection_failed"
+          ? "Calendar was not connected. Check the setup and try again."
+          : "",
   );
   const tasks = useQuery({
     queryKey: ["tasks", owner],
@@ -352,15 +385,13 @@ function Home({
         </div>
         <div className="sidebar-footer">
           <span className="avatar">
-            {config.auth_mode === "local" ? "L" : "Y"}
+            {Array.from(displayName.trim())[0]?.toLocaleUpperCase() || "?"}
           </span>
           <div>
-            {config.auth_mode === "local"
-              ? "Local workspace"
-              : "Your private space"}
+            {displayName || "Your space"}
             <small>
               {config.auth_mode === "local"
-                ? "Saved on this computer"
+                ? "On this device"
                 : "Signed in securely"}
             </small>
           </div>
@@ -381,11 +412,16 @@ function Home({
           <span>
             Your space <span className="slash">/</span> <strong>{page}</strong>
           </span>
-          <span className="quiet-label">
-            <span className="status-dot" /> One thing at a time
-          </span>
+          <ThemeToggle />
         </header>
         <main className="content">
+          {config.synthetic_demo && (
+            <p className="notice" role="status">
+              Synthetic test app · No real accounts connected · Google and AI
+              responses are simulated. Your regular GhostTab app is at
+              http://127.0.0.1:5173/.
+            </p>
+          )}
           {pendingNavigation && (
             <ConfirmDialog
               message="Leaving will discard your unsaved draft edits. Keep editing to save or copy them first."
@@ -398,7 +434,9 @@ function Home({
               }}
             />
           )}
-          <ErrorNotice error={tasks.error || connections.error} />
+          <ErrorNotice
+            error={sessionError || tasks.error || connections.error}
+          />
           {feedback && (
             <p className="notice" role="status">
               {feedback}
@@ -602,8 +640,15 @@ function Home({
                 </div>
                 {tasks.isPending ? (
                   <p role="status">Loading workspaces…</p>
+                ) : tasks.isError ? (
+                  <button
+                    className="secondary"
+                    onClick={() => void tasks.refetch()}
+                  >
+                    Retry loading workspaces
+                  </button>
                 ) : tasks.data?.length ? (
-                  <TaskList tasks={tasks.data} onOpen={open} />
+                  <WorkspaceList tasks={tasks.data} onOpen={open} />
                 ) : (
                   <div className="empty-state">
                     <h2>Start with one thing on your mind.</h2>
@@ -675,6 +720,10 @@ function Home({
                   workspaces and add notes in the meantime.
                 </p>
               )}
+              <GoogleConnections api={api} owner={owner} />
+              <SlackConnection api={api} owner={owner} />
+              <JiraConnection api={api} owner={owner} />
+              <TeamsConnection api={api} owner={owner} />
               <div className="privacy-grid">
                 <Panel title="A connection you control">
                   <p>
@@ -767,38 +816,9 @@ function Home({
             <span>
               <span className="tiny-mark" /> A little less context switching.
             </span>
-            <span>GhostTab · Built with care</span>
           </footer>
         </main>
       </div>
-    </div>
-  );
-}
-
-function TaskList({
-  tasks,
-  onOpen,
-}: {
-  tasks: Task[];
-  onOpen: (task: Task) => void;
-}) {
-  return (
-    <div className="task-list">
-      {tasks.map((task) => (
-        <button className="task-row" key={task.id} onClick={() => onOpen(task)}>
-          <span className="event-symbol" aria-hidden="true">
-            {task.from_calendar ? "◷" : "✧"}
-          </span>
-          <span className="task-copy">
-            <strong>{task.title}</strong>
-            <span>{task.goal}</span>
-          </span>
-          <span className={`badge ${readiness(task).tone}`}>
-            {readiness(task).label}
-          </span>
-          <span aria-hidden="true">↗</span>
-        </button>
-      ))}
     </div>
   );
 }
@@ -880,6 +900,14 @@ function WorkspaceView({
       setCitation(null);
       refresh();
     },
+  });
+  const checkSource = useMutation({
+    mutationFn: (evidence: string) => api.refreshSource(id, evidence),
+    onSuccess: () => {
+      setCitation(null);
+      refresh();
+    },
+    onError: refresh,
   });
   const data = workspace.data;
   if (!data)
@@ -995,8 +1023,16 @@ function WorkspaceView({
           prepare.error ||
           source.error ||
           remove.error ||
-          sync.error
+          sync.error ||
+          checkSource.error
         }
+      />
+      <TaskLifecycle
+        api={api}
+        owner={owner}
+        workspace={data}
+        blocked={draftUnsaved}
+        onChanged={refresh}
       />
       <PreparationStatus
         task={data.task}
@@ -1020,6 +1056,34 @@ function WorkspaceView({
           source, or updating the brief.
         </p>
       )}
+      <GoogleSourceImport
+        api={api}
+        owner={owner}
+        task={id}
+        blocked={draftUnsaved}
+        onImported={refresh}
+      />
+      <SlackImport
+        api={api}
+        owner={owner}
+        task={id}
+        blocked={draftUnsaved}
+        onImported={refresh}
+      />
+      <JiraImport
+        api={api}
+        owner={owner}
+        task={id}
+        blocked={draftUnsaved}
+        onImported={refresh}
+      />
+      <TeamsImport
+        api={api}
+        owner={owner}
+        task={id}
+        blocked={draftUnsaved}
+        onImported={refresh}
+      />
       <div className="workspace-grid">
         <div
           className="brief-column"
@@ -1109,11 +1173,7 @@ function WorkspaceView({
           )}
           {data.evidence.map((item) => (
             <article className="source-card" key={item.id}>
-              <span className="card-eyebrow">
-                {item.origin === "google_calendar"
-                  ? "GOOGLE CALENDAR · READ ONLY"
-                  : "MANUALLY ADDED NOTES"}
-              </span>
+              <span className="card-eyebrow">{sourceLabel(item.origin)}</span>
               <h3>{item.title}</h3>
               <p
                 className={`source-excerpt ${item.origin === "google_calendar" ? "calendar-excerpt" : ""}`}
@@ -1142,6 +1202,19 @@ function WorkspaceView({
                 )}
               </details>
               <div className="source-actions">
+                {["google_docs", "gmail", "slack", "jira", "teams"].includes(
+                  item.origin,
+                ) && (
+                  <button
+                    className="text-button"
+                    disabled={checkSource.isPending || draftUnsaved}
+                    onClick={() => checkSource.mutate(item.id)}
+                  >
+                    {checkSource.isPending
+                      ? "Checking source…"
+                      : "Check source"}
+                  </button>
+                )}
                 {item.origin === "manual" && (
                   <button
                     className="text-button"

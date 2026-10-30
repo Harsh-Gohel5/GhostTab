@@ -13,11 +13,26 @@ export function ReadinessOverview({
 }) {
   const [filter, setFilter] = useState("attention");
   const attention = tasks.filter(
-    (task) => !["ready", "preparing"].includes(readiness(task).kind),
+    (task) =>
+      !["ready", "preparing", "reviewed", "completed"].includes(
+        readiness(task).kind,
+      ),
   );
   const ready = tasks.filter((task) => readiness(task).kind === "ready");
+  const reviewed = tasks.filter((task) => readiness(task).kind === "reviewed");
+  const completed = tasks.filter(
+    (task) => readiness(task).kind === "completed",
+  );
   const visible =
-    filter === "attention" ? attention : filter === "ready" ? ready : tasks;
+    filter === "attention"
+      ? attention
+      : filter === "ready"
+        ? ready
+        : filter === "reviewed"
+          ? reviewed
+          : filter === "completed"
+            ? completed
+            : tasks;
   return (
     <section className="readiness-overview" aria-labelledby="readiness-title">
       <div className="section-heading">
@@ -42,6 +57,8 @@ export function ReadinessOverview({
             count: attention.length,
           },
           { id: "ready", label: "Ready to review", count: ready.length },
+          { id: "reviewed", label: "Reviewed", count: reviewed.length },
+          { id: "completed", label: "Completed", count: completed.length },
           { id: "all", label: "All", count: tasks.length },
         ].map((item) => (
           <button
@@ -82,14 +99,22 @@ export function ReadinessOverview({
                 ? "A little breathing room."
                 : filter === "ready"
                   ? "Your next brief starts with context."
-                  : "Start with your next meeting or task."}
+                  : filter === "reviewed"
+                    ? "No reviewed briefs yet."
+                    : filter === "completed"
+                      ? "No completed tasks yet."
+                      : "Start with your next meeting or task."}
             </h3>
             <p>
               {filter === "attention"
                 ? "No saved workspaces need attention right now. Check All for any preparations in progress."
                 : filter === "ready"
                   ? "No current briefs are ready to review yet. Choose a workspace under Needs attention to get started."
-                  : "Choose a Calendar event below, or create a workspace and add notes."}
+                  : filter === "reviewed"
+                    ? "Open a current brief, review its sources and draft, then mark it reviewed."
+                    : filter === "completed"
+                      ? "Mark a workspace complete when your work is finished. You can reopen it later."
+                      : "Choose a Calendar event below, or create a workspace and add notes."}
             </p>
           </div>
         )}

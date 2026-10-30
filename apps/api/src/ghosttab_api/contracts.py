@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
@@ -45,6 +47,15 @@ class DraftInput(ClosedModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=False)
     draft: str = Field(max_length=6000)
     expected_draft: str = Field(max_length=6000)
+
+
+class LifecycleInput(ClosedModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=False)
+    action: Literal["review", "complete", "reopen"]
+    expected_generation: int = Field(ge=1)
+    expected_completed_at: float | None
+    snapshot_id: str | None = Field(default=None, max_length=36)
+    expected_draft: str | None = Field(default=None, max_length=6000)
 
 
 class EventInput(ClosedModel):

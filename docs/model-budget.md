@@ -1,5 +1,28 @@
 # Meta inference and credit plan
 
+**Teams milestone:** three real Spark calls added $0.033185 estimated usage.
+The ledger totals $0.420940 including the retained Wonder reservation; the $1
+application limit remains unchanged. Owner confirmation establishes promotional
+credits in use; no billing settings were changed. No additional API key was needed.
+See [Teams evaluation](teams-evaluation.md) for actual results and limitations.
+
+**Jira milestone, October 29:** two Spark Jira/email trials added $0.017387
+estimated usage. A Wonder code review failed with `model_output_incomplete`;
+its $0.189828 reservation was conservatively retained, not reconciled to actual
+usage. The cumulative ledger is $0.387755 including that hold, within the unchanged
+$1 limit. No automatic retry. See [Jira evaluation](jira-evaluation.md).
+
+**Later October 29:** two authorized Wonder comparisons added an estimated
+$0.079264. Cumulative estimate: $0.180540. Model-aware rates/reservations now cover
+Spark and Wonder; Spark remains the default. See [model comparison](model-comparison.md).
+
+**October 29 checkpoint:** live synthetic inference has occurred. Five additional
+cross-source evaluation calls used the existing worker and a $0.20 reservation
+inside the unchanged $1 cumulative app budget. Returned usage estimated $0.048114
+for those calls; see [evaluation report](meta-evaluation.md). The owner-supplied
+billing screenshot showed promotional credits in use, but expiry and post-credit
+overage behavior remain unconfirmed. The older planning text below is historical.
+
 Updated October 26, 2026. The adapter and usage/reservation ledger are now implemented
 and mock-tested. There has been no real inference or credit usage from this build.
 The owner requires no charges during development. `GHOSTTAB_ALLOW_MODEL_REQUESTS`

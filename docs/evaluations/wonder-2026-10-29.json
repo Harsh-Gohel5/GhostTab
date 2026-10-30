@@ -1,0 +1,227 @@
+{
+  "model": "muse-wonder-1.0",
+  "prompt_version": "meeting-brief-v2",
+  "sources": "fictional; not live connectors",
+  "hold_usd": 0.2,
+  "cases": [
+    {
+      "case": "conflict",
+      "expectation": "Flag conflicting deadlines; do not silently choose one or invent precedence.",
+      "status": "succeeded",
+      "error_code": null,
+      "latency_seconds": 14.73,
+      "estimated_cost_usd": 0.03934,
+      "usage": {
+        "completion_tokens": 1877,
+        "prompt_tokens": 450,
+        "total_tokens": 2327,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1008
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "brief": {
+        "summary": {
+          "text": "Brief for the fictional launch planning meeting scheduled for November 1, 2026 at 1:30 PM America/Phoenix, with an unresolved conflict between two stated approval deadlines.",
+          "citations": [
+            {
+              "evidence_id": "1ff6a4f0-45f6-4af3-a113-28fe0b2d5058",
+              "quote": "Meeting: launch planning. Starts November 1, 2026 at 1:30 PM America/Phoenix."
+            }
+          ]
+        },
+        "facts": [
+          {
+            "text": "The fictional launch planning meeting starts November 1, 2026 at 1:30 PM America/Phoenix and ends at 2 PM America/Phoenix.",
+            "citations": [
+              {
+                "evidence_id": "1ff6a4f0-45f6-4af3-a113-28fe0b2d5058",
+                "quote": "Meeting: launch planning. Starts November 1, 2026 at 1:30 PM America/Phoenix. Ends at 2 PM. Location not provided."
+              }
+            ]
+          },
+          {
+            "text": "One source gives an approval deadline of November 2, 2026 at noon America/Phoenix.",
+            "citations": [
+              {
+                "evidence_id": "09b8c065-617b-4d34-8185-1ea53e1985a2",
+                "quote": "Approval deadline: November 2, 2026 at noon America/Phoenix."
+              }
+            ]
+          },
+          {
+            "text": "A different source gives an approval deadline of November 3, 2026 at 4 PM America/Phoenix.",
+            "citations": [
+              {
+                "evidence_id": "49ac83a5-8120-4563-b670-73871ae85e1e",
+                "quote": "Approval deadline: November 3, 2026 at 4 PM America/Phoenix."
+              }
+            ]
+          }
+        ],
+        "next_steps": [
+          {
+            "text": "Proposed: Resolve which approval deadline applies before or at the November 1, 2026 meeting, since neither source has a verified precedence rule.",
+            "citations": [
+              {
+                "evidence_id": "09b8c065-617b-4d34-8185-1ea53e1985a2",
+                "quote": "Neither source has a verified precedence rule."
+              },
+              {
+                "evidence_id": "1ff6a4f0-45f6-4af3-a113-28fe0b2d5058",
+                "quote": "Starts November 1, 2026 at 1:30 PM America/Phoenix."
+              }
+            ]
+          },
+          {
+            "text": "Proposed: Confirm and share the meeting location, which has not been provided.",
+            "citations": [
+              {
+                "evidence_id": "1ff6a4f0-45f6-4af3-a113-28fe0b2d5058",
+                "quote": "Location not provided."
+              }
+            ]
+          }
+        ],
+        "unknowns": [
+          "Which approval deadline is authoritative: November 2, 2026 at noon America/Phoenix or November 3, 2026 at 4 PM America/Phoenix.",
+          "The meeting location has not been provided.",
+          "No verified precedence rule exists for resolving the conflicting approval deadlines.",
+          "Attendees, agenda, ownership, and deliverables are not specified in the evidence."
+        ],
+        "draft": "Subject: Proposed plan for the November 1, 2026 launch planning meeting\n\nHello,\n\nThis is a proposed, unsent draft for the launch planning meeting on November 1, 2026 at 1:30 PM America/Phoenix. The meeting is scheduled to end at 2 PM America/Phoenix, and no location has been provided yet.\n\nSuggested agenda — not yet agreed:\n1. Confirm the meeting location.\n2. Confirm which approval deadline applies, as the sources conflict: November 2, 2026 at noon America/Phoenix or November 3, 2026 at 4 PM America/Phoenix.\n3. Discuss next steps for the launch once the deadline is confirmed.\n\nPlease let me know if the suggested agenda and details work, or if anything should change."
+      },
+      "expectation_result": "met in this sample (agent assessment)"
+    },
+    {
+      "case": "missing_owner",
+      "expectation": "Keep approver, deadline and delivery-checklist owner unknown; do not assign them to Maya.",
+      "status": "succeeded",
+      "error_code": null,
+      "latency_seconds": 35.8,
+      "estimated_cost_usd": 0.039924,
+      "usage": {
+        "completion_tokens": 1931,
+        "prompt_tokens": 436,
+        "total_tokens": 2367,
+        "completion_tokens_details": {
+          "reasoning_tokens": 791
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 116
+        }
+      },
+      "brief": {
+        "summary": {
+          "text": "This is a preparation workspace for a launch planning meeting on November 1, 2026. The delivery plan still needs approval before launch, and Maya owns only the launch checklist.",
+          "citations": [
+            {
+              "evidence_id": "7a0cd316-27cb-494d-9047-fdc17f398128",
+              "quote": "Starts November 1, 2026 at 1:30 PM America/Phoenix."
+            },
+            {
+              "evidence_id": "3e563d24-49a8-4838-bf73-7a7a26118e9a",
+              "quote": "The delivery plan needs approval before launch."
+            },
+            {
+              "evidence_id": "e1d161ad-3c62-479e-85f5-06e553dd58b2",
+              "quote": "Maya owns only the launch checklist."
+            }
+          ]
+        },
+        "facts": [
+          {
+            "text": "A launch planning meeting is listed for November 1, 2026 at 1:30 PM America/Phoenix, ending at 2 PM.",
+            "citations": [
+              {
+                "evidence_id": "7a0cd316-27cb-494d-9047-fdc17f398128",
+                "quote": "Meeting: launch planning."
+              },
+              {
+                "evidence_id": "7a0cd316-27cb-494d-9047-fdc17f398128",
+                "quote": "Starts November 1, 2026 at 1:30 PM America/Phoenix."
+              },
+              {
+                "evidence_id": "7a0cd316-27cb-494d-9047-fdc17f398128",
+                "quote": "Ends at 2 PM."
+              }
+            ]
+          },
+          {
+            "text": "Maya owns only the launch checklist.",
+            "citations": [
+              {
+                "evidence_id": "e1d161ad-3c62-479e-85f5-06e553dd58b2",
+                "quote": "Maya owns only the launch checklist."
+              }
+            ]
+          },
+          {
+            "text": "The delivery checklist owner is unknown; this is separate from the launch checklist.",
+            "citations": [
+              {
+                "evidence_id": "e1d161ad-3c62-479e-85f5-06e553dd58b2",
+                "quote": "The delivery checklist owner is unknown."
+              }
+            ]
+          },
+          {
+            "text": "The delivery plan needs approval before launch, and no approver or deadline has been assigned.",
+            "citations": [
+              {
+                "evidence_id": "3e563d24-49a8-4838-bf73-7a7a26118e9a",
+                "quote": "The delivery plan needs approval before launch."
+              },
+              {
+                "evidence_id": "3e563d24-49a8-4838-bf73-7a7a26118e9a",
+                "quote": "No approver or deadline has been assigned."
+              }
+            ]
+          }
+        ],
+        "next_steps": [
+          {
+            "text": "Proposed step: assign an approver and a deadline for the delivery plan.",
+            "citations": [
+              {
+                "evidence_id": "3e563d24-49a8-4838-bf73-7a7a26118e9a",
+                "quote": "No approver or deadline has been assigned."
+              }
+            ]
+          },
+          {
+            "text": "Proposed step: identify the owner of the delivery checklist without transferring the launch checklist ownership.",
+            "citations": [
+              {
+                "evidence_id": "e1d161ad-3c62-479e-85f5-06e553dd58b2",
+                "quote": "The delivery checklist owner is unknown."
+              }
+            ]
+          },
+          {
+            "text": "Proposed step: confirm the meeting location before November 1, 2026.",
+            "citations": [
+              {
+                "evidence_id": "7a0cd316-27cb-494d-9047-fdc17f398128",
+                "quote": "Location not provided."
+              }
+            ]
+          }
+        ],
+        "unknowns": [
+          "Approver for the delivery plan is not assigned [evidence_id: 3e563d24-49a8-4838-bf73-7a7a26118e9a; quote: \"No approver or deadline has been assigned.\"]",
+          "Deadline for delivery plan approval is not assigned [evidence_id: 3e563d24-49a8-4838-bf73-7a7a26118e9a; quote: \"No approver or deadline has been assigned.\"]",
+          "Delivery checklist owner is unknown [evidence_id: e1d161ad-3c62-479e-85f5-06e553dd58b2; quote: \"The delivery checklist owner is unknown.\"]",
+          "Meeting location is not provided [evidence_id: 7a0cd316-27cb-494d-9047-fdc17f398128; quote: \"Location not provided.\"]",
+          "No contradictions are stated in the provided evidence; the missing decisions above remain unanswered."
+        ],
+        "draft": "Proposed, unsent draft: Hello, this is a proposed message about the launch planning meeting on November 1, 2026 at 1:30 PM America/Phoenix, ending at 2 PM. The location is not provided in the source. Suggested agenda, not already agreed: confirm who needs to approve the delivery plan and by when; confirm the owner of the delivery checklist; and confirm the meeting location. The source states that Maya owns only the launch checklist, so please do not treat the delivery checklist as assigned to Maya."
+      },
+      "expectation_result": "met in this sample (agent assessment)"
+    }
+  ],
+  "semantic_assessment": "Agent-reviewed against the same two written expectations; both met. No consistent advantage demonstrated; raw evidence metadata in one unknowns output reduces presentation quality. Spark remains default.",
+  "estimated_total_usd": 0.079264
+}

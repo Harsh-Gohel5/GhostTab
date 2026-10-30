@@ -1,0 +1,21 @@
+{
+  "model": "muse-wonder-1.0",
+  "prompt_version": "meeting-brief-v2",
+  "sources": "own repository source only; no credentials or user data",
+  "hold_usd": 0.2,
+  "cases": [
+    {
+      "case": "jira_code_review",
+      "expectation": "Review concrete correctness/authorization bugs. Cite code exactly. Distinguish verified code facts from hypotheses; propose tests, never claim execution.",
+      "status": "failed",
+      "error_code": "model_output_incomplete",
+      "latency_seconds": 56.19,
+      "estimated_cost_usd": 0.189828,
+      "usage": {},
+      "brief": null
+    }
+  ],
+  "semantic_assessment": "No usable output; review failed validation.",
+  "estimated_total_usd": 0.189828,
+  "cost_note": "Conservative retained reservation, not measured usage or confirmed provider spend."
+}
