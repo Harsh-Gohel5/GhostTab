@@ -84,6 +84,17 @@ def task_view(session, task):
         "goal": task.goal,
         "generation": task.generation,
         "created_at": task.created_at,
+        "lifecycle": "completed" if task.completed_at is not None else "active",
+        "reviewed_at": task.reviewed_at,
+        "review_current": bool(
+            snapshot
+            and snapshot.generation == task.generation
+            and snapshot.id == task.reviewed_snapshot_id
+            and task.reviewed_at is not None
+        ),
+        "completed_at": task.completed_at,
+        "changed_since_completion": task.completed_at is not None
+        and task.completed_generation != task.generation,
         "from_calendar": bool(task.calendar_event_id),
         "calendar_event_id": task.calendar_event_id,
         "source_count": session.scalar(

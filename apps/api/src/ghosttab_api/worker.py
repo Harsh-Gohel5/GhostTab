@@ -123,7 +123,7 @@ def run_once(factory, settings, client=None):
         # Record usage even if subsequent citation/schema validation fails.
         with factory.begin() as session:
             run = session.get(ModelRun, run_id)
-            cost = actual_cost(result.usage)
+            cost = actual_cost(result.usage, settings.meta_model_id)
             if cost is not None:
                 session.execute(
                     update(Budget)

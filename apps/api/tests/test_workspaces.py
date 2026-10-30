@@ -11,6 +11,7 @@ from uuid import uuid4
 import httpx
 import jwt
 import pytest
+from connector_samples import SampleModel, sample_sources
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives.asymmetric import ec
 from fastapi import HTTPException
@@ -27,6 +28,7 @@ from ghosttab_api.meta import MetaClient, ModelFailure, ModelResult
 from ghosttab_api.models import Base, Budget, Connection, Job, ModelRun, OAuthState, WorkerHeartbeat
 from ghosttab_api.readiness import HEARTBEAT_TTL, touch_worker, worker_presence
 from ghosttab_api.worker import claim_job, run_once
+from ghosttab_api.workspaces import owned_task, put_evidence
 
 
 @pytest.fixture
@@ -160,6 +162,50 @@ def test_worker_reports_presence_during_blocking_preparation(system, monkeypatch
 def test_preparation_readiness_requires_identity(system):
     system.app.dependency_overrides.clear()
     assert system.request("GET", "/preparation/status").status_code == 401
+
+
+def test_synthetic_connectors_share_citations_revisions_and_removal_boundaries(system):
+    task = system.request(
+        "POST", "/tasks", {"title": "Synthetic cross-tool task", "goal": "Fixture rehearsal only"}
+    ).json()["id"]
+    samples = sample_sources()
+    ids = []
+    with system.factory.begin() as session:
+        owned = owned_task(session, task, "alice", lock=True)
+        for item in samples:
+            ids.append(
+                put_evidence(session, owned, item.evidence, origin="sample_" + item.provider).id
+            )
+    system.request("POST", f"/tasks/{task}/prepare")
+    assert run_once(system.factory, system.settings, SampleModel())
+    original = system.request("GET", f"/tasks/{task}/workspace").json()
+    assert len(original["snapshot"]["citations"]) == 5
+    assert original["task"]["freshness"] == "current"
+    from ghosttab_api.contracts import EvidenceInput
+    from ghosttab_api.models import Evidence
+
+    with system.factory.begin() as session:
+        owned = owned_task(session, task, "alice", lock=True)
+        put_evidence(
+            session,
+            owned,
+            EvidenceInput(
+                title=samples[0].evidence.title,
+                content="Maya owns the updated launch checklist.",
+                url=samples[0].evidence.url,
+            ),
+            item=session.get(Evidence, ids[0]),
+        )
+    stale = system.request("GET", f"/tasks/{task}/workspace").json()
+    assert stale["task"]["freshness"] == "stale"
+    assert stale["snapshot"]["id"] == original["snapshot"]["id"]
+    assert any(
+        "Maya owns the launch checklist." in x["content"] for x in stale["snapshot"]["citations"]
+    )
+    system.request("DELETE", f"/tasks/{task}/evidence/{ids[0]}")
+    assert system.request("GET", f"/tasks/{task}/workspace").json()["snapshot"] is None
+    system.app.dependency_overrides[current_user] = lambda: Principal("bob")
+    assert system.request("GET", f"/tasks/{task}/workspace").status_code == 404
 
 
 def seeded(system):

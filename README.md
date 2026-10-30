@@ -11,10 +11,31 @@ services, support, and other knowledge work.
 
 ## Current status
 
+Google identity sign-in is included in the account UI; live Supabase/Google setup
+is still pending. Slack's public-thread OAuth/import/refresh/disconnect flow is
+implemented and mock-tested, with live installation deferred. See
+[Slack setup and limits](docs/slack-source.md). Jira and Teams currently remain
+reader adapters without production connection/import UI.
+
+Email sign-up/sign-in/confirmation/recovery UI now uses the existing Supabase path;
+live provider setup and email delivery remain pending. See
+[account access](docs/account-access.md). Ghosts greet once with a blink/smile on
+load and theme changes, respecting reduced-motion settings. A bounded two-case
+[Wonder comparison](docs/model-comparison.md) did not show a clear benefit over
+Spark for the tested cases, so the default remains Spark.
+
+October 29 checkpoint: persistent light/dark themes, a friendlier SVG ghost with
+a subtle dark-mode Halloween accent, and profile initials replace the local
+workspace label. Signed-in names come from account metadata/email; local mode
+uses the device account name. Five controlled real Meta trials passed schema/quote
+validation and scenario-specific agent review; see
+[evaluation results and limits](docs/meta-evaluation.md).
+
 This repository contains the first local task/meeting workspace slice:
 
 - Today, Workspaces, and Connections views for a broad knowledge-work audience.
 - Persisted tasks, manually added notes, immutable source revisions, and draft editing.
+- Human review, completion and reopening, with separate saved-source readiness.
 - Google Calendar read-only OAuth adapter, upcoming-event selection and manual refresh.
 - A durable worker with bounded Meta requests, citation validation, source-generation
   checks, lease recovery, and a usage/reservation ledger.
@@ -31,10 +52,19 @@ is enabled with a $1 cumulative application budget. That estimate-based budget i
 not a provider billing guarantee. Credit expiry and overage behavior remain
 unconfirmed. See [setup](docs/setup.md).
 
-Google Calendar is the first confirmed connector. Mail, chat, document retrieval,
-scheduled synchronization, hosted deployment, and the local Git bridge remain
-future work. Calendar events are imported only when selected. **Check Calendar**
+Google Calendar is the first live-verified connector. Docs/Gmail connection,
+selection, import, manual refresh and disconnect flows are implemented and tested
+with simulated providers; live authorization is deferred. See
+[Google source setup and verification boundaries](docs/google-sources.md).
+Live chat verification, scheduled synchronization, hosted deployment, and the local Git
+bridge remain future work. Calendar events are imported only when selected. **Check Calendar**
 is a manual action; no real-time synchronization is claimed.
+
+Selected-item reader adapters for Docs, Gmail, Slack, Jira and Teams are tested
+with synthetic responses. Jira/Teams still have no production import routes
+or authorization UI. The isolated browser fixture demonstrates their shared evidence
+workflow with explicit sample labels. See [connector development](docs/connector-development.md)
+for implemented boundaries and the remaining authorization work.
 
 Today shows saved workspace readiness and links upcoming Calendar events to their
 workspace by event ID. Filter Needs attention, Ready to review, or All, then open
@@ -43,6 +73,15 @@ or proof that an AI-generated brief is correct.
 
 Saved workspaces support copying the current draft and downloading a Markdown
 brief with source quotes. Neither action sends messages or starts inference.
+The Workspaces list supports case-insensitive search across titles and goals and
+readiness filters with counts. Search words can appear in either field; all words
+must match. Filtering uses saved context, performs no model requests or provider
+reads, and covers the latest 100 loaded workspaces, not source contents. Search
+and filters reset when leaving the list. The default Active filter excludes
+completed workspaces; All and Completed keep them accessible. A review applies
+to the current saved brief and draft. Source updates require fresh review while
+completed tasks stay completed until explicitly reopened. See
+[task lifecycle](docs/task-lifecycle.md).
 Follow the [repeatable local demo](docs/demo-walkthrough.md) for the complete
 Calendar → preparation → review → source-change flow.
 

@@ -68,19 +68,28 @@ def request_body(title, goal, evidence, model):
 
 
 def reservation(body):
-    # Conservative UTF-8 byte bound plus framing/schema allowance, at Spark
-    # Standard uncached input/output rates. Reconcile with returned usage.
+    # Conservative UTF-8 byte bound plus framing/schema allowance at the chosen
+    # model's Standard uncached rates. Reconcile with returned usage.
     size = len(json.dumps(body, ensure_ascii=False).encode()) + 4096
-    return math.ceil(size * 1.25 + MAX_OUTPUT_TOKENS * 4.25)
+    input_rate, _, output_rate = model_rates(body["model"])
+    return math.ceil(size * input_rate + MAX_OUTPUT_TOKENS * output_rate)
 
 
-def actual_cost(usage):
+def model_rates(model):
+    rates = {"muse-spark-1.3": (1.25, 0.15, 4.25), "muse-wonder-1.0": (4, 0.2, 20)}
+    if model not in rates:
+        raise ModelFailure("unsupported_model")
+    return rates[model]
+
+
+def actual_cost(usage, model="muse-spark-1.3"):
     prompt, output = usage.get("prompt_tokens"), usage.get("completion_tokens")
     if not isinstance(prompt, int) or not isinstance(output, int) or min(prompt, output) < 0:
         return None
     cached = usage.get("prompt_tokens_details", {}).get("cached_tokens", 0)
     cached = min(prompt, max(0, cached)) if isinstance(cached, int) else 0
-    return math.ceil((prompt - cached) * 1.25 + cached * 0.15 + output * 4.25)
+    input_rate, cache_rate, output_rate = model_rates(model)
+    return math.ceil((prompt - cached) * input_rate + cached * cache_rate + output * output_rate)
 
 
 def validate_brief(content, evidence):

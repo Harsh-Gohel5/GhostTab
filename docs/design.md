@@ -1,5 +1,18 @@
 # GhostTab interface direction
 
+The SVG ghost now greets for 1.8 seconds on mount and theme change with a small
+blink, smile and tilt. It does not loop, and all greeting animations are restricted
+to `prefers-reduced-motion: no-preference`. Account screens share the same theme,
+logo and accessible form/focus styling.
+
+October 29 refinement: the top-right theme button switches light/dark palettes,
+stored in browser local storage. With no saved preference the device color scheme
+is used. Both modes share semantic indigo/teal tokens; dark mode adds a small witch
+hat and warm detail to the friendly SVG ghost, without a site-wide Halloween theme.
+The footer's “Built with care” branding was removed. The sidebar shows a profile
+initial/name from signed-in metadata/email, or the device account in local mode;
+this local label is not a Google identity claim. No profile data is sent to Meta.
+
 Approved October 26, 2026: **light neutral, indigo and teal**.
 
 Use a near-white page, opaque white panels, ink-colored primary text and readable

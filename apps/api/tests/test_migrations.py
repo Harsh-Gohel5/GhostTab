@@ -22,5 +22,10 @@ def test_worker_presence_upgrade_preserves_existing_task(tmp_path, monkeypatch):
     command.upgrade(config, "head")
     with sqlite3.connect(database) as connection:
         assert connection.execute("SELECT title FROM tasks").fetchone()[0] == "Preserve this task"
-        assert connection.execute("SELECT version_num FROM alembic_version").fetchone()[0] == "0002"
+        assert connection.execute("SELECT version_num FROM alembic_version").fetchone()[0] == "0004"
         assert connection.execute("SELECT count(*) FROM worker_heartbeats").fetchone()[0] == 0
+        assert connection.execute("SELECT count(*) FROM source_connections").fetchone()[0] == 0
+        assert connection.execute("SELECT reviewed_at,completed_at FROM tasks").fetchone() == (
+            None,
+            None,
+        )

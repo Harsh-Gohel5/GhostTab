@@ -1,3 +1,4 @@
+import getpass
 import time
 from typing import Annotated
 
@@ -7,7 +8,7 @@ from sqlalchemy import select
 
 from ghosttab_api import calendar
 from ghosttab_api.auth import Principal, current_user
-from ghosttab_api.contracts import DraftInput, EventInput, EvidenceInput, TaskInput
+from ghosttab_api.contracts import DraftInput, EventInput, EvidenceInput, LifecycleInput, TaskInput
 from ghosttab_api.models import Budget, Connection, Evidence, EvidenceVersion, Job, Task
 from ghosttab_api.readiness import preparation_status
 from ghosttab_api.workspaces import (
@@ -33,6 +34,10 @@ def config(request: Request):
         "model_configured": bool(settings.model_api_key.get_secret_value())
         and settings.allow_model_requests,
         "calendar_configured": settings.google_ready,
+        "synthetic_demo": settings.synthetic_demo,
+        "display_name": getpass.getuser()
+        if settings.auth_mode == "local" and not settings.synthetic_demo
+        else "",
     }
 
 
@@ -236,6 +241,42 @@ def workspace(task_id: str, request: Request, user: User):
         }
 
 
+@router.post("/tasks/{task_id}/lifecycle")
+def change_lifecycle(task_id: str, body: LifecycleInput, request: Request, user: User):
+    with request.app.state.sessions.begin() as session:
+        task = owned_task(session, task_id, user.id, lock=True)
+        if (
+            task.generation != body.expected_generation
+            or task.completed_at != body.expected_completed_at
+        ):
+            raise HTTPException(
+                409, "Workspace changed elsewhere; reload before updating its status"
+            )
+        if body.action == "review":
+            snapshot = visible_snapshot(session, task_id)
+            if (
+                not snapshot
+                or snapshot.generation != task.generation
+                or snapshot.id != body.snapshot_id
+                or snapshot.draft != body.expected_draft
+            ):
+                raise HTTPException(
+                    409, "Brief or saved draft changed; review the current version first"
+                )
+            if task.reviewed_snapshot_id != snapshot.id or task.reviewed_at is None:
+                task.reviewed_snapshot_id = snapshot.id
+                task.reviewed_at = time.time()
+        elif body.action == "complete":
+            if task.completed_at is None:
+                task.completed_at = time.time()
+                task.completed_generation = task.generation
+        else:
+            task.completed_at = None
+            task.completed_generation = None
+        session.flush()
+        return task_view(session, task)
+
+
 @router.post("/tasks/{task_id}/evidence", status_code=201)
 def add_evidence(task_id: str, body: EvidenceInput, request: Request, user: User):
     with request.app.state.sessions.begin() as session:
@@ -253,7 +294,7 @@ def edit_evidence(
         if not item or item.task_id != task.id or item.removed:
             raise HTTPException(404, "Evidence not found")
         if item.origin != "manual":
-            raise HTTPException(409, "Refresh this evidence from Calendar instead")
+            raise HTTPException(409, "Refresh this connected source instead")
         return {"id": put_evidence(session, task, body, item=item).id}
 
 
@@ -307,7 +348,7 @@ def job_status(job_id: str, request: Request, user: User):
 @router.put("/tasks/{task_id}/draft")
 def save_draft(task_id: str, body: DraftInput, request: Request, user: User, snapshot_id: str):
     with request.app.state.sessions.begin() as session:
-        owned_task(session, task_id, user.id, lock=True)
+        task = owned_task(session, task_id, user.id, lock=True)
         snapshot = visible_snapshot(session, task_id)
         if not snapshot or snapshot.id != snapshot_id:
             raise HTTPException(
@@ -319,5 +360,8 @@ def save_draft(task_id: str, body: DraftInput, request: Request, user: User, sna
                 "The saved draft changed elsewhere. "
                 "Your edits were not saved; compare the latest draft.",
             )
-        snapshot.draft = body.draft
+        if snapshot.draft != body.draft:
+            task.reviewed_snapshot_id = None
+            task.reviewed_at = None
+            snapshot.draft = body.draft
         return {"saved": True}

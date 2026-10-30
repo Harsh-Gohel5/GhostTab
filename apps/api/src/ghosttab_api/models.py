@@ -22,6 +22,10 @@ class Task(Base):
     generation: Mapped[int] = mapped_column(Integer, default=1)
     created_at: Mapped[float] = mapped_column(Float, default=time.time)
     calendar_event_id: Mapped[str | None] = mapped_column(String(1024), nullable=True)
+    reviewed_snapshot_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    reviewed_at: Mapped[float | None] = mapped_column(Float, nullable=True)
+    completed_at: Mapped[float | None] = mapped_column(Float, nullable=True)
+    completed_generation: Mapped[int | None] = mapped_column(Integer, nullable=True)
     __table_args__ = (UniqueConstraint("owner_id", "calendar_event_id"),)
 
 
@@ -109,3 +113,28 @@ class WorkerHeartbeat(Base):
     __tablename__ = "worker_heartbeats"
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     seen_at: Mapped[float] = mapped_column(Float, index=True)
+
+
+class SourceConnection(Base):
+    __tablename__ = "source_connections"
+    owner_id: Mapped[str] = mapped_column(String(100), primary_key=True)
+    provider: Mapped[str] = mapped_column(String(30), primary_key=True)
+    grant_id: Mapped[str] = mapped_column(String(36), default=new_id)
+    encrypted_tokens: Mapped[str] = mapped_column(Text)
+
+
+class SourceOAuthState(Base):
+    __tablename__ = "source_oauth_states"
+    digest: Mapped[str] = mapped_column(String(64), primary_key=True)
+    owner_id: Mapped[str] = mapped_column(String(100))
+    provider: Mapped[str] = mapped_column(String(30))
+    encrypted_verifier: Mapped[str] = mapped_column(Text)
+    expires_at: Mapped[float] = mapped_column(Float)
+
+
+class SourceReference(Base):
+    __tablename__ = "source_references"
+    evidence_id: Mapped[str] = mapped_column(ForeignKey("evidence.id"), primary_key=True)
+    provider: Mapped[str] = mapped_column(String(30))
+    external_id: Mapped[str] = mapped_column(String(256))
+    grant_id: Mapped[str] = mapped_column(String(36))

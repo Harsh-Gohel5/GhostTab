@@ -6,6 +6,8 @@ export const configSchema = z.object({
   supabase_publishable_key: z.string(),
   model_configured: z.boolean(),
   calendar_configured: z.boolean(),
+  synthetic_demo: z.boolean().default(false),
+  display_name: z.string().default(""),
 });
 const jobSchema = z.object({
   id: z.string(),
@@ -26,6 +28,11 @@ export const taskSchema = z.object({
   calendar_event_id: z.string().nullable(),
   source_count: z.number().int().nonnegative(),
   freshness: z.enum(["unprepared", "current", "stale"]),
+  lifecycle: z.enum(["active", "completed"]),
+  reviewed_at: z.number().nullable(),
+  review_current: z.boolean(),
+  completed_at: z.number().nullable(),
+  changed_since_completion: z.boolean(),
   job: jobSchema.nullable(),
 });
 export const evidenceSchema = z.object({
@@ -111,6 +118,7 @@ export type Evidence = z.infer<typeof evidenceSchema>;
 export type Workspace = z.infer<typeof workspaceSchema>;
 export type Point = z.infer<typeof pointSchema>;
 export type SourceInput = { title: string; content: string; url: string };
+export type GoogleProvider = "google_docs" | "gmail";
 
 export class ApiError extends Error {
   status: number;
@@ -167,6 +175,97 @@ export class Api {
   }
   tasks() {
     return this.request("/tasks", z.array(taskSchema));
+  }
+  changeLifecycle(
+    workspace: Workspace,
+    action: "review" | "complete" | "reopen",
+  ) {
+    return this.request(
+      `/tasks/${workspace.task.id}/lifecycle`,
+      taskSchema,
+      "POST",
+      {
+        action,
+        expected_generation: workspace.task.generation,
+        expected_completed_at: workspace.task.completed_at,
+        snapshot_id: workspace.snapshot?.id ?? null,
+        expected_draft: workspace.snapshot?.draft ?? null,
+      },
+    );
+  }
+  sourceConnection(provider: GoogleProvider) {
+    return this.request(
+      `/integrations/google/${provider}`,
+      z.object({
+        connected: z.boolean(),
+        configured: z.boolean(),
+      }),
+    );
+  }
+  slackConnection() {
+    return this.request(
+      "/integrations/slack",
+      z.object({ connected: z.boolean(), configured: z.boolean() }),
+    );
+  }
+  connectSlack() {
+    return this.request(
+      "/integrations/slack/start",
+      z.object({ url: z.string().url() }),
+      "POST",
+    );
+  }
+  disconnectSlack() {
+    return this.request("/integrations/slack", z.undefined(), "DELETE");
+  }
+  importSlack(
+    task: string,
+    selection: { channel_id: string; thread_ts: string },
+  ) {
+    return this.request(
+      `/tasks/${task}/imports/slack`,
+      z.object({ id: z.string() }),
+      "POST",
+      selection,
+    );
+  }
+  connectSource(provider: GoogleProvider) {
+    return this.request(
+      `/integrations/google/${provider}/start`,
+      z.object({ url: z.string().url() }),
+      "POST",
+    );
+  }
+  disconnectSource(provider: GoogleProvider) {
+    return this.request(
+      `/integrations/google/${provider}`,
+      z.undefined(),
+      "DELETE",
+    );
+  }
+  searchMail(query: string) {
+    return this.request(
+      `/integrations/gmail/messages?q=${encodeURIComponent(query)}`,
+      z.object({
+        messages: z.array(z.object({ id: z.string(), title: z.string() })),
+        has_more: z.boolean(),
+      }),
+    );
+  }
+  importSource(task: string, provider: GoogleProvider, item_id: string) {
+    return this.request(
+      `/tasks/${task}/imports/${provider}`,
+      z.object({ id: z.string() }),
+      "POST",
+      { item_id },
+    );
+  }
+  refreshSource(task: string, evidence: string) {
+    return this.request(
+      `/tasks/${task}/evidence/${evidence}/refresh`,
+      z.object({ removed: z.boolean() }),
+      "POST",
+    );
   }
   workspace(id: string) {
     return this.request(`/tasks/${id}/workspace`, workspaceSchema);

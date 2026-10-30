@@ -1,5 +1,28 @@
 # GhostTab architecture
 
+**Slack/identity addition:** Google identity login uses Supabase's SDK with basic
+identity scopes and does not create source grants. Slack's confidential web OAuth
+and selected-public-thread routes reuse the source-grant tables and immutable
+evidence flow. Imports verify public-channel metadata and grant identity before
+publication; the shared refresh endpoint dispatches Slack sources to that reader.
+No migration was added. Live provider configuration/consent remains deferred.
+See [Slack setup](slack-source.md) and [account access](account-access.md).
+
+**Task lifecycle:** migration 0004 stores human review/completion on tasks,
+independently from evidence generations and model jobs. Review binds to a snapshot
+and is current only while that snapshot/generation remains visible; changing a
+saved draft clears it. Owner-scoped progress actions share the existing task lock.
+Completion is explicit and does not execute work, cancel existing jobs or erase
+context. See [task-lifecycle.md](task-lifecycle.md).
+
+**October 28 addition:** Docs and Gmail use the separate `google_sources.py` router,
+provider-specific encrypted grants/PKCE state, and selected resource references
+(migration 0003). They reuse task/evidence revisions and the existing worker.
+Import/refresh checks ownership and grant identity before retrieval and again
+while committing. Disconnect blocks affected sources and derived snapshots.
+Calendar's grant and callback remain unchanged. Complete UI/API flows are
+mock-verified; live consent/reads are deferred. See [google-sources.md](google-sources.md).
+
 Updated October 27, 2026. **Current slice:** task/evidence storage, durable jobs,
 Meta adapter, Google Calendar adapter, and the broader interface are implemented
 locally. Live Calendar and synthetic Meta flows are verified; cloud deployment is

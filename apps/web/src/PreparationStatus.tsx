@@ -64,9 +64,10 @@ export function PreparationStatus({
     : "Add notes or choose a Calendar meeting, then prepare your brief.";
   let tone = "idle";
   if (hasBrief) {
-    heading = "Brief ready for review";
-    message =
-      "This brief uses the saved source revisions shown here. Review its supporting quotes and make the draft your own.";
+    heading = task.review_current ? "Brief reviewed" : "Brief ready for review";
+    message = task.review_current
+      ? "You marked the current saved brief and draft as reviewed. Sources and supporting quotes remain available below."
+      : "This brief uses the saved source revisions shown here. Review its supporting quotes and make the draft your own.";
     tone = "ready";
   }
   if (stale) {
