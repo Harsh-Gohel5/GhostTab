@@ -1,5 +1,40 @@
 # Account access
 
+## Google sign-in availability and setup
+
+The account page checks `/api/auth/providers` against Supabase's public Auth
+settings before enabling Google sign-in. Disabled, malformed, unavailable or timed
+out responses keep email authentication usable and show a retry action. The read
+is bounded to three seconds, does not follow redirects and returns only Google
+availability, never the provider payload. Rechecking picks up provider changes
+without restarting GhostTab. This check does not prove a completed OAuth flow.
+
+If Supabase returns `Unsupported provider: provider is not enabled`, enable Google
+in **Authentication → Sign In / Providers → Google**. A Supabase publishable key
+does not enable Google's provider; it requires Google's OAuth client credentials.
+
+1. In the existing Google Cloud project, open **APIs & Services → Credentials**.
+2. Open a **Web application** OAuth client. A dedicated sign-in client is preferred;
+   reusing the Calendar web client is supported if all Calendar callbacks remain.
+3. Add the exact Supabase callback shown in its Google provider settings to the
+   Google client's **Authorized redirect URIs**. Its form is
+   `https://PROJECT_REF.supabase.co/auth/v1/callback`. Preserve existing callbacks.
+4. Save the Google client ID and client secret in Supabase's Google provider form,
+   enable the provider, and save. Do not use the Supabase publishable key here.
+5. Allow GhostTab's frontend/recovery URLs in Supabase URL Configuration. Return to
+   GhostTab and choose **Check Google sign-in again**, then complete Google consent.
+
+Real public configuration has been connected locally; email signup/confirmation
+and sign-in were reported by the owner. The API's real settings check confirmed
+Google disabled and reproduced the provider-not-enabled response. Live Google
+consent, application JWT-backed workspace operations and recovery/password update
+still need verification. Provider credentials remain outside Git.
+
+Supabase's built-in SMTP is restricted to project-team email addresses and currently
+two messages per hour. Public signup/recovery requires suitable custom SMTP setup;
+do not present default email delivery as a production-ready service.
+See [SMTP restrictions](https://supabase.com/docs/guides/auth/auth-smtp).
+
 ## Google identity sign-in
 
 **Continue with Google** now starts Supabase's Google OAuth flow from sign-in or

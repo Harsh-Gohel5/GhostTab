@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from ghosttab_api import __version__
+from ghosttab_api.auth_providers import router as auth_providers_router
 from ghosttab_api.config import Settings
 from ghosttab_api.database import make_engine, sessions
 from ghosttab_api.google_sources import router as google_sources_router
@@ -45,6 +46,7 @@ def create_app(settings: Settings | None = None, *, engine=None) -> FastAPI:
             timeout=5,
         )
     app.include_router(router)
+    app.include_router(auth_providers_router)
     app.include_router(teams_router)
     app.include_router(jira_router)
     app.include_router(slack_router)

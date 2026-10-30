@@ -17,6 +17,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Resp
 from fastapi.staticfiles import StaticFiles
 
 from ghosttab_api.auth import Principal, current_user
+from ghosttab_api.auth_providers import provider_status
 from ghosttab_api.config import Settings
 from ghosttab_api.database import make_engine, sessions
 from ghosttab_api.main import create_app
@@ -45,6 +46,7 @@ def main():
         with factory.begin() as session:
             session.add(Budget(id=1, charged_microusd=0))
         app = create_app(settings, engine=engine)
+        app.dependency_overrides[provider_status] = lambda: {"google": "enabled"}
         secret = secrets.token_hex(32)
         profile = {
             "id": "synthetic-auth-owner",

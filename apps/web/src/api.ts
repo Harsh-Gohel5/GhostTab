@@ -9,6 +9,9 @@ export const configSchema = z.object({
   synthetic_demo: z.boolean().default(false),
   display_name: z.string().default(""),
 });
+export const authProvidersSchema = z.object({
+  google: z.enum(["enabled", "disabled", "unavailable"]),
+});
 const jobSchema = z.object({
   id: z.string(),
   task_id: z.string(),
