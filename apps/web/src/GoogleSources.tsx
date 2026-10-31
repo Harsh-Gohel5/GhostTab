@@ -27,22 +27,7 @@ function SourceError({ error }: { error: unknown }) {
   ) : null;
 }
 
-export function GoogleConnections({ api, owner }: { api: Api; owner: string }) {
-  return (
-    <>
-      {providers.map((provider) => (
-        <GoogleConnection
-          key={provider.id}
-          api={api}
-          owner={owner}
-          provider={provider.id}
-        />
-      ))}
-    </>
-  );
-}
-
-function GoogleConnection({
+export function GoogleConnection({
   api,
   owner,
   provider,

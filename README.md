@@ -18,16 +18,23 @@ services, support, and other knowledge work.
 
 ## Current status
 
-Google identity sign-in is included in the account UI; live Supabase/Google setup
-is still pending. Slack's public-thread OAuth/import/refresh/disconnect flow is
+Connections now includes a searchable [49-tool catalog](docs/connector-catalog.md).
+Six entries open existing connection flows; 43 are clearly labeled planned
+previews with no account access or Connect action. This showcases the broader
+roadmap without claiming those integrations work.
+
+Google identity sign-in and email signup/confirmation/sign-in have been verified
+by the owner against the configured Supabase project. Recovery/password update
+and JWT-backed workspace operations still need live verification.
+Slack's public-thread OAuth/import/refresh/disconnect flow is
 implemented and mock-tested, with live installation deferred. See
 [Slack setup and limits](docs/slack-source.md). Jira now has a read-only OAuth/site/issue import, refresh and disconnect flow;
 live consent remains deferred. See [Jira setup and limits](docs/jira-source.md).
 Teams now has selected-chat OAuth/import/refresh/disconnect UI and backend flow,
 verified with simulated providers; live consent is deferred. See [Teams setup](docs/teams-source.md).
 
-Email sign-up/sign-in/confirmation/recovery UI now uses the existing Supabase path;
-live provider setup and email delivery remain pending. See
+Email sign-up/sign-in/confirmation/recovery UI uses the existing Supabase path;
+general-public email delivery still requires SMTP configuration. See
 [account access](docs/account-access.md). Ghosts greet once with a blink/smile on
 load and theme changes, respecting reduced-motion settings. A bounded two-case
 [Wonder comparison](docs/model-comparison.md) did not show a clear benefit over
