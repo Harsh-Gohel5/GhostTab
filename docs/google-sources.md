@@ -1,8 +1,16 @@
 # Google Docs and Gmail: selected sources
 
-October 28, 2026. UI/backend flows are implemented and mock-verified. **Live
-Docs/Gmail authorization and reads remain unverified**, deferred by the owner.
-Calendar is still the only live-verified connector. No new consent was obtained.
+October 31, 2026. The owner enabled Google Docs API, registered its callback,
+completed real authorization and showed Connected in the normal app. The owner
+then imported Docs alongside Calendar, prepared a brief, and reported the Docs
+change/Check source/regeneration/citation sequence done. Screenshots show the
+brief and Calendar citations; final Docs citation/update states still need an
+independently captured demo record. See [current status](current-status.md).
+
+Gmail remains implemented and simulated-provider tested but not live-connected.
+The earlier October 28 mock/fixture results below remain distinct from this new
+owner-run Docs verification. Live Docs disconnect/revocation and token-expiry
+rehearsal are still pending.
 
 ## Workflow
 
@@ -72,7 +80,8 @@ Owner and grant identity are checked before retrieval and again under a connecti
 lock before committing sources. Tests cover consent binding/replay/missing scope,
 refresh/revocation, ownership, disconnect during import, duplicate imports,
 immutable citation revisions, stale/blocked briefs, bounded Gmail metadata search,
-and transient/missing-source handling. PostgreSQL CI still needs an approved PR.
+and transient/missing-source handling. Required API CI, including PostgreSQL tests
+and migrations, passed on the merged integration/catalog checkpoints.
 
 The port-8010 browser fixture uses temporary storage, fake grants, MockTransport
 and a fake model. A prominent banner identifies it; OAuth starts are disabled.

@@ -1,5 +1,15 @@
 # Hackathon delivery roadmap
 
+**October 31 live-workflow checkpoint:** Google identity and Calendar/Docs
+connection/import/preparation have been exercised in the signed-in local app.
+The owner reports the Docs change/regeneration sequence done. The two-service
+workflow is owner-reported complete, with final Docs citation and before/after
+state capture still pending. Gmail/Slack/Jira/Teams live authorization remains
+unfinished; planned catalog tiles do not count as live connectors.
+See [current status](current-status.md). Next: capture and review that workflow,
+then recovery/isolation/reconnect rehearsal, judge access and submission materials.
+The dated sequence below is the historical plan, not a current completion checklist.
+
 **Owner-approved frontend showcase, October 30:** the Connections catalog lists
 49 tools across 14 categories. Six use existing connection flows; the remaining
 43 are planned previews only. This adds no live connector scope and planned cards

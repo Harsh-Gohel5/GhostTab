@@ -1,5 +1,12 @@
 # Frontend integration catalog
 
+October 31: catalog [PR #12](https://github.com/Harsh-Gohel5/GhostTab/pull/12) is
+merged as `c8e360a`; required web/API CI passed, including PostgreSQL tests and
+migrations. Owner screenshots now show the dark catalog and Google Docs Connected,
+and the owner completed connection management through the normal app. Full catalog
+filter/focus/responsive interaction verification remains pending. See
+[current status](current-status.md) for the later live workflow.
+
 The Connections page includes 49 tools across 14 categories from the owner's
 broader product roadmap. The canonical list is `apps/web/src/catalogData.ts`.
 Tools can belong to several categories but render only once in a result list.
@@ -45,5 +52,5 @@ with the correct export. App, assets and API health were checked directly.
 Use `http://127.0.0.1:5173/` for the real app. Port 8010 is the explicitly labeled,
 isolated synthetic QA fixture, not the real account workspace. Browser automation
 is currently unavailable, so visual and interactive browser verification remains
-pending; do not claim that it passed. Unit/type/lint/build results are recorded in
-the PR. The full source/backend CI gate is required before merge.
+pending for the complete catalog; do not claim that it passed. Unit/type/lint/build
+results are recorded in the merged PR. The required source/backend CI gate passed.

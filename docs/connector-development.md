@@ -1,5 +1,12 @@
 # Credential-free connector milestone
 
+**October 31 update:** this file retains the earlier adapter/fixture milestones.
+The complete provider flows and catalog are merged. Calendar and Docs now have
+owner-run live evidence; Gmail, Slack, Jira and Teams still need live account
+verification. See [current status](current-status.md) and
+[Google sources](google-sources.md). Statements below about deferred Docs consent
+or unmerged work describe their dated historical checkpoint.
+
 **Teams checkpoint:** selected-chat connection/import/refresh/disconnect now has
 UI/API flow with simulated provider verification. All five additional readers now
 have corresponding connection flows; live Docs/Gmail/Slack/Jira/Teams consent is

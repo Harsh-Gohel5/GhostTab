@@ -1,5 +1,13 @@
 # GhostTab architecture
 
+**October 31 current state:** the owner has exercised Supabase Google sign-in,
+Calendar connection/import and the Docs two-source workflow through the regular
+local app. Change/regeneration is owner-reported complete; final Docs citation
+capture remains pending. The searchable catalog lists 49 tools, with six existing
+provider flows and 43 Planned previews. Migration head is `0004`; SQLite remains
+the local store and PostgreSQL is verified in CI. See [current status](current-status.md)
+for verification boundaries. Dated architecture checkpoints below are historical.
+
 **Teams addition:** confidential single-tenant work/school OAuth with PKCE and
 `Chat.Read` reuses encrypted source grants. Explicit chat selection reads metadata
 and at most 50 recent messages through Graph `/me/chats`; owner/grant checks fence
@@ -73,8 +81,9 @@ The foundation table above is the starting milestone. The current slice adds
 SQLAlchemy 2/Alembic, SQLite locally and PostgreSQL support, owner-scoped operations,
 manual task/evidence entry, immutable evidence versions, persisted jobs/snapshots/
 drafts/usage, and separate worker execution. TanStack Query polls active preparations.
-Local identity is loopback-only; Supabase JWT verification and existing-user sign-in
-are implemented but have not been exercised with a live Supabase project.
+Local identity is loopback-only; Supabase JWT verification, email account access
+and Google sign-in are implemented. The owner has exercised live sign-in and
+signed-in workspace actions; final recovery/isolation rehearsal remains pending.
 
 Google Calendar is the first confirmed source. Its adapter provides read-only OAuth
 with encrypted tokens, event selection and manual refresh. Mail/chat/docs, scheduled
@@ -97,7 +106,8 @@ The editor retains unsaved text on refetch/new briefs, requires explicit conflic
 resolution, and warns before leaving. No private drafts are written to browser
 storage. See [development priorities and browser QA](development-plan.md).
 
-There is no production deployment, local Git bridge or general connector catalog yet.
+There is no production deployment or local Git bridge. The frontend catalog is
+implemented; its planned entries do not add backend integrations.
 Migration `0002` adds a server-only `worker_heartbeats` table. Each worker reports
 every ten seconds on a separate thread, including during inference, and removes
 its own row on normal shutdown. Stale rows expire after 45 seconds; rows older
