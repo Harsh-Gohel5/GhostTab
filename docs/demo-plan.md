@@ -1,15 +1,12 @@
 # Demonstration, evaluation, and showcase plan
 
-Status: local walkthrough ready, October 27, 2026. No user-study or productivity result is claimed
-by this document.
-
-**Current build:** Google Calendar is the only confirmed account. The first
-implemented local slice selects an event, adds clearly labeled manual notes,
-prepares a cited brief when Meta is explicitly enabled, and checks source changes
-manually. Live Calendar and synthetic Meta preparation are verified locally. See
-[the repeatable walkthrough](demo-walkthrough.md). The multi-service story below
-remains a release target requiring additional account authorization. Never present
-manual notes as a live mail, chat or document integration.
+Status: October 31, 2026. Calendar and Docs are authorized in the owner's signed-in
+local app. The owner completed the guided preparation and reported the Docs
+change/regeneration test done. Independent capture of both providers' citations
+and before/after states remains pending. See [current status](current-status.md)
+and [the repeatable walkthrough](demo-walkthrough.md). No productivity or user-study
+result is claimed. Wider mail/chat scenarios below remain proposals until their
+live accounts are verified; manual notes and Planned tiles do not prove them.
 
 ## Future multi-service story
 

@@ -1,5 +1,12 @@
 # Meta inference and credit plan
 
+**October 31:** the owner has confirmed promotional-credit use and exercised
+normal-app preparation with Calendar/Docs test content. The local application cap
+last checked is still $1; it has not been increased. Historical ledger totals
+below predate the latest owner-triggered workflow and must not be presented as
+today's balance or provider-billed spend. No model calls or extra keys are needed
+for the documentation checkpoint. See [current status](current-status.md).
+
 **October 30 grounding correction:** `meeting-brief-v3` prevents the observed
 unsupported whole-handoff readiness inference in the final targeted trial and
 keeps source instructions out of business conflicts. Eight final live regression

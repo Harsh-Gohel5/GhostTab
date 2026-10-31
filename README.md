@@ -1,5 +1,12 @@
 # GhostTab
 
+**October 31 checkpoint:** Calendar and Google Docs are connected in the owner's
+signed-in account. The owner completed the two-source preparation and reported
+the Docs change/regeneration test done. Screenshots confirm the generated brief;
+independent capture of the final Docs citation/update sequence remains pending.
+See [current status and public handoff](docs/current-status.md) for evidence,
+merged PRs, limitations and next priorities. Older dated checkpoints are historical.
+
 **October 30 grounding correction:** `meeting-brief-v3` prevents the observed
 unsupported whole-handoff readiness inference in the final targeted trial and
 keeps source instructions out of business conflicts. Eight final live regression
@@ -24,8 +31,9 @@ previews with no account access or Connect action. This showcases the broader
 roadmap without claiming those integrations work.
 
 Google identity sign-in and email signup/confirmation/sign-in have been verified
-by the owner against the configured Supabase project. Recovery/password update
-and JWT-backed workspace operations still need live verification.
+by the owner against the configured Supabase project. Signed-in Calendar/workspace
+and preparation actions have now been exercised through the UI. Recovery/password
+update and final account-isolation rehearsal remain pending.
 Slack's public-thread OAuth/import/refresh/disconnect flow is
 implemented and mock-tested, with live installation deferred. See
 [Slack setup and limits](docs/slack-source.md). Jira now has a read-only OAuth/site/issue import, refresh and disconnect flow;
@@ -68,9 +76,11 @@ is enabled with a $1 cumulative application budget. That estimate-based budget i
 not a provider billing guarantee. Credit expiry and overage behavior remain
 unconfirmed. See [setup](docs/setup.md).
 
-Google Calendar is the first live-verified connector. Docs/Gmail connection,
-selection, import, manual refresh and disconnect flows are implemented and tested
-with simulated providers; live authorization is deferred. See
+Google Calendar and Google Docs now have owner-run live workflow evidence. Docs
+import and change/regeneration are owner-reported complete; final before/after
+citation capture remains pending. Gmail connection, selection, import, manual
+refresh and disconnect are implemented and simulated-provider tested, but its live
+authorization is still pending. See
 [Google source setup and verification boundaries](docs/google-sources.md).
 Live chat verification, scheduled synchronization, hosted deployment, and the local Git
 bridge remain future work. Calendar events are imported only when selected. **Check Calendar**

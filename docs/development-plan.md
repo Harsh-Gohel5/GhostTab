@@ -1,5 +1,16 @@
 # Development assessment and next milestones
 
+**October 31 current checkpoint:** all application work through catalog PR #12 is
+merged. The owner has connected Calendar and Docs in the signed-in account,
+generated a brief and reported the Docs change/regeneration test done. Capture
+both source citations and the before/after states for independent review; then
+finish account recovery/isolation/reconnect and final demo delivery. Gmail and
+other providers remain live-unverified. See [current status](current-status.md)
+for merged PRs, automated checks and the distinction between owner confirmation
+and independent verification. The earlier checkpoints and pending-PR statements
+below are historical; current owner authorization permits focused PRs and merges
+after review and required CI.
+
 **October 30 grounding correction:** `meeting-brief-v3` prevents the observed
 unsupported whole-handoff readiness inference in the final targeted trial and
 keeps source instructions out of business conflicts. Eight final live regression

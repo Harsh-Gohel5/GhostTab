@@ -28,8 +28,11 @@ Real public configuration has been connected locally; email signup/confirmation,
 sign-in and completed Google sign-in were reported working by the owner on
 October 30. After provider setup, the real settings check confirmed Google enabled
 and the authorization endpoint redirected to Google with the expected callback.
-Application JWT-backed workspace operations and recovery/password update still
-need live verification. Provider credentials remain outside Git.
+On October 31, owner screenshots showed a signed-in Calendar import and prepared
+workspace, and the owner reported the Docs workflow complete in that account.
+Recovery/password update and final live account-isolation rehearsal remain pending.
+This does not replace the automated JWT/ownership tests. Provider credentials
+remain outside Git. See [current status](current-status.md).
 
 Supabase's built-in SMTP is restricted to project-team email addresses and currently
 two messages per hour. Public signup/recovery requires suitable custom SMTP setup;
@@ -90,10 +93,11 @@ JWT acceptance/rejection and owner isolation. The isolated browser rehearsal pas
 sign-up confirmation, sign-in, reload restoration, sign-out, recovery request and
 recovery callback/password update.
 
-**Live Supabase project configuration, real email delivery, actual confirmation
-links and hosted account isolation remain unverified.** No real account was created
-and no external email was sent during this milestone. Complete those checks before
-calling hosted authentication ready for users.
+The isolated rehearsal above did not create a real account or send email. Later,
+the owner configured a real Supabase project and confirmed email signup,
+confirmation and sign-in, then Google sign-in and signed-in workspace use.
+Recovery/password update, general-public email delivery and final live account
+isolation remain unverified. This is not a production-authentication certification.
 
 For a disposable rehearsal, build the web app and run
 `.venv/Scripts/python.exe apps/api/tests/auth_browser_fixture.py`, then open

@@ -1,13 +1,17 @@
 # Run the first working slice
 
+Latest live verification and remaining release work: [October 31 checkpoint](current-status.md).
+
 Google identity login needs separate Supabase provider configuration; see
 [account access](account-access.md). Slack now has a public-thread connector flow;
-see [Slack source setup](slack-source.md). Live authorization is deferred for both.
+see [Slack source setup](slack-source.md). Google identity sign-in has been verified
+by the owner; Slack live authorization remains deferred.
 
 Account creation, confirmation and password recovery now have UI/SDK flows. See
 [account access](account-access.md) for provider configuration, callback URLs and
 the synthetic rehearsal. The regular local app and Calendar grant remain intact;
-real hosted signup/email delivery is not yet verified.
+owner-run real signup/confirmation/sign-in is verified, while broad email delivery
+and recovery/password update remain pending.
 
 Apply migration 0004 for saved review/completion/reopen state. Existing tasks
 remain active and unreviewed. See [task lifecycle](task-lifecycle.md).
@@ -16,7 +20,8 @@ Docs and Gmail now have separate connection/import flows. Apply migration 0003
 with `npm run db:migrate` before restarting the API. See
 [Google source setup](google-sources.md) for the additional callback registrations,
 scopes, account authorization steps and verification boundaries. The existing
-Calendar setup remains unchanged; Docs/Gmail live consent is still deferred.
+Calendar setup remains unchanged. Docs consent/import and the two-source workflow
+have now been exercised by the owner; Gmail live consent remains pending.
 
 ## Preparation availability and recovery
 
@@ -45,8 +50,9 @@ deployment is needed. npm and pip install free dependencies; funding messages ar
 optional donation notices. No purchases are authorized.
 
 Meta requests are **off by default**, including when a key is present. Automated
-tests use synthetic data and mocked providers. No real Google consent or Meta
-inference has been verified as part of implementing this slice.
+tests use synthetic data and mocked providers. Separate live Google consent and
+Meta preparations have been exercised; see current status for their evidence and
+limitations. Running tests does not itself authorize live provider requests.
 
 Google documents standard Calendar API use at no additional cost within its daily
 threshold. GhostTab requests up to 25 upcoming primary-calendar events per manual
