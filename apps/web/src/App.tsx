@@ -7,7 +7,8 @@ import { Api, configSchema, authProvidersSchema } from "./api";
 import { PreparationStatus } from "./PreparationStatus";
 import { ReadinessOverview } from "./ReadinessOverview";
 import { WorkspaceList } from "./WorkspaceList";
-import { GoogleConnections, GoogleSourceImport } from "./GoogleSources";
+import { GoogleConnection, GoogleSourceImport } from "./GoogleSources";
+import { ConnectorCatalog } from "./ConnectorCatalog";
 import { TaskLifecycle } from "./TaskLifecycle";
 import { ThemeToggle } from "./ThemeToggle";
 import { GhostMark } from "./GhostMark";
@@ -690,54 +691,90 @@ function Home({
                   <p>You choose what GhostTab can read and what to prepare.</p>
                 </div>
               </div>
-              <div className="connection-card">
-                <span className="calendar-logo" aria-hidden="true">
-                  31
-                </span>
-                <div>
-                  <h2>Google Calendar</h2>
-                  <p>
-                    Read upcoming events from your primary calendar.
-                    <br />
-                    Select a meeting to save its time, location, and
-                    description.
-                  </p>
-                  <span className="badge">
-                    {connected
-                      ? "Connected · read only"
-                      : "Read only · selected meetings"}
-                  </span>
-                </div>
-                {connected ? (
-                  <button
-                    className="secondary"
-                    disabled={disconnect.isPending}
-                    onClick={() => disconnect.mutate()}
-                  >
-                    Disconnect
-                  </button>
-                ) : (
-                  <button
-                    className="primary"
-                    disabled={connect.isPending || !config.calendar_configured}
-                    onClick={() => connect.mutate()}
-                  >
-                    {connect.isPending ? "Opening Google…" : "Connect Calendar"}
-                  </button>
-                )}
-              </div>
-              <ErrorNotice error={connect.error || disconnect.error} />
-              {!config.calendar_configured && (
-                <p className="notice">
-                  Calendar setup is pending. Follow <code>docs/setup.md</code>{" "}
-                  to configure Google authorization locally. You can create
-                  workspaces and add notes in the meantime.
-                </p>
-              )}
-              <GoogleConnections api={api} owner={owner} />
-              <SlackConnection api={api} owner={owner} />
-              <JiraConnection api={api} owner={owner} />
-              <TeamsConnection api={api} owner={owner} />
+              <ConnectorCatalog
+                api={api}
+                owner={owner}
+                calendarStatus={
+                  connections.isError
+                    ? null
+                    : connections.data
+                      ? { connected, configured: config.calendar_configured }
+                      : undefined
+                }
+                onRetryCalendar={() => void connections.refetch()}
+                renderConnection={(provider) => {
+                  if (provider === "google_calendar")
+                    return (
+                      <>
+                        <div className="connection-card">
+                          <span className="calendar-logo" aria-hidden="true">
+                            31
+                          </span>
+                          <div>
+                            <h2>Google Calendar</h2>
+                            <p>
+                              Read upcoming events from your primary calendar.
+                              <br />
+                              Select a meeting to save its time, location, and
+                              description.
+                            </p>
+                            <span className="badge">
+                              {connected
+                                ? "Connected · read only"
+                                : "Read only · selected meetings"}
+                            </span>
+                          </div>
+                          {connected ? (
+                            <button
+                              className="secondary"
+                              disabled={disconnect.isPending}
+                              onClick={() => disconnect.mutate()}
+                            >
+                              Disconnect
+                            </button>
+                          ) : (
+                            <button
+                              className="primary"
+                              disabled={
+                                connect.isPending || !config.calendar_configured
+                              }
+                              onClick={() => connect.mutate()}
+                            >
+                              {connect.isPending
+                                ? "Opening Google…"
+                                : "Connect Calendar"}
+                            </button>
+                          )}
+                        </div>
+                        <ErrorNotice
+                          error={connect.error || disconnect.error}
+                        />
+                        {!config.calendar_configured && (
+                          <p className="notice">
+                            Calendar setup is pending. Follow{" "}
+                            <code>docs/setup.md</code> to configure Google
+                            authorization locally. You can create workspaces and
+                            add notes in the meantime.
+                          </p>
+                        )}
+                      </>
+                    );
+                  if (provider === "google_docs" || provider === "gmail")
+                    return (
+                      <GoogleConnection
+                        key={provider}
+                        api={api}
+                        owner={owner}
+                        provider={provider}
+                      />
+                    );
+                  if (provider === "slack")
+                    return <SlackConnection api={api} owner={owner} />;
+                  if (provider === "jira")
+                    return <JiraConnection api={api} owner={owner} />;
+                  return <TeamsConnection api={api} owner={owner} />;
+                }}
+              />
               <div className="privacy-grid">
                 <Panel title="A connection you control">
                   <p>

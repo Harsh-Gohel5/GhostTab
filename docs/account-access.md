@@ -24,11 +24,12 @@ does not enable Google's provider; it requires Google's OAuth client credentials
 5. Allow GhostTab's frontend/recovery URLs in Supabase URL Configuration. Return to
    GhostTab and choose **Check Google sign-in again**, then complete Google consent.
 
-Real public configuration has been connected locally; email signup/confirmation
-and sign-in were reported by the owner. The API's real settings check confirmed
-Google disabled and reproduced the provider-not-enabled response. Live Google
-consent, application JWT-backed workspace operations and recovery/password update
-still need verification. Provider credentials remain outside Git.
+Real public configuration has been connected locally; email signup/confirmation,
+sign-in and completed Google sign-in were reported working by the owner on
+October 30. After provider setup, the real settings check confirmed Google enabled
+and the authorization endpoint redirected to Google with the expected callback.
+Application JWT-backed workspace operations and recovery/password update still
+need live verification. Provider credentials remain outside Git.
 
 Supabase's built-in SMTP is restricted to project-team email addresses and currently
 two messages per hour. Public signup/recovery requires suitable custom SMTP setup;
@@ -47,8 +48,8 @@ there; a dedicated Google OAuth web client keeps identity setup distinct from th
 existing Calendar integration. Register the Supabase callback shown in the provider
 dashboard (normally `https://PROJECT.supabase.co/auth/v1/callback`) in Google Cloud,
 and allow the GhostTab frontend URL in Supabase redirects. These are different
-from GhostTab's Calendar/Docs/Gmail callback URLs. No provider configuration or
-live Google consent was performed. A declined/failed callback shows a generic
+from GhostTab's Calendar/Docs/Gmail callback URLs. The owner completed local Google
+provider configuration and reported successful sign-in. A declined/failed callback shows a generic
 retry message. The 8011 fixture supplies a simulated Google identity callback for
 browser testing; it never opens Google or proves real identity verification.
 

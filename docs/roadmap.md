@@ -1,5 +1,10 @@
 # Hackathon delivery roadmap
 
+**Owner-approved frontend showcase, October 30:** the Connections catalog lists
+49 tools across 14 categories. Six use existing connection flows; the remaining
+43 are planned previews only. This adds no live connector scope and planned cards
+must not be represented as working integrations in the demo. See [catalog](connector-catalog.md).
+
 **Teams checkpoint:** frontend/backend selected-chat workflow is mock/browser
 verified; live consent remains pending. Additional connectors are no longer the
 next build priority. Focus on model grounding quality, live two-service/account
