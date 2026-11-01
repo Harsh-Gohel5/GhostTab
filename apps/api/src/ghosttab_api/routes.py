@@ -11,6 +11,7 @@ from ghosttab_api.auth import Principal, current_user
 from ghosttab_api.contracts import DraftInput, EventInput, EvidenceInput, LifecycleInput, TaskInput
 from ghosttab_api.models import Budget, Connection, Evidence, EvidenceVersion, Job, Task
 from ghosttab_api.readiness import preparation_status
+from ghosttab_api.source_changes import source_changes
 from ghosttab_api.workspaces import (
     evidence_packet,
     job_view,
@@ -224,11 +225,14 @@ def workspace(task_id: str, request: Request, user: User):
                         "title": version.title,
                         "content": version.content,
                         "url": version.url,
+                        "observed_at": version.created_at,
                     }
                 )
+        evidence = evidence_packet(session, task.id)
         return {
             "task": task_view(session, task),
-            "evidence": evidence_packet(session, task.id),
+            "evidence": evidence,
+            "source_changes": source_changes(evidence, snapshot, citations),
             "snapshot": {
                 "id": snapshot.id,
                 "brief": snapshot.brief,

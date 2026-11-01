@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "check": "tsc --noEmit && eslint . && node --experimental-strip-types --test tests/briefExport.test.mjs tests/draftState.test.mjs tests/dates.test.mjs tests/preparationReadiness.test.mjs tests/readiness.test.mjs tests/authActions.test.mjs tests/slackLink.test.mjs tests/jiraLink.test.mjs tests/teamsLink.test.mjs tests/connectorCatalog.test.mjs",
+    "check": "tsc --noEmit && eslint . && node --experimental-strip-types --test tests/briefExport.test.mjs tests/draftState.test.mjs tests/dates.test.mjs tests/preparationReadiness.test.mjs tests/readiness.test.mjs tests/authActions.test.mjs tests/slackLink.test.mjs tests/jiraLink.test.mjs tests/teamsLink.test.mjs tests/connectorCatalog.test.mjs tests/sourceDiff.test.mjs tests/sourceChanges.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

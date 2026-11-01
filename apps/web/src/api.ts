@@ -52,9 +52,23 @@ const pointSchema = z.object({
   text: z.string(),
   citations: z.array(citationSchema),
 });
+export const sourceChangeSchema = z.object({
+  kind: z.enum(["updated", "added"]),
+  current: evidenceSchema,
+  previous: evidenceSchema.nullable(),
+  changed_fields: z.array(z.enum(["title", "content", "url"])),
+  claims_to_review: z.array(
+    z.object({
+      section: z.enum(["summary", "fact", "next_step"]),
+      text: z.string(),
+      quotes: z.array(z.string()),
+    }),
+  ),
+});
 export const workspaceSchema = z.object({
   task: taskSchema,
   evidence: z.array(evidenceSchema),
+  source_changes: z.array(sourceChangeSchema).default([]),
   snapshot: z
     .object({
       id: z.string(),
@@ -119,6 +133,7 @@ export type Config = z.infer<typeof configSchema>;
 export type Task = z.infer<typeof taskSchema>;
 export type Evidence = z.infer<typeof evidenceSchema>;
 export type Workspace = z.infer<typeof workspaceSchema>;
+export type SourceChange = z.infer<typeof sourceChangeSchema>;
 export type Point = z.infer<typeof pointSchema>;
 export type SourceInput = { title: string; content: string; url: string };
 export type GoogleProvider = "google_docs" | "gmail";

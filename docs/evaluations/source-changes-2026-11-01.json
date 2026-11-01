@@ -1,0 +1,288 @@
+{
+  "model": "muse-spark-1.3",
+  "prompt_version": "meeting-brief-v3",
+  "sources": "fictional Calendar/Docs representations; no connector reads",
+  "hold_usd": 0.2,
+  "cases": [
+    {
+      "case": "source_baseline",
+      "expectation": "Retain Calendar timing and checklist ownership; leave both missing owners unknown. Do not infer whole-handoff readiness from the pending approval.",
+      "status": "succeeded",
+      "error_code": null,
+      "latency_seconds": 7.46,
+      "estimated_cost_usd": 0.010578,
+      "usage": {
+        "provider_usage": {
+          "completion_tokens": 2171,
+          "prompt_tokens": 1081,
+          "total_tokens": 3252,
+          "completion_tokens_details": {
+            "reasoning_tokens": 1067
+          },
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "request_id": "chatcmpl-01a19875-3eb8-74d5-a912-bcfab9ce73e3",
+        "prompt_version": "meeting-brief-v3"
+      },
+      "brief": {
+        "summary": {
+          "text": "Fictional launch handoff is recorded for November 3, 2026 at noon America/Phoenix, with Maya owning the launch checklist, Lee approval due November 5, 2026 at 3 PM America/Phoenix, launch approval pending, and accessibility review owner unassigned.",
+          "citations": [
+            {
+              "evidence_id": "966e64c7-fabc-463d-b31c-9b8b3cb8a752",
+              "quote": "Meeting: fictional launch handoff on November 3, 2026 at noon America/Phoenix."
+            },
+            {
+              "evidence_id": "966e64c7-fabc-463d-b31c-9b8b3cb8a752",
+              "quote": "Launch approval is pending."
+            },
+            {
+              "evidence_id": "8e29522a-1960-40f4-9b36-9de625de1b6d",
+              "quote": "The accessibility review owner is unassigned."
+            }
+          ]
+        },
+        "facts": [
+          {
+            "text": "The fictional launch handoff meeting is recorded for November 3, 2026 at noon America/Phoenix.",
+            "citations": [
+              {
+                "evidence_id": "966e64c7-fabc-463d-b31c-9b8b3cb8a752",
+                "quote": "Meeting: fictional launch handoff on November 3, 2026 at noon America/Phoenix."
+              }
+            ]
+          },
+          {
+            "text": "Maya owns the launch checklist.",
+            "citations": [
+              {
+                "evidence_id": "966e64c7-fabc-463d-b31c-9b8b3cb8a752",
+                "quote": "Maya owns the launch checklist."
+              }
+            ]
+          },
+          {
+            "text": "Lee must approve the delivery plan by November 5, 2026 at 3 PM America/Phoenix.",
+            "citations": [
+              {
+                "evidence_id": "966e64c7-fabc-463d-b31c-9b8b3cb8a752",
+                "quote": "Lee must approve the delivery plan by November 5, 2026 at 3 PM America/Phoenix."
+              }
+            ]
+          },
+          {
+            "text": "Launch approval is pending.",
+            "citations": [
+              {
+                "evidence_id": "966e64c7-fabc-463d-b31c-9b8b3cb8a752",
+                "quote": "Launch approval is pending."
+              }
+            ]
+          },
+          {
+            "text": "The accessibility review owner is unassigned.",
+            "citations": [
+              {
+                "evidence_id": "8e29522a-1960-40f4-9b36-9de625de1b6d",
+                "quote": "The accessibility review owner is unassigned."
+              }
+            ]
+          },
+          {
+            "text": "The support contact is unassigned.",
+            "citations": [
+              {
+                "evidence_id": "8e29522a-1960-40f4-9b36-9de625de1b6d",
+                "quote": "The support contact is unassigned."
+              }
+            ]
+          }
+        ],
+        "next_steps": [
+          {
+            "text": "Proposed: Seek Lee's approval of the delivery plan by November 5, 2026 at 3 PM America/Phoenix.",
+            "citations": [
+              {
+                "evidence_id": "966e64c7-fabc-463d-b31c-9b8b3cb8a752",
+                "quote": "Lee must approve the delivery plan by November 5, 2026 at 3 PM America/Phoenix."
+              }
+            ]
+          },
+          {
+            "text": "Proposed: Coordinate with Maya on the launch checklist ahead of the handoff.",
+            "citations": [
+              {
+                "evidence_id": "966e64c7-fabc-463d-b31c-9b8b3cb8a752",
+                "quote": "Maya owns the launch checklist."
+              }
+            ]
+          },
+          {
+            "text": "Proposed: Identify owners for the accessibility review and support contact.",
+            "citations": [
+              {
+                "evidence_id": "8e29522a-1960-40f4-9b36-9de625de1b6d",
+                "quote": "The accessibility review owner is unassigned."
+              },
+              {
+                "evidence_id": "8e29522a-1960-40f4-9b36-9de625de1b6d",
+                "quote": "The support contact is unassigned."
+              }
+            ]
+          }
+        ],
+        "unknowns": [
+          "Owner for the accessibility review is not recorded beyond unassigned.",
+          "Support contact is not recorded beyond unassigned.",
+          "Outcome of Lee's delivery plan approval is not recorded.",
+          "Outcome or decision-maker for pending launch approval is not recorded beyond pending status."
+        ],
+        "draft": "Subject: Draft - Fictional launch handoff on November 3, 2026 at noon America/Phoenix\n\nHi team,\n\nSharing a draft for the fictional launch handoff scheduled for November 3, 2026 at noon America/Phoenix.\n\nSuggested agenda:\n- Review launch checklist with Maya\n- Review delivery plan pending approval from Lee due November 5, 2026 at 3 PM America/Phoenix\n- Confirm owners for accessibility review and support contact, currently recorded as unassigned\n- Note launch approval is recorded as pending\n\nPlease let me know if you would like to add items. This draft is unsent and for preparation only."
+      }
+    },
+    {
+      "case": "source_updated",
+      "expectation": "Cite the Doc for Nina's accessibility ownership and Calendar for timing/approval. Do not keep the accessibility owner unknown, assign Nina support, or claim completion.",
+      "status": "succeeded",
+      "error_code": null,
+      "latency_seconds": 6.32,
+      "estimated_cost_usd": 0.009366,
+      "usage": {
+        "provider_usage": {
+          "completion_tokens": 1886,
+          "prompt_tokens": 1080,
+          "total_tokens": 2966,
+          "completion_tokens_details": {
+            "reasoning_tokens": 680
+          },
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "request_id": "chatcmpl-01a19875-5765-76cc-b12b-7130d9d94727",
+        "prompt_version": "meeting-brief-v3"
+      },
+      "brief": {
+        "summary": {
+          "text": "Fictional launch handoff scheduled for November 3, 2026 at noon America/Phoenix, with recorded owners for launch checklist and accessibility review, a pending delivery plan approval, pending launch approval, and unassigned support contact.",
+          "citations": [
+            {
+              "evidence_id": "c0a77e6d-f7c7-45a1-a3a9-29682b2bdcfa",
+              "quote": "fictional launch handoff on November 3, 2026 at noon America/Phoenix"
+            },
+            {
+              "evidence_id": "c0a77e6d-f7c7-45a1-a3a9-29682b2bdcfa",
+              "quote": "Launch approval is pending."
+            },
+            {
+              "evidence_id": "22558812-4a66-423a-9e3d-f6735624cd14",
+              "quote": "The support contact is unassigned."
+            }
+          ]
+        },
+        "facts": [
+          {
+            "text": "Fictional launch handoff is scheduled for November 3, 2026 at noon America/Phoenix.",
+            "citations": [
+              {
+                "evidence_id": "c0a77e6d-f7c7-45a1-a3a9-29682b2bdcfa",
+                "quote": "fictional launch handoff on November 3, 2026 at noon America/Phoenix"
+              }
+            ]
+          },
+          {
+            "text": "Maya owns the launch checklist.",
+            "citations": [
+              {
+                "evidence_id": "c0a77e6d-f7c7-45a1-a3a9-29682b2bdcfa",
+                "quote": "Maya owns the launch checklist."
+              }
+            ]
+          },
+          {
+            "text": "Lee must approve the delivery plan by November 5, 2026 at 3 PM America/Phoenix.",
+            "citations": [
+              {
+                "evidence_id": "c0a77e6d-f7c7-45a1-a3a9-29682b2bdcfa",
+                "quote": "Lee must approve the delivery plan by November 5, 2026 at 3 PM America/Phoenix."
+              }
+            ]
+          },
+          {
+            "text": "Launch approval is pending.",
+            "citations": [
+              {
+                "evidence_id": "c0a77e6d-f7c7-45a1-a3a9-29682b2bdcfa",
+                "quote": "Launch approval is pending."
+              }
+            ]
+          },
+          {
+            "text": "Nina owns the accessibility review.",
+            "citations": [
+              {
+                "evidence_id": "22558812-4a66-423a-9e3d-f6735624cd14",
+                "quote": "Nina owns the accessibility review."
+              }
+            ]
+          },
+          {
+            "text": "The support contact is unassigned.",
+            "citations": [
+              {
+                "evidence_id": "22558812-4a66-423a-9e3d-f6735624cd14",
+                "quote": "The support contact is unassigned."
+              }
+            ]
+          }
+        ],
+        "next_steps": [
+          {
+            "text": "Plan for Lee to approve the delivery plan by November 5, 2026 at 3 PM America/Phoenix.",
+            "citations": [
+              {
+                "evidence_id": "c0a77e6d-f7c7-45a1-a3a9-29682b2bdcfa",
+                "quote": "Lee must approve the delivery plan by November 5, 2026 at 3 PM America/Phoenix."
+              }
+            ]
+          },
+          {
+            "text": "Plan for Maya to address the launch checklist at the handoff.",
+            "citations": [
+              {
+                "evidence_id": "c0a77e6d-f7c7-45a1-a3a9-29682b2bdcfa",
+                "quote": "Maya owns the launch checklist."
+              }
+            ]
+          },
+          {
+            "text": "Plan for Nina to address the accessibility review.",
+            "citations": [
+              {
+                "evidence_id": "22558812-4a66-423a-9e3d-f6735624cd14",
+                "quote": "Nina owns the accessibility review."
+              }
+            ]
+          }
+        ],
+        "unknowns": [
+          "Who will be assigned as support contact is not stated.",
+          "Criteria or owner for resolving pending launch approval beyond the delivery plan approval is not stated.",
+          "Status of Maya's launch checklist work is not stated.",
+          "Status of Nina's accessibility review work is not stated."
+        ],
+        "draft": "Subject: Suggested agenda for fictional launch handoff on November 3, 2026 at noon America/Phoenix\n\nHi team,\n\nProposed draft for the fictional launch handoff — unsent, for review:\n\nSuggested agenda:\n1. Launch checklist (owner: Maya)\n2. Delivery plan approval due by November 5, 2026 at 3 PM America/Phoenix (approver: Lee)\n3. Accessibility review (owner: Nina)\n4. Support contact — currently unassigned, needs decision\n5. Launch approval status — currently pending\n\nPlease confirm if this agenda works or suggest changes.\n\nThanks"
+      }
+    }
+  ],
+  "semantic_assessment": "requires human review",
+  "estimated_total_usd": 0.019944,
+  "coding_agent_review": {
+    "scope": "One sample per case. Facts/ownership update inspected; independent human review pending.",
+    "baseline": "Calendar timing retained; accessibility and support remain unassigned.",
+    "updated": "Nina accessibility ownership is cited to the document; Calendar timing retained; support remains unassigned; no completion claim.",
+    "limitation": "Summaries paraphrase more assertions than their selected quotes support directly. Mechanical quote validity is not semantic completeness."
+  }
+}

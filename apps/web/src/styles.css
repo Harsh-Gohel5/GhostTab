@@ -1600,6 +1600,71 @@ label textarea {
 .connector-catalog {
   margin-bottom: 32px;
 }
+
+.source-change {
+  border-top: 1px solid var(--line);
+  padding: 18px 0;
+}
+.source-change > summary {
+  cursor: pointer;
+  color: var(--accent);
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+.source-version-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.source-version-grid > section {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  background: var(--surface);
+}
+.source-changes pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.7;
+  max-height: 320px;
+  overflow: auto;
+}
+.source-link-text {
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  color: var(--muted);
+}
+.source-diff span {
+  display: block;
+  white-space: pre-wrap;
+}
+.diff-added {
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+.diff-removed {
+  background: var(--accent-soft);
+  color: var(--accent);
+  text-decoration: line-through;
+}
+.changed-claims {
+  padding-left: 20px;
+}
+.changed-claims li {
+  margin: 16px 0;
+}
+.source-changes blockquote {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .source-version-grid {
+    grid-template-columns: 1fr;
+  }
+}
 .catalog-heading,
 .catalog-detail-heading,
 .catalog-card-heading {

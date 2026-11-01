@@ -162,9 +162,14 @@ def test_selected_import_refresh_citations_and_disconnect(system, monkeypatch):
     updated = system.request("GET", f"/tasks/{tid}/workspace").json()
     assert updated["task"]["freshness"] == "stale"
     assert updated["snapshot"] == old
+    change = updated["source_changes"][0]
+    assert change["kind"] == "updated" and change["current"]["id"] == eid
+    assert change["previous"]["title"] != change["current"]["title"]
+    assert change["changed_fields"] == ["title"]
     assert system.request("DELETE", "/integrations/google/google_docs").status_code == 204
     blocked = system.request("GET", f"/tasks/{tid}/workspace").json()
     assert blocked["snapshot"] is None
+    assert blocked["source_changes"] == []
     assert [x["origin"] for x in blocked["evidence"]] == ["gmail"]
     assert system.request("GET", "/integrations/google/gmail").json()["connected"]
     assert seen[0].url.host == "docs.googleapis.com"
