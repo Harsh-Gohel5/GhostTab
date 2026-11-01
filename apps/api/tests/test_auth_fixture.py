@@ -63,3 +63,26 @@ def test_failure_controls_are_bounded_and_recoverable(client):
         ).status_code
         == 400
     )
+
+
+def test_fixture_preparation_uses_fake_model_for_signed_in_draft_checks(client, monkeypatch):
+    from ghosttab_api.meta import MetaClient
+
+    def forbidden(*_):
+        pytest.fail("Fixture must never use a live model client")
+
+    monkeypatch.setattr(MetaClient, "complete", forbidden)
+    account = signin(client, "demo@example.test")
+    headers = {"Authorization": "Bearer " + account["access_token"]}
+    task = client.post(
+        "/api/tasks", headers=headers, json={"title": "Draft sample", "goal": "Check sign-out"}
+    ).json()
+    tid = task["id"]
+    client.post(
+        f"/api/tasks/{tid}/evidence",
+        headers=headers,
+        json={"title": "Fictional note", "content": "Review the fictional plan."},
+    )
+    assert client.post(f"/api/tasks/{tid}/prepare", headers=headers).status_code == 202
+    snapshot = client.get(f"/api/tasks/{tid}/workspace", headers=headers).json()["snapshot"]
+    assert "Synthetic draft" in snapshot["draft"]

@@ -1,5 +1,10 @@
 # GhostTab
 
+**November 1 readiness pass:** isolated sign-out/session/account checks and
+Calendar replacement-grant recovery are documented in
+[release readiness](docs/release-readiness.md). Real-provider expiry/reconnection
+and final live-account isolation remain release gates; the saved demo is preserved.
+
 **October 31 checkpoint:** Calendar and Google Docs are connected in the owner's
 signed-in account. The owner completed the two-source preparation and reported
 the Docs change/regeneration test done. Screenshots confirm the generated brief;

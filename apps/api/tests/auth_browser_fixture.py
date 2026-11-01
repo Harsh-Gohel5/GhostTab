@@ -14,6 +14,7 @@ from typing import Literal
 
 import jwt
 import uvicorn
+from connector_samples import SampleModel
 from fastapi import HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
@@ -25,6 +26,8 @@ from ghosttab_api.config import Settings
 from ghosttab_api.database import make_engine, sessions
 from ghosttab_api.main import create_app
 from ghosttab_api.models import Base, Budget
+from ghosttab_api.readiness import touch_worker
+from ghosttab_api.worker import run_once
 
 
 def create_auth_fixture(folder):
@@ -33,6 +36,8 @@ def create_auth_fixture(folder):
         _env_file=None,
         environment="test",
         synthetic_demo=True,
+        allow_model_requests=True,
+        model_api_key="synthetic-fixture-only",
         database_url=f"sqlite:///{Path(folder).as_posix()}/auth.db",
     ).model_copy(
         update={
@@ -87,7 +92,11 @@ def create_auth_fixture(folder):
 
     @app.middleware("http")
     async def delayed_tasks(request, call_next):
+        touch_worker(factory, "synthetic-auth-fixture")
         response = await call_next(request)
+        if request.method == "POST" and request.url.path.endswith("/prepare"):
+            # Explicit fake client: the fixture never submits inference.
+            run_once(factory, settings, SampleModel())
         if request.url.path == "/api/tasks":
             await asyncio.sleep(state["tasks_delay_ms"] / 1000)
         return response

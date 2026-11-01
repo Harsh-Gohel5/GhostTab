@@ -16,6 +16,11 @@ The fixture-only `POST /synthetic/scenario` accepts `logout_failure` (boolean),
 Omitted values reset to defaults. These controls exist only in the disposable
 fixture; never add them to the normal API. Refresh tokens identify their owner.
 The fixture does not model provider-side access-token revocation after logout.
+Preparation in this fixture uses an explicit fake model, allowing signed-in draft
+checks without an inference key or live request. The normal Meta adapter is never
+used. To run the optional actual-SDK integration check while the fixture runs:
+`node --experimental-strip-types --test --test-timeout=15000 apps/web/tests/sessionFixture.integration.mjs`.
+The script's session storage is in memory and its destination is fixed to port 8011.
 
 Fixture tests verify two-owner task isolation and bounded, recoverable failure
 controls. Browser sign-out, session restoration, account-switch races and live
@@ -45,3 +50,36 @@ transitions; all 47 frontend tests, type/lint checks and production build passed
 The disposable browser rehearsal verified reload restoration, B seeing no A
 workspace, and sign-out propagation across two tabs. These checks use the actual
 Supabase client against the fixture, not live Supabase accounts.
+
+## Final isolated recovery evidence
+
+- Browser: unsaved-draft sign-out opens confirmation; Keep editing preserves text
+  and session; Discard and leave proceeds. Injected logout 503 displays the local
+  sign-out warning correctly. A fictional screenshot is saved only under ignored
+  `.ghosttab/screenshots/readiness-signout.png`.
+- Actual SDK: rejected proactive refresh preserves a still-valid session; rejected
+  refresh of expired saved-session metadata clears it. The expired metadata lives
+  only in test-owned memory. Partial logout returns the safe local warning.
+- Docs: transient failure preserves the saved brief; resource denial blocks its
+  evidence; rejected token refresh removes the grant. Reconnect alone restores
+  neither removed evidence nor its brief. Explicit reimport and fake preparation
+  produce a new current snapshot, preserving unrelated manual notes.
+- The SDK integration test initially assumed every refresh rejection cleared a
+  session. SDK source and the failing trial showed the valid-token distinction;
+  the expectation was corrected. A Docs test likewise distinguished resource
+  denial from account-level grant revocation. No application change was made to
+  force those incorrect expectations.
+
+## Remaining owner-run release gates
+
+Final local results: 47 frontend tests, TypeScript/ESLint, 142 API tests,
+Ruff lint/format and production build passed. The opt-in SDK integration check
+also passed. Commands had 25–90 second process deadlines; no command exceeded
+its deadline. Existing bundle/Alembic warnings remain; the new test fixture also
+exposes a Starlette TestClient deprecation warning. No dependency was added.
+
+These isolated checks do not establish real-provider expiry/reconnection behavior
+or final two-live-account browser isolation. Use disposable test accounts/resources
+for those checks; do not revoke the working demo's grants. Existing owner-confirmed
+password recovery need not be repeated. Final two-source citation capture, video,
+judge access and public email delivery remain separate delivery work.
