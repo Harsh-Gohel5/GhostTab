@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { startGoogleSignIn, submitAuth } from "../src/authActions.ts";
+import {
+  finishPasswordRecovery,
+  startGoogleSignIn,
+  submitAuth,
+} from "../src/authActions.ts";
 
 const values = {
   email: " demo@example.test ",
@@ -9,6 +13,35 @@ const values = {
   name: " Fictional User ",
 };
 const redirect = "http://127.0.0.1:5173/";
+
+test("recovery completion ends only this browser session before returning to sign in", async () => {
+  let options;
+  await finishPasswordRecovery({
+    signOut: async (input) => {
+      options = input;
+      return { error: null };
+    },
+  });
+  assert.deepEqual(options, { scope: "local" });
+});
+
+test("recovery sign-out errors stay retryable and do not expose provider details", async () => {
+  for (const signOut of [
+    async () => ({ error: { message: "private-provider-detail" } }),
+    async () => {
+      throw new Error("private-network-detail");
+    },
+  ]) {
+    await assert.rejects(finishPasswordRecovery({ signOut }), (error) => {
+      assert.match(
+        error.message,
+        /Password updated.*Retry returning to sign in/,
+      );
+      assert.doesNotMatch(error.message, /private-/);
+      return true;
+    });
+  }
+});
 
 test("Google login requests identity scopes only with the application callback", async () => {
   let input;

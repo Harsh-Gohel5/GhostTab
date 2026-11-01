@@ -1,5 +1,13 @@
 # Account access
 
+November 1 recovery refinement: after a successful password update, GhostTab ends
+the recovery browser's Supabase session (`scope: local`) and returns to email
+sign-in with a success message. There is no direct workspace continuation. A
+failed sign-out offers a retry without resubmitting the password update. Other
+browser/device sessions are not globally revoked by this action. The owner
+confirmed the earlier live recovery/update flow; this new return-to-sign-in
+behavior still needs owner verification after the fix.
+
 ## Google sign-in availability and setup
 
 The account page checks `/api/auth/providers` against Supabase's public Auth

@@ -37,8 +37,10 @@ roadmap without claiming those integrations work.
 
 Google identity sign-in and email signup/confirmation/sign-in have been verified
 by the owner against the configured Supabase project. Signed-in Calendar/workspace
-and preparation actions have now been exercised through the UI. Recovery/password
-update and final account-isolation rehearsal remain pending.
+and preparation actions have now been exercised through the UI. The owner also
+confirmed recovery/password update. A new refinement signs out the recovery
+browser session and returns to sign-in; that completion behavior and final live
+account-isolation rehearsal remain to be verified by the owner.
 Slack's public-thread OAuth/import/refresh/disconnect flow is
 implemented and mock-tested, with live installation deferred. See
 [Slack setup and limits](docs/slack-source.md). Jira now has a read-only OAuth/site/issue import, refresh and disconnect flow;
