@@ -94,6 +94,7 @@ function SessionGate({ config }: { config: Config }) {
     [config.auth_mode, config.supabase_url, config.supabase_publishable_key],
   );
   const [session, setSession] = useState<Session | null>(null);
+  const [authNotice, setAuthNotice] = useState("");
   const [ready, setReady] = useState(!client);
   const [authError, setAuthError] = useState(() => {
     const query = new URLSearchParams(location.search);
@@ -134,7 +135,10 @@ function SessionGate({ config }: { config: Config }) {
     const { data } = client.auth.onAuthStateChange((event, value) => {
       if (!active) return;
       observedAuthEvent = true;
-      if (value) setAuthError("");
+      if (value) {
+        setAuthError("");
+        setAuthNotice("");
+      }
       if (event === "PASSWORD_RECOVERY") setRecovering(true);
       if (event === "SIGNED_OUT") setRecovering(false);
       if (previousUser !== value?.user.id) {
@@ -189,6 +193,7 @@ function SessionGate({ config }: { config: Config }) {
         auth={client.auth}
         recovery={recovering && !!session}
         initialError={authError}
+        initialNotice={authNotice}
         googleState={
           providers.isError
             ? "unavailable"
@@ -197,7 +202,10 @@ function SessionGate({ config }: { config: Config }) {
         onCheckGoogle={() => void providers.refetch()}
         checkingGoogle={providers.isFetching}
         onRecovered={() => {
+          setSession(null);
           setRecovering(false);
+          setAuthError("");
+          setAuthNotice("Password updated. Sign in with your new password.");
           history.replaceState(null, "", location.pathname);
         }}
       />

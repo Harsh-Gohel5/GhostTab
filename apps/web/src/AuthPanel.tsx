@@ -2,13 +2,18 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { GhostMark } from "./GhostMark";
 import { ThemeToggle } from "./ThemeToggle";
-import { startGoogleSignIn, submitAuth } from "./authActions";
+import {
+  finishPasswordRecovery,
+  startGoogleSignIn,
+  submitAuth,
+} from "./authActions";
 import type { AuthMethods, AuthMode } from "./authActions";
 
 export function AuthPanel({
   auth,
   recovery,
   initialError,
+  initialNotice = "",
   onRecovered,
   synthetic,
   googleState,
@@ -18,6 +23,7 @@ export function AuthPanel({
   auth: AuthMethods;
   recovery: boolean;
   initialError: string;
+  initialNotice?: string;
   onRecovered: () => void;
   synthetic: boolean;
   googleState: "checking" | "enabled" | "disabled" | "unavailable";
@@ -75,7 +81,11 @@ export function AuthPanel({
       );
       setMessage(result);
       form.reset();
-      if (effectiveMode === "update") setUpdated(true);
+      if (effectiveMode === "update") {
+        setUpdated(true);
+        await finishPasswordRecovery(auth);
+        onRecovered();
+      }
     } catch (reason) {
       setError(
         reason instanceof Error
@@ -321,9 +331,9 @@ export function AuthPanel({
             </form>
           </details>
         )}
-        {message && (
+        {(message || initialNotice) && (
           <p className="notice" role="status">
-            {message}
+            {message || initialNotice}
           </p>
         )}
         {error && (
@@ -332,8 +342,27 @@ export function AuthPanel({
           </p>
         )}
         {updated && (
-          <button className="primary" onClick={onRecovered}>
-            Continue to workspace
+          <button
+            className="primary"
+            disabled={busy}
+            onClick={async () => {
+              setBusy(true);
+              setError("");
+              try {
+                await finishPasswordRecovery(auth);
+                onRecovered();
+              } catch (reason) {
+                setError(
+                  reason instanceof Error
+                    ? reason.message
+                    : "Sign out could not finish. Retry returning to sign in.",
+                );
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            {busy ? "Returning to sign in…" : "Retry return to sign in"}
           </button>
         )}
       </section>

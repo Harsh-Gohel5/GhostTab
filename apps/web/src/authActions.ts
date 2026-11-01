@@ -8,7 +8,21 @@ export type AuthMethods = Pick<
   | "resend"
   | "updateUser"
   | "signInWithOAuth"
+  | "signOut"
 >;
+
+export async function finishPasswordRecovery(
+  auth: Pick<AuthMethods, "signOut">,
+) {
+  try {
+    const { error } = await auth.signOut({ scope: "local" });
+    if (error) throw error;
+  } catch {
+    throw new Error(
+      "Password updated, but sign out could not finish. Retry returning to sign in.",
+    );
+  }
+}
 
 export async function startGoogleSignIn(auth: AuthMethods, redirect: string) {
   const { error } = await auth.signInWithOAuth({
@@ -83,5 +97,5 @@ export async function submitAuth(
     throw new Error(
       "Password could not be updated. Open a fresh recovery link and try again.",
     );
-  return "Password updated. Continue to your workspace.";
+  return "Password updated. Returning to sign in…";
 }
