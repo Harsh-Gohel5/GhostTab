@@ -25,6 +25,11 @@ services, support, and other knowledge work.
 
 ## Current status
 
+Workspaces now show **What changed since this brief** after saved context changes:
+previous/current source versions, bounded text differences and saved claims whose
+citations point to that source. Updating remains an explicit Meta preparation
+action with the existing draft/budget protections. See [source-change review](docs/source-changes.md).
+
 Connections now includes a searchable [49-tool catalog](docs/connector-catalog.md).
 Six entries open existing connection flows; 43 are clearly labeled planned
 previews with no account access or Connect action. This showcases the broader

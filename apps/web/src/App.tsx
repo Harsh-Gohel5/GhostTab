@@ -9,6 +9,7 @@ import { ReadinessOverview } from "./ReadinessOverview";
 import { WorkspaceList } from "./WorkspaceList";
 import { GoogleConnection, GoogleSourceImport } from "./GoogleSources";
 import { ConnectorCatalog } from "./ConnectorCatalog";
+import { SourceChanges } from "./SourceChanges";
 import { TaskLifecycle } from "./TaskLifecycle";
 import { ThemeToggle } from "./ThemeToggle";
 import { GhostMark } from "./GhostMark";
@@ -1107,6 +1108,20 @@ function WorkspaceView({
           source, or updating the brief.
         </p>
       )}
+      <SourceChanges
+        changes={data.source_changes}
+        onUpdate={() => prepare.mutate()}
+        busy={busy || prepare.isPending}
+        disabled={
+          busy ||
+          prepare.isPending ||
+          draftUnsaved ||
+          !serviceReady ||
+          !config.model_configured ||
+          !data.evidence.length ||
+          exhausted
+        }
+      />
       <GoogleSourceImport
         api={api}
         owner={owner}
