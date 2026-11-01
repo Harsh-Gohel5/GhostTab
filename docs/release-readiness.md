@@ -28,3 +28,20 @@ disconnecting a newly connected Calendar grant. Automatic disconnect now checks
 the failed request's grant identity under the connection lock. Explicit user
 disconnect remains unconditional. Targeted Calendar/OAuth checks passed (5 tests),
 including preservation of newly imported evidence after a replacement grant.
+
+## Session transition checks
+
+The installed Supabase SDK clears local state even when remote logout returns
+503. The old generic retry message was misleading on the resulting sign-in page.
+GhostTab now distinguishes local sign-out from confirmed remote sign-out, without
+claiming other sessions ended. A retained/unknown session still gets retry guidance.
+
+Session restoration now has a ten-second UI deadline. Late restoration cannot
+override sign-out or a newer identity, and unmounted subscriptions cannot update
+state. API credential lookup is bound to the workspace's account: an old action
+cannot obtain the newly signed-in user's token. Five focused tests cover these
+transitions; all 47 frontend tests, type/lint checks and production build passed.
+
+The disposable browser rehearsal verified reload restoration, B seeing no A
+workspace, and sign-out propagation across two tabs. These checks use the actual
+Supabase client against the fixture, not live Supabase accounts.
