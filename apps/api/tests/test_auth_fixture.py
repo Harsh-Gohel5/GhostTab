@@ -7,7 +7,8 @@ from fastapi.testclient import TestClient
 
 @pytest.fixture
 def client(tmp_path):
-    app = create_auth_fixture(tmp_path)
+    # API CI runs independently of the frontend build job.
+    app = create_auth_fixture(tmp_path, dist=tmp_path)
     with TestClient(app) as client:
         yield client
     app.state.sessions.kw["bind"].dispose()

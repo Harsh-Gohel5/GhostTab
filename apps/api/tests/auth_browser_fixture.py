@@ -30,7 +30,7 @@ from ghosttab_api.readiness import touch_worker
 from ghosttab_api.worker import run_once
 
 
-def create_auth_fixture(folder):
+def create_auth_fixture(folder, *, dist=None):
     # HTTP is allowed only in this isolated fixture. Real settings require HTTPS.
     settings = Settings(
         _env_file=None,
@@ -211,7 +211,7 @@ def create_auth_fixture(folder):
             + '">Open synthetic recovery link</a>'
         )
 
-    dist = Path(__file__).resolve().parents[3] / "apps/web/dist"
+    dist = dist if dist is not None else Path(__file__).resolve().parents[3] / "apps/web/dist"
     app.mount("/", StaticFiles(directory=dist, html=True))
     return app
 
