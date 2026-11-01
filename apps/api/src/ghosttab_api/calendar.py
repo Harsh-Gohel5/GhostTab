@@ -136,13 +136,16 @@ def finish_connection(factory, settings, state, cookie, code, error):
         )
 
 
-def disconnect(factory, owner_id):
+def disconnect(factory, owner_id, *, expected=None):
     with factory.begin() as session:
         session.execute(
             update(Connection)
             .where(Connection.owner_id == owner_id)
             .values(updated_at=Connection.updated_at)
         )
+        current = session.get(Connection, owner_id, populate_existing=True)
+        if expected is not None and (not current or current.grant_id != expected):
+            return
         # Block derived content and queued work immediately when access is removed.
         tasks = session.scalars(
             select(Task)
@@ -188,7 +191,7 @@ def calendar_request(factory, settings, owner_id, event_id=None):
             )
         except HTTPException as exc:
             if exc.status_code == 401:
-                disconnect(factory, owner_id)
+                disconnect(factory, owner_id, expected=grant_id)
             raise
         fresh["refresh_token"] = fresh["refresh_token"] or tokens["refresh_token"]
         fresh["scope"] = fresh["scope"] or tokens["scope"]
@@ -239,7 +242,7 @@ def calendar_request(factory, settings, owner_id, event_id=None):
             ):
                 raise HTTPException(503, "Calendar rate limit reached; wait before checking again")
         if response.status_code in (401, 403):
-            disconnect(factory, owner_id)
+            disconnect(factory, owner_id, expected=grant_id)
             raise HTTPException(401, "Calendar access is unavailable; reconnect Google Calendar")
         if response.status_code in (404, 410):
             return {"status": "cancelled", "id": event_id}, grant_id

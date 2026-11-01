@@ -20,3 +20,11 @@ The fixture does not model provider-side access-token revocation after logout.
 Fixture tests verify two-owner task isolation and bounded, recoverable failure
 controls. Browser sign-out, session restoration, account-switch races and live
 Calendar/Docs recovery remain separate acceptance checks.
+
+## Calendar replacement-grant correction
+
+A regression reproduced both an old refresh rejection and an old read rejection
+disconnecting a newly connected Calendar grant. Automatic disconnect now checks
+the failed request's grant identity under the connection lock. Explicit user
+disconnect remains unconditional. Targeted Calendar/OAuth checks passed (5 tests),
+including preservation of newly imported evidence after a replacement grant.
