@@ -14,6 +14,7 @@ import { TaskLifecycle } from "./TaskLifecycle";
 import { ThemeToggle } from "./ThemeToggle";
 import { GhostMark } from "./GhostMark";
 import { AuthPanel } from "./AuthPanel";
+import { watchSession, accountToken, signOutAccount } from "./accountSession";
 import { SlackConnection, SlackImport } from "./SlackSource";
 import { JiraConnection, JiraImport } from "./JiraSource";
 import { TeamsConnection, TeamsImport } from "./TeamsSource";
@@ -109,68 +110,45 @@ function SessionGate({ config }: { config: Config }) {
   const queryClient = useQueryClient();
   useEffect(() => {
     if (!client) return;
-    let active = true;
-    let observedAuthEvent = false;
     let previousUser: string | undefined;
-    void client.auth
-      .getSession()
-      .then(({ data, error }) => {
-        if (active && !observedAuthEvent) {
-          setSession(data.session);
-          setReady(true);
-          if (error)
-            setAuthError(
-              "Your session could not be restored. Please sign in again.",
-            );
+    return watchSession(
+      client.auth,
+      (value, event) => {
+        if (value) {
+          setAuthError("");
+          setAuthNotice("");
         }
-      })
-      .catch(() => {
-        if (active && !observedAuthEvent) {
-          setReady(true);
-          setAuthError(
-            "Your session could not be restored. Please sign in again.",
-          );
+        if (event === "PASSWORD_RECOVERY") setRecovering(true);
+        if (event === "SIGNED_OUT") setRecovering(false);
+        if (previousUser !== value?.user.id) {
+          void queryClient.cancelQueries({
+            predicate: (q) => q.queryKey[0] !== "config",
+          });
+          queryClient.removeQueries({
+            predicate: (q) => q.queryKey[0] !== "config",
+          });
+          previousUser = value?.user.id;
         }
-      });
-    const { data } = client.auth.onAuthStateChange((event, value) => {
-      if (!active) return;
-      observedAuthEvent = true;
-      if (value) {
-        setAuthError("");
-        setAuthNotice("");
-      }
-      if (event === "PASSWORD_RECOVERY") setRecovering(true);
-      if (event === "SIGNED_OUT") setRecovering(false);
-      if (previousUser !== value?.user.id) {
-        void queryClient.cancelQueries({
-          predicate: (query) => query.queryKey[0] !== "config",
-        });
-        queryClient.removeQueries({
-          predicate: (query) => query.queryKey[0] !== "config",
-        });
-        previousUser = value?.user.id;
-      }
-      setSession(value);
-      setReady(true);
-    });
-    return () => {
-      active = false;
-      data.subscription.unsubscribe();
-    };
+        setSession(value);
+        setReady(true);
+      },
+      () => {
+        setSession(null);
+        setReady(true);
+        setAuthError(
+          "Your session could not be restored. Please sign in again.",
+        );
+      },
+    );
   }, [client, queryClient]);
   const api = useMemo(
     () =>
       new Api(
         client
-          ? async () => {
-              const { data, error } = await client.auth.getSession();
-              if (error || !data.session)
-                throw new Error("Please sign in again.");
-              return data.session.access_token;
-            }
+          ? () => accountToken(client.auth, session?.user.id ?? "")
           : undefined,
       ),
-    [client],
+    [client, session?.user.id],
   );
   const providers = useQuery({
     queryKey: ["auth-providers", config.supabase_url],
@@ -228,12 +206,8 @@ function SessionGate({ config }: { config: Config }) {
         client
           ? () => {
               setAuthError("");
-              void client.auth
-                .signOut()
-                .then(({ error }) => {
-                  if (error)
-                    setAuthError("Sign out could not finish. Please retry.");
-                })
+              void signOutAccount(client.auth)
+                .then((notice) => setAuthNotice(notice))
                 .catch(() =>
                   setAuthError("Sign out could not finish. Please retry."),
                 );

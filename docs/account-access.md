@@ -1,5 +1,13 @@
 # Account access
 
+November 1 readiness follow-up: session restoration has a ten-second UI deadline,
+request credentials are bound to the active workspace account, and partial logout
+distinguishes local sign-out from remote confirmation. Disposable two-account,
+cross-tab, unsaved-draft and SDK checks are recorded in
+[release readiness](release-readiness.md). Final live-account isolation remains
+pending. The ignored November 1 release summary records owner confirmation of the
+recovery return-to-sign-in behavior; older pending statements below are historical.
+
 November 1 recovery refinement: after a successful password update, GhostTab ends
 the recovery browser's Supabase session (`scope: local`) and returns to email
 sign-in with a success message. There is no direct workspace continuation. A
