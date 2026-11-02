@@ -1,10 +1,15 @@
 # Frontend integration catalog
 
+November 1 UI refinement: all 49 tools appear as compact logo tiles, with local
+SVG assets and per-file provenance in `apps/web/public/connectors/SOURCES.json`.
+Selecting a tile opens its existing connection controls in a modal dialog.
+The gallery adds no backend endpoints, credentials, permissions or dependencies.
+
 October 31: catalog [PR #12](https://github.com/Harsh-Gohel5/GhostTab/pull/12) is
 merged as `c8e360a`; required web/API CI passed, including PostgreSQL tests and
 migrations. Owner screenshots now show the dark catalog and Google Docs Connected,
-and the owner completed connection management through the normal app. Full catalog
-filter/focus/responsive interaction verification remains pending. See
+and the owner completed connection management through the normal app. At that
+checkpoint, filter/focus/responsive verification remained pending. See
 [current status](current-status.md) for the later live workflow.
 
 The Connections page includes 49 tools across 14 categories from the owner's
@@ -12,10 +17,10 @@ broader product roadmap. The canonical list is `apps/web/src/catalogData.ts`.
 Tools can belong to several categories but render only once in a result list.
 
 Six entries map to existing connection flows: Google Calendar, Google Docs,
-Gmail, Slack, Jira and Microsoft Teams. Cards read the existing owner-scoped
+Gmail, Slack, Jira and Microsoft Teams. Tiles read the existing owner-scoped
 connection status queries and display Connected, Ready to connect, Setup required,
 Checking status or Status unavailable. These labels do not establish provider
-health or live verification. Manage opens the original provider controls.
+health or live verification. Selecting a tile opens the original provider controls.
 
 The other 43 entries are **Planned** previews. Their detail view describes potential
 context and explicitly states that connection/import is unavailable. They have no
@@ -24,10 +29,12 @@ data. The catalog does not implement those integrations or promise delivery date
 It is a frontend showcase, not evidence for a live-integration demonstration.
 
 Search combines tool names, context descriptions and categories. Category and
-availability filters combine; the grid initially shows 12 matching entries and
-can reveal more. Existing connection options sort first. Empty results have a clear
-reset action. Selection moves keyboard focus to details, and closing restores
-focus to the originating card. Shared semantic tokens support both themes.
+availability filters combine. Quick filters show all tools, the six connection
+options, connected tools or planned previews. All matching entries render without
+a show-more step; existing connection options sort first. Empty results have a
+clear reset action. The native modal traps keyboard focus, supports Escape, locks
+background scrolling and restores focus to the originating tile on close.
+Shared semantic tokens support both themes; narrow screens use three tile columns.
 
 No backend endpoints, permissions, model calls or database migrations were added.
 Provider-specific import flows inside workspaces remain unchanged. Existing
@@ -40,6 +47,16 @@ ESLint, backend lint/format checks and 130 API tests. `npm run build` passed wit
 the existing large-bundle warning. The frontend checks/build passed again after
 the provider-panel reset correction. PostgreSQL verification runs in PR CI.
 
+November 1 local verification: required checks passed 50 frontend tests and 142
+API tests; the production build passed with the existing large-bundle warning.
+After the keyboard-focus correction, frontend checks and the build passed again.
+Browser verification used only the existing disposable synthetic fixture on 8010:
+all 49 logos loaded; all six existing provider panels opened; search, combined
+filters, empty-result reset, planned previews, keyboard navigation, Escape and
+focus restoration passed. Desktop dark/light themes and a 390px phone viewport
+were inspected, with no horizontal overflow. This verifies UI behavior, not fresh
+live OAuth or provider health. No demo data or environment configuration changed.
+
 ## Loading issue found during development
 
 A Windows case-insensitive module-name collision initially made Vite resolve the
@@ -51,6 +68,5 @@ with the correct export. App, assets and API health were checked directly.
 
 Use `http://127.0.0.1:5173/` for the real app. Port 8010 is the explicitly labeled,
 isolated synthetic QA fixture, not the real account workspace. Browser automation
-is currently unavailable, so visual and interactive browser verification remains
-pending for the complete catalog; do not claim that it passed. Unit/type/lint/build
-results are recorded in the merged PR. The required source/backend CI gate passed.
+was unavailable at the October 31 checkpoint; the November 1 fixture checks above
+supersede that UI verification gap. Live provider restrictions remain unchanged.

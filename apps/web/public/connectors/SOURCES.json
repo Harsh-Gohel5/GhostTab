@@ -1,0 +1,198 @@
+{
+  "asana": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/asana-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "azure-devops": {
+    "source": "https://github.com/simple-icons/simple-icons/blob/develop/icons/azuredevops.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "bitbucket": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/bitbucket.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "box": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/box.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "canva": {
+    "source": "https://github.com/simple-icons/simple-icons/blob/develop/icons/canva.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "clickup": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/clickup-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "confluence": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/confluence.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "datadog": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/datadog-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "discord": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/discord-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "dropbox": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/dropbox.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "excel": {
+    "source": "https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/svg/microsoft-excel.svg",
+    "license": "See dashboard-icons LICENSE and brand rights"
+  },
+  "figjam": {
+    "source": "https://www.figma.com/figjam/",
+    "license": "Brand asset; see source attribution"
+  },
+  "figma": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/figma.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "freshdesk": {
+    "source": "https://www.freshworks.com/beta/icons/template-2026/freshdesk-logo-icon.svg",
+    "license": "Brand asset; see source attribution"
+  },
+  "github": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/github-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "gitlab": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/gitlab-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "gmail": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/google-gmail.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "google-calendar": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/google-calendar-2020.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "google-chat": {
+    "source": "https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/svg/google-chat.svg",
+    "license": "See dashboard-icons LICENSE and brand rights"
+  },
+  "google-docs": {
+    "source": "https://github.com/simple-icons/simple-icons/blob/develop/icons/googledocs.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "google-drive": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/google-drive-2020.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "google-meet": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/google-meet.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "google-sheets": {
+    "source": "https://github.com/simple-icons/simple-icons/blob/develop/icons/googlesheets.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "google-slides": {
+    "source": "https://github.com/simple-icons/simple-icons/blob/develop/icons/googleslides.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "hubspot": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/hubspot.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "intercom": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/intercom-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "jira": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/jira.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "linear": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/linear-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "miro": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/miro-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "monday": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/monday-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "notion": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/notion-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "onedrive": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/microsoft-onedrive.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "outlook": {
+    "source": "https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/svg/microsoft-outlook.svg",
+    "license": "See dashboard-icons LICENSE and brand rights"
+  },
+  "outlook-calendar": {
+    "source": "https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/svg/microsoft-outlook.svg",
+    "license": "See dashboard-icons LICENSE and brand rights"
+  },
+  "pagerduty": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/pagerduty-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "planner": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Microsoft_Planner_%282024%E2%80%93present%29.svg",
+    "license": "Brand asset; see source attribution"
+  },
+  "powerpoint": {
+    "source": "https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/svg/microsoft-powerpoint.svg",
+    "license": "See dashboard-icons LICENSE and brand rights"
+  },
+  "salesforce": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/salesforce.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "sentry": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/sentry-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "servicenow": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/5/57/ServiceNow_logo.svg",
+    "license": "Brand asset; see source attribution"
+  },
+  "sharepoint": {
+    "source": "https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/svg/microsoft-sharepoint.svg",
+    "license": "See dashboard-icons LICENSE and brand rights"
+  },
+  "slack": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/slack-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "teams": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/microsoft-teams.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "todo": {
+    "source": "https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/svg/microsoft-to-do.svg",
+    "license": "See dashboard-icons LICENSE and brand rights"
+  },
+  "todoist": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/todoist-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "trello": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/trello.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "word": {
+    "source": "https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/svg/microsoft-word.svg",
+    "license": "See dashboard-icons LICENSE and brand rights"
+  },
+  "zendesk": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/zendesk-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  },
+  "zoom": {
+    "source": "https://github.com/gilbarbara/logos/blob/main/logos/zoom-icon.svg",
+    "license": "CC0-1.0; brand rights retained"
+  }
+}
