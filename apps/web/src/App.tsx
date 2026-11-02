@@ -725,7 +725,7 @@ function Home({
                             >
                               {connect.isPending
                                 ? "Opening Google…"
-                                : "Connect Calendar"}
+                                : "Connect to Google Calendar"}
                             </button>
                           )}
                         </div>

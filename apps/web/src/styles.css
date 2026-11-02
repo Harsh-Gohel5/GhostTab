@@ -1735,8 +1735,38 @@ label textarea {
 }
 .catalog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 10px;
+  scroll-margin-top: 24px;
+}
+.catalog-grid:focus {
+  outline: none;
+}
+.catalog-pagination,
+.catalog-pagination > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.catalog-pagination {
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.catalog-pagination button {
+  min-height: 44px;
+}
+.catalog-page {
+  width: 44px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--muted);
+}
+.catalog-page.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 .catalog-tile {
   position: relative;
@@ -1934,6 +1964,9 @@ label textarea {
   }
 }
 @media (max-width: 700px) {
+  .catalog-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
   .catalog-filters {
     grid-template-columns: 1fr 1fr;
   }
@@ -1945,6 +1978,13 @@ label textarea {
   }
 }
 @media (max-width: 420px) {
+  .catalog-pagination {
+    gap: 4px;
+  }
+  .catalog-pagination > button {
+    padding: 9px;
+    font-size: 11px;
+  }
   .catalog-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 7px;

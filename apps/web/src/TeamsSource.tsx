@@ -95,7 +95,7 @@ export function TeamsConnection({ api, owner }: { api: Api; owner: string }) {
           disabled={!status.data?.configured || connect.isPending}
           onClick={() => connect.mutate()}
         >
-          {connect.isPending ? "Opening Teams…" : "Connect Teams"}
+          {connect.isPending ? "Opening Teams…" : "Connect to Microsoft Teams"}
         </button>
       )}
       {status.data && !status.data.configured && (

@@ -37,9 +37,10 @@ action with the existing draft/budget protections. See [source-change review](do
 
 Connections includes a compact, searchable [49-tool logo gallery](docs/connector-catalog.md).
 Select a tool to open its existing controls in a focused dialog; quick filters
-help find connected tools and connection options without paging through cards.
-Six entries open existing connection flows; 43 are clearly labeled planned
-previews with no account access or Connect action. This showcases the broader
+help find connected tools and connection options. The gallery has two pages
+(25 and 24 tools) and consistent View options labels. Six entries open existing
+connection flows; the other 43 show a Connect to action with explicit availability
+feedback and no account access. This showcases the broader
 roadmap without claiming those integrations work.
 
 Google identity sign-in and email signup/confirmation/sign-in have been verified

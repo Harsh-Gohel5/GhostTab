@@ -95,7 +95,7 @@ export function SlackConnection({ api, owner }: { api: Api; owner: string }) {
           disabled={!status.data?.configured || connect.isPending}
           onClick={() => connect.mutate()}
         >
-          {connect.isPending ? "Opening Slack…" : "Connect Slack"}
+          {connect.isPending ? "Opening Slack…" : "Connect to Slack"}
         </button>
       )}
       {status.data && !status.data.configured && (

@@ -46,7 +46,7 @@ test("all 49 products have locally bundled SVG marks with provenance and no acti
   }
 });
 
-test("gallery exposes every logo tile immediately and defers connection controls until selection", () => {
+test("gallery starts with 25 logo tiles, two pages, and deferred connection controls", () => {
   const client = new QueryClient();
   const html = renderToStaticMarkup(
     createElement(
@@ -62,16 +62,22 @@ test("gallery exposes every logo tile immediately and defers connection controls
       }),
     ),
   );
-  assert.equal((html.match(/class="catalog-tile"/g) ?? []).length, 49);
-  assert.equal((html.match(/aria-haspopup="dialog"/g) ?? []).length, 49);
+  assert.equal((html.match(/class="catalog-tile"/g) ?? []).length, 25);
+  assert.equal((html.match(/aria-haspopup="dialog"/g) ?? []).length, 25);
   assert.doesNotMatch(html, /Show more integrations/);
   assert.match(html, /Google Calendar — Connected/);
   assert.match(html, /Slack — Checking status/);
-  assert.match(html, /Planned tools are previews only/);
+  assert.match(html, /1–25 of 49 tools/);
+  assert.match(html, /Page 1 of 2/);
+  assert.match(html, /aria-label="Page 2"/);
+  assert.equal(
+    (html.match(/class="catalog-tile-status">View options/g) ?? []).length,
+    25,
+  );
   client.clear();
 });
 
-test("details reuse the selected provider and planned previews never offer connection controls", () => {
+test("details reuse real provider controls and unavailable tools expose an honest connection action", () => {
   const selected = connectorCatalog.find((item) => item.provider === "slack");
   const html = renderToStaticMarkup(
     createElement(components.ConnectorDetails, {
@@ -100,8 +106,27 @@ test("details reuse the selected provider and planned previews never offer conne
         assert.fail("Planned tools must not mount provider controls"),
     }),
   );
-  assert.match(preview, /Connection and import are not available/);
+  assert.match(preview, /Connect to Notion/);
+  assert.match(preview, /This connection is not available in this release/);
+  assert.match(preview, /No account access or import is enabled/);
   assert.match(preview, /&lt;script&gt;untrusted&lt;\/script&gt;/);
+});
+
+test("every unavailable product has its own connect action without mounting a provider flow", () => {
+  for (const item of connectorCatalog.filter((item) => !item.provider)) {
+    const html = renderToStaticMarkup(
+      createElement(components.ConnectorDetails, {
+        item,
+        state: "Planned",
+        onClose: () => {},
+        renderConnection: () =>
+          assert.fail(`${item.name} must not mount OAuth controls`),
+      }),
+    );
+    assert.ok(html.includes(`Connect to ${item.name}`), item.name);
+    assert.match(html, /aria-describedby="connector-availability"/);
+    assert.match(html, /Not available yet/);
+  }
 });
 
 test("catalog category and text search combine and preserve a single Teams entry", () => {

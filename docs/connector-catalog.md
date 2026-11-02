@@ -4,6 +4,10 @@ November 1 UI refinement: all 49 tools appear as compact logo tiles, with local
 SVG assets and per-file provenance in `apps/web/public/connectors/SOURCES.json`.
 Selecting a tile opens its existing connection controls in a modal dialog.
 The gallery adds no backend endpoints, credentials, permissions or dependencies.
+The follow-up organizes the gallery into two pages of 25 and 24 tools, with five
+aligned desktop columns and previous/next/page controls. Every tile says
+**View options**; connected status remains available through the status dot,
+accessible label, filters and details.
 
 October 31: catalog [PR #12](https://github.com/Harsh-Gohel5/GhostTab/pull/12) is
 merged as `c8e360a`; required web/API CI passed, including PostgreSQL tests and
@@ -18,20 +22,24 @@ Tools can belong to several categories but render only once in a result list.
 
 Six entries map to existing connection flows: Google Calendar, Google Docs,
 Gmail, Slack, Jira and Microsoft Teams. Tiles read the existing owner-scoped
-connection status queries and display Connected, Ready to connect, Setup required,
+connection status queries; details display Connected, Ready to connect, Setup required,
 Checking status or Status unavailable. These labels do not establish provider
 health or live verification. Selecting a tile opens the original provider controls.
 
-The other 43 entries are **Planned** previews. Their detail view describes potential
-context and explicitly states that connection/import is unavailable. They have no
-Connect action, OAuth route, credentials, fake account status or imported sample
-data. The catalog does not implement those integrations or promise delivery dates.
+The other 43 entries remain unavailable integrations. Each detail view has a
+**Connect to [app]** action and states that account access/import is unavailable
+in this release. Clicking shows availability feedback; it does not redirect,
+request credentials, create grants or mark an account connected. These entries
+have no OAuth route or imported sample data. The catalog does not implement those
+integrations or promise delivery dates.
 It is a frontend showcase, not evidence for a live-integration demonstration.
 
 Search combines tool names, context descriptions and categories. Category and
 availability filters combine. Quick filters show all tools, the six connection
-options, connected tools or planned previews. All matching entries render without
-a show-more step; existing connection options sort first. Empty results have a
+options, connected tools or planned entries. Search/filter changes return to page
+one; the current page is clamped when live statuses change. Existing connection
+options sort first. Page navigation returns focus and scroll to the tile grid.
+Empty results have a
 clear reset action. The native modal traps keyboard focus, supports Escape, locks
 background scrolling and restores focus to the originating tile on close.
 Shared semantic tokens support both themes; narrow screens use three tile columns.
@@ -56,6 +64,14 @@ filters, empty-result reset, planned previews, keyboard navigation, Escape and
 focus restoration passed. Desktop dark/light themes and a 390px phone viewport
 were inspected, with no horizontal overflow. This verifies UI behavior, not fresh
 live OAuth or provider health. No demo data or environment configuration changed.
+
+Two-page follow-up verification: `npm run check` passed 51 frontend tests and
+142 API tests; `npm run build` passed with the existing bundle warning. Disposable
+browser checks confirmed 25 + 24 unique entries, View options on every tile,
+page navigation, search from page two, availability feedback with no redirect,
+focus restoration and a 390px phone layout without horizontal overflow. Slack
+disconnect and the resulting Connect to Slack control were checked only against
+the synthetic fixture; no real account grants were changed.
 
 ## Loading issue found during development
 
