@@ -97,7 +97,7 @@ export function JiraConnection({ api, owner }: { api: Api; owner: string }) {
           disabled={!status.data?.configured || connect.isPending}
           onClick={() => connect.mutate()}
         >
-          {connect.isPending ? "Opening Jira…" : "Connect Jira"}
+          {connect.isPending ? "Opening Jira…" : "Connect to Jira"}
         </button>
       )}
       {status.data && !status.data.configured && (

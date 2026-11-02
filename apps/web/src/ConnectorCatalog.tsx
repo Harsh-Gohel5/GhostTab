@@ -10,6 +10,7 @@ import {
 import type { CatalogEntry, LiveProvider } from "./catalogData";
 
 const liveSources = ["google_docs", "gmail", "slack", "jira", "teams"] as const;
+const pageSize = 25;
 type Availability =
   | "Connected"
   | "Ready to connect"
@@ -34,6 +35,7 @@ export function ConnectorCatalog({
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [filter, setFilter] = useState("all");
+  const [page, setPage] = useState(0);
   const [selected, setSelected] = useState<CatalogEntry | null>(null);
   const [trigger, setTrigger] = useState<HTMLButtonElement | null>(null);
   const sources = useQueries({
@@ -77,10 +79,23 @@ export function ConnectorCatalog({
             : availability(item) === filter)),
     )
     .sort((a, b) => Number(!!b.provider) - Number(!!a.provider));
+  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const currentPage = Math.min(page, pageCount - 1);
+  const visible = filtered.slice(
+    currentPage * pageSize,
+    (currentPage + 1) * pageSize,
+  );
+  const grid = useRef<HTMLDivElement>(null);
+  function changePage(next: number) {
+    setPage(next);
+    grid.current?.scrollIntoView({ block: "start", behavior: "instant" });
+    grid.current?.focus({ preventScroll: true });
+  }
   const clear = () => {
     setQuery("");
     setCategory("all");
     setFilter("all");
+    setPage(0);
   };
   return (
     <section className="connector-catalog" aria-label="Integration catalog">
@@ -121,7 +136,10 @@ export function ConnectorCatalog({
             key={item.value}
             className={`catalog-filter ${filter === item.value ? "is-active" : ""}`}
             aria-pressed={filter === item.value}
-            onClick={() => setFilter(item.value)}
+            onClick={() => {
+              setFilter(item.value);
+              setPage(0);
+            }}
           >
             {item.label}
             <span>{item.count}</span>
@@ -136,6 +154,7 @@ export function ConnectorCatalog({
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
+              setPage(0);
             }}
             placeholder="Search 49 tools…"
           />
@@ -146,6 +165,7 @@ export function ConnectorCatalog({
             value={category}
             onChange={(event) => {
               setCategory(event.target.value);
+              setPage(0);
             }}
           >
             <option value="all">All categories</option>
@@ -160,6 +180,7 @@ export function ConnectorCatalog({
             value={filter}
             onChange={(event) => {
               setFilter(event.target.value);
+              setPage(0);
             }}
           >
             <option value="all">All integrations</option>
@@ -173,8 +194,10 @@ export function ConnectorCatalog({
         </label>
       </div>
       <p role="status" className="muted">
-        {filtered.length} {filtered.length === 1 ? "tool" : "tools"} · Planned
-        tools are previews only; they cannot connect or read accounts.
+        {filtered.length
+          ? `${currentPage * pageSize + 1}–${currentPage * pageSize + visible.length} of ${filtered.length} tools`
+          : "0 tools"}
+        {pageCount > 1 && ` · Page ${currentPage + 1} of ${pageCount}`}
       </p>
       {(calendarStatus === null ||
         sources.some((source) => source.isError)) && (
@@ -193,8 +216,13 @@ export function ConnectorCatalog({
           </button>
         </p>
       )}
-      <div className="catalog-grid">
-        {filtered.map((item) => (
+      <div
+        className="catalog-grid"
+        ref={grid}
+        tabIndex={-1}
+        aria-label="Tools on this page"
+      >
+        {visible.map((item) => (
           <ConnectorTile
             key={item.id}
             item={item}
@@ -206,6 +234,37 @@ export function ConnectorCatalog({
           />
         ))}
       </div>
+      {pageCount > 1 && (
+        <nav className="catalog-pagination" aria-label="Integration pages">
+          <button
+            className="secondary"
+            disabled={currentPage === 0}
+            onClick={() => changePage(currentPage - 1)}
+          >
+            ← Previous
+          </button>
+          <div>
+            {Array.from({ length: pageCount }, (_, index) => (
+              <button
+                key={index}
+                className={`catalog-page ${currentPage === index ? "is-active" : ""}`}
+                aria-label={`Page ${index + 1}`}
+                aria-current={currentPage === index ? "page" : undefined}
+                onClick={() => changePage(index)}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+          <button
+            className="secondary"
+            disabled={currentPage === pageCount - 1}
+            onClick={() => changePage(currentPage + 1)}
+          >
+            Next →
+          </button>
+        </nav>
+      )}
       {!filtered.length && (
         <div className="form-panel">
           <h3>No matching tools</h3>
@@ -254,13 +313,7 @@ export function ConnectorTile({
         <img src={`/connectors/${item.id}.svg`} alt="" width="32" height="32" />
       </span>
       <span className="catalog-tile-name">{item.name}</span>
-      <span className="catalog-tile-status">
-        {state === "Planned"
-          ? "Planned"
-          : state === "Connected"
-            ? "Connected"
-            : "View options"}
-      </span>
+      <span className="catalog-tile-status">View options</span>
     </button>
   );
 }
@@ -279,6 +332,7 @@ export function ConnectorDetails({
   returnFocus?: HTMLButtonElement | null;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const [connectionNotice, setConnectionNotice] = useState(false);
   useEffect(() => {
     const element = dialog.current!;
     const overflow = document.body.style.overflow;
@@ -312,7 +366,7 @@ export function ConnectorDetails({
         </span>
         <div>
           <p className="eyebrow">
-            {item.provider ? "YOUR CONNECTION" : "ON THE ROADMAP"}
+            {item.provider ? "YOUR CONNECTION" : "CONNECTION OPTIONS"}
           </p>
           <h2 id="connector-detail-title">{item.name}</h2>
         </div>
@@ -330,7 +384,7 @@ export function ConnectorDetails({
         <span
           className={`catalog-status ${state === "Connected" ? "catalog-connected" : ""}`}
         >
-          {state}
+          {item.provider ? state : "Not available yet"}
         </span>
         <span>{item.categories.join(" · ")}</span>
       </div>
@@ -342,15 +396,24 @@ export function ConnectorDetails({
           renderConnection(item.provider)
         ) : (
           <div className="catalog-planned">
-            <h3>A little further down the road.</h3>
-            <p>
-              We’re exploring how {item.name} can bring useful context into your
-              workspace.
+            <h3>Connect {item.name}</h3>
+            <p className="muted" id="connector-availability">
+              This connection is not available in this release. No account
+              access or import is enabled.
             </p>
-            <p className="muted">
-              This is a planned integration. Connection and import are not
-              available yet, and this preview does not access your account.
-            </p>
+            <button
+              className="primary"
+              aria-describedby="connector-availability"
+              onClick={() => setConnectionNotice(true)}
+            >
+              Connect to {item.name}
+            </button>
+            {connectionNotice && (
+              <p className="notice" role="status">
+                {item.name} authorization is not available yet. No account has
+                been connected.
+              </p>
+            )}
           </div>
         )}
       </div>

@@ -116,7 +116,7 @@ export function GoogleConnection({
           disabled={!status.data?.configured || connect.isPending}
           onClick={() => connect.mutate()}
         >
-          {connect.isPending ? "Opening Google…" : `Connect ${info.name}`}
+          {connect.isPending ? "Opening Google…" : `Connect to ${info.name}`}
         </button>
       )}
       {status.data && !status.data.configured && (
