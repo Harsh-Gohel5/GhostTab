@@ -34,10 +34,8 @@ export function ConnectorCatalog({
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [filter, setFilter] = useState("all");
-  const [limit, setLimit] = useState(12);
   const [selected, setSelected] = useState<CatalogEntry | null>(null);
-  const detail = useRef<HTMLElement>(null);
-  const trigger = useRef<HTMLButtonElement | null>(null);
+  const [trigger, setTrigger] = useState<HTMLButtonElement | null>(null);
   const sources = useQueries({
     queries: liveSources.map((provider) => ({
       queryKey: ["source-connection", owner, provider],
@@ -51,12 +49,6 @@ export function ConnectorCatalog({
               : api.teamsConnection(),
     })),
   });
-  useEffect(() => {
-    if (selected) {
-      detail.current?.focus({ preventScroll: true });
-      detail.current?.scrollIntoView({ block: "nearest" });
-    }
-  }, [selected]);
   function availability(item: CatalogEntry): Availability {
     if (!item.provider) return "Planned";
     if (item.provider === "google_calendar" && calendarStatus === null)
@@ -79,36 +71,63 @@ export function ConnectorCatalog({
     .filter(
       (item) =>
         matchesConnector(item, query, category) &&
-        (filter === "all" || availability(item) === filter),
+        (filter === "all" ||
+          (filter === "available"
+            ? !!item.provider
+            : availability(item) === filter)),
     )
     .sort((a, b) => Number(!!b.provider) - Number(!!a.provider));
   const clear = () => {
     setQuery("");
     setCategory("all");
     setFilter("all");
-    setLimit(12);
   };
   return (
     <section className="connector-catalog" aria-label="Integration catalog">
       <div className="catalog-heading">
-        <div>
-          <h2>One place for your working context.</h2>
-          <p className="muted">
-            Explore {connectorCatalog.length} tools across{" "}
-            {connectorCategories.length} categories. Connect the tools available
-            today, or explore the roadmap.
-          </p>
-        </div>
-        <span className="badge">
-          {connectorCatalog.filter((item) => item.provider).length} connection
-          options · {connectorCatalog.filter((item) => !item.provider).length}{" "}
-          planned
+        <p className="muted">
+          Pick a tool to view its connection options. You’re always in control.
+        </p>
+        <span className="catalog-count">
+          {connectorCatalog.length} tools · {connectorCategories.length}{" "}
+          categories
         </span>
       </div>
-      <p className="catalog-disclosure">
-        Planned integrations are previews only. They cannot connect, read
-        accounts or import data yet.
-      </p>
+      <div
+        className="catalog-quick-filters"
+        aria-label="Quick integration filters"
+      >
+        {[
+          { value: "all", label: "All tools", count: connectorCatalog.length },
+          {
+            value: "available",
+            label: "Connection options",
+            count: connectorCatalog.filter((x) => x.provider).length,
+          },
+          {
+            value: "Connected",
+            label: "Connected",
+            count: connectorCatalog.filter(
+              (x) => availability(x) === "Connected",
+            ).length,
+          },
+          {
+            value: "Planned",
+            label: "Planned",
+            count: connectorCatalog.filter((x) => !x.provider).length,
+          },
+        ].map((item) => (
+          <button
+            key={item.value}
+            className={`catalog-filter ${filter === item.value ? "is-active" : ""}`}
+            aria-pressed={filter === item.value}
+            onClick={() => setFilter(item.value)}
+          >
+            {item.label}
+            <span>{item.count}</span>
+          </button>
+        ))}
+      </div>
       <div className="catalog-filters">
         <label>
           Find a tool
@@ -117,9 +136,8 @@ export function ConnectorCatalog({
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
-              setLimit(12);
             }}
-            placeholder="Search tools or context…"
+            placeholder="Search 49 tools…"
           />
         </label>
         <label>
@@ -128,7 +146,6 @@ export function ConnectorCatalog({
             value={category}
             onChange={(event) => {
               setCategory(event.target.value);
-              setLimit(12);
             }}
           >
             <option value="all">All categories</option>
@@ -143,10 +160,10 @@ export function ConnectorCatalog({
             value={filter}
             onChange={(event) => {
               setFilter(event.target.value);
-              setLimit(12);
             }}
           >
             <option value="all">All integrations</option>
+            <option value="available">Connection options</option>
             {["Connected", "Ready to connect", "Setup required", "Planned"].map(
               (name) => (
                 <option key={name}>{name}</option>
@@ -156,8 +173,8 @@ export function ConnectorCatalog({
         </label>
       </div>
       <p role="status" className="muted">
-        Showing {Math.min(limit, filtered.length)} of {filtered.length} matching
-        integrations.
+        {filtered.length} {filtered.length === 1 ? "tool" : "tools"} · Planned
+        tools are previews only; they cannot connect or read accounts.
       </p>
       {(calendarStatus === null ||
         sources.some((source) => source.isError)) && (
@@ -177,46 +194,17 @@ export function ConnectorCatalog({
         </p>
       )}
       <div className="catalog-grid">
-        {filtered.slice(0, limit).map((item) => {
-          const state = availability(item);
-          return (
-            <article
-              key={item.id}
-              className={`catalog-card ${item.provider ? "catalog-supported" : ""}`}
-            >
-              <div className="catalog-card-heading">
-                <span className="connector-avatar" aria-hidden="true">
-                  {item.name
-                    .split(" ")
-                    .map((word) => word[0])
-                    .join("")
-                    .slice(0, 2)}
-                </span>
-                <span
-                  className={`catalog-status ${state === "Connected" ? "catalog-connected" : ""}`}
-                >
-                  {state}
-                </span>
-              </div>
-              <h3>{item.name}</h3>
-              <p>{item.context}</p>
-              <span className="catalog-category">
-                {item.categories.join(" · ")}
-              </span>
-              <button
-                className="text-button"
-                aria-expanded={selected?.id === item.id}
-                aria-controls="connector-detail"
-                onClick={(event) => {
-                  trigger.current = event.currentTarget;
-                  setSelected({ ...item });
-                }}
-              >
-                {item.provider ? `Manage ${item.name}` : `Preview ${item.name}`}
-              </button>
-            </article>
-          );
-        })}
+        {filtered.map((item) => (
+          <ConnectorTile
+            key={item.id}
+            item={item}
+            state={availability(item)}
+            onOpen={(button) => {
+              setTrigger(button);
+              setSelected(item);
+            }}
+          />
+        ))}
       </div>
       {!filtered.length && (
         <div className="form-panel">
@@ -227,50 +215,145 @@ export function ConnectorCatalog({
           </button>
         </div>
       )}
-      {limit < filtered.length && (
-        <button
-          className="secondary catalog-more"
-          onClick={() => setLimit((value) => value + 12)}
-        >
-          Show more integrations ({filtered.length - limit} remaining)
-        </button>
-      )}
       {selected && (
-        <section
-          className="catalog-detail"
-          id="connector-detail"
-          tabIndex={-1}
-          ref={detail}
-          aria-label={`${selected.name} integration details`}
-        >
-          <div className="catalog-detail-heading">
-            <h2>{selected.name}</h2>
-            <button
-              className="text-button"
-              onClick={() => {
-                setSelected(null);
-                trigger.current?.focus();
-              }}
-            >
-              Close details
-            </button>
-          </div>
-          {selected.provider ? (
-            renderConnection(selected.provider)
-          ) : (
-            <div className="form-panel">
-              <span className="catalog-status">Planned · preview only</span>
-              <h3>Context we’re designing toward</h3>
-              <p>{selected.context}</p>
-              <p className="muted">
-                This integration is on the roadmap. Connection and import are
-                not available yet, and this preview does not access your
-                account.
-              </p>
-            </div>
-          )}
-        </section>
+        <ConnectorDetails
+          key={selected.id}
+          item={selected}
+          state={availability(selected)}
+          renderConnection={renderConnection}
+          returnFocus={trigger}
+          onClose={() => setSelected(null)}
+        />
       )}
     </section>
+  );
+}
+
+export function ConnectorTile({
+  item,
+  state,
+  onOpen,
+}: {
+  item: CatalogEntry;
+  state: Availability;
+  onOpen: (button: HTMLButtonElement) => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="catalog-tile"
+      aria-label={`${item.name} — ${state}`}
+      aria-haspopup="dialog"
+      onClick={(event) => onOpen(event.currentTarget)}
+    >
+      <span
+        className={`catalog-dot ${state === "Connected" ? "is-connected" : item.provider ? "is-available" : ""}`}
+        aria-hidden="true"
+      />
+      <span className="connector-logo">
+        <img src={`/connectors/${item.id}.svg`} alt="" width="32" height="32" />
+      </span>
+      <span className="catalog-tile-name">{item.name}</span>
+      <span className="catalog-tile-status">
+        {state === "Planned"
+          ? "Planned"
+          : state === "Connected"
+            ? "Connected"
+            : "View options"}
+      </span>
+    </button>
+  );
+}
+
+export function ConnectorDetails({
+  item,
+  state,
+  renderConnection,
+  onClose,
+  returnFocus,
+}: {
+  item: CatalogEntry;
+  state: Availability;
+  renderConnection: (provider: LiveProvider) => ReactNode;
+  onClose: () => void;
+  returnFocus?: HTMLButtonElement | null;
+}) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const element = dialog.current!;
+    const overflow = document.body.style.overflow;
+    element.showModal();
+    document.body.style.overflow = "hidden";
+    return () => {
+      element.close();
+      document.body.style.overflow = overflow;
+      returnFocus?.focus({ preventScroll: true });
+    };
+  }, [returnFocus]);
+  return (
+    <dialog
+      ref={dialog}
+      className="catalog-dialog"
+      aria-labelledby="connector-detail-title"
+      aria-describedby="connector-detail-summary"
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+    >
+      <div className="catalog-dialog-heading">
+        <span className="connector-logo">
+          <img
+            src={`/connectors/${item.id}.svg`}
+            width="40"
+            height="40"
+            alt=""
+          />
+        </span>
+        <div>
+          <p className="eyebrow">
+            {item.provider ? "YOUR CONNECTION" : "ON THE ROADMAP"}
+          </p>
+          <h2 id="connector-detail-title">{item.name}</h2>
+        </div>
+        <button
+          type="button"
+          className="catalog-close"
+          aria-label={`Close ${item.name} details`}
+          autoFocus
+          onClick={onClose}
+        >
+          ✕
+        </button>
+      </div>
+      <div className="catalog-dialog-meta">
+        <span
+          className={`catalog-status ${state === "Connected" ? "catalog-connected" : ""}`}
+        >
+          {state}
+        </span>
+        <span>{item.categories.join(" · ")}</span>
+      </div>
+      <p id="connector-detail-summary" className="muted">
+        {item.context}
+      </p>
+      <div className="catalog-controls">
+        {item.provider ? (
+          renderConnection(item.provider)
+        ) : (
+          <div className="catalog-planned">
+            <h3>A little further down the road.</h3>
+            <p>
+              We’re exploring how {item.name} can bring useful context into your
+              workspace.
+            </p>
+            <p className="muted">
+              This is a planned integration. Connection and import are not
+              available yet, and this preview does not access your account.
+            </p>
+          </div>
+        )}
+      </div>
+    </dialog>
   );
 }
