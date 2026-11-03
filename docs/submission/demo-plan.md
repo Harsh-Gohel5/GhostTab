@@ -3,8 +3,8 @@
 Status: October 31, 2026. Calendar and Docs are authorized in the owner's signed-in
 local app. The owner completed the guided preparation and reported the Docs
 change/regeneration test done. Independent capture of both providers' citations
-and before/after states remains pending. See [current status](current-status.md)
-and [the repeatable walkthrough](demo-walkthrough.md). No productivity or user-study
+and before/after states remains pending. See [current status](../current-status.md)
+and [the repeatable walkthrough](../guides/demo-walkthrough.md). No productivity or user-study
 result is claimed. Wider mail/chat scenarios below remain proposals until their
 live accounts are verified; manual notes and Planned tiles do not prove them.
 

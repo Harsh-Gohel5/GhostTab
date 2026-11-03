@@ -41,7 +41,7 @@ target these assertions and repeat the broader regression cases before changing
 the app prompt. One sample per case is not a reliability score; independent owner
 review remains pending.
 
-Sanitized [review report](evaluations/teams-review-2026-10-29.json) and
-[trial report](evaluations/teams-trials-2026-10-29.json). Reproduce only with owner
+Sanitized [review report](teams-review-2026-10-29.json) and
+[trial report](teams-trials-2026-10-29.json). Reproduce only with owner
 authorization using `apps/api/tests/evaluate_teams.py --live`; `--review` selects
 own-code review. No automatic retries or model-default changes were made.

@@ -101,7 +101,7 @@ export function JiraConnection({ api, owner }: { api: Api; owner: string }) {
         </button>
       )}
       {status.data && !status.data.configured && (
-        <p className="muted">Jira setup is pending. See docs/jira-source.md.</p>
+        <p className="muted">Jira setup is pending. See docs/connectors/jira.md.</p>
       )}
       <Failure error={status.error || connect.error || disconnect.error} />
     </section>

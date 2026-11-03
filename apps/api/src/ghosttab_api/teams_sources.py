@@ -37,7 +37,7 @@ def tenant(settings):
         return str(UUID(settings.teams_tenant_id))
     except (ValueError, TypeError, AttributeError) as exc:
         raise HTTPException(
-            503, "Teams needs a work/school tenant ID; see docs/teams-source.md"
+            503, "Teams needs a work/school tenant ID; see docs/connectors/teams.md"
         ) from exc
 
 
@@ -55,7 +55,7 @@ def configured(settings):
 
 def begin(factory, settings, owner):
     if not configured(settings):
-        raise HTTPException(503, "Teams needs server configuration; see docs/teams-source.md")
+        raise HTTPException(503, "Teams needs server configuration; see docs/connectors/teams.md")
     state, verifier = secrets.token_urlsafe(32), secrets.token_urlsafe(48)
     digest = hashlib.sha256(state.encode()).hexdigest()
     with factory.begin() as session:

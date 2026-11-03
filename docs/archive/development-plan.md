@@ -5,7 +5,7 @@ merged. The owner has connected Calendar and Docs in the signed-in account,
 generated a brief and reported the Docs change/regeneration test done. Capture
 both source citations and the before/after states for independent review; then
 finish account recovery/isolation/reconnect and final demo delivery. Gmail and
-other providers remain live-unverified. See [current status](current-status.md)
+other providers remain live-unverified. See [current status](../current-status.md)
 for merged PRs, automated checks and the distinction between owner confirmation
 and independent verification. The earlier checkpoints and pending-PR statements
 below are historical; current owner authorization permits focused PRs and merges
@@ -15,21 +15,21 @@ after review and required CI.
 unsupported whole-handoff readiness inference in the final targeted trial and
 keeps source instructions out of business conflicts. Eight final live regression
 cases met narrow expectations in coding-agent inspection after an initial partial
-failure. See [grounding evaluation](grounding-evaluation.md) for costs and limitations.
+failure. See [grounding evaluation](../evaluations/grounding.md) for costs and limitations.
 
 
 **Teams checkpoint:** implemented OAuth/PKCE, selected-chat import, manual check
 and disconnect. Browser rehearsal passed with simulated providers. Checks passed
 33 frontend and 122 API tests (155 total), lint/type checks and production build;
 existing bundle/Alembic warnings remain. Three real Spark calls added $0.033185
-estimated usage. See [evaluation](teams-evaluation.md), including a partial
+estimated usage. See [evaluation](../evaluations/teams.md), including a partial
 semantic pass requiring follow-up. Next: targeted model-quality regression, then
 live second-source/account verification and a repeatable two-service demo.
 
 **Jira checkpoint, October 29:** selected-issue 3LO connection, explicit site
 selection, import, manual refresh and disconnect are implemented. The normal UI
 shows setup pending until the owner configures Jira. Mock API and isolated browser
-checks passed; no live consent or real Jira reads. See [Jira](jira-source.md).
+checks passed; no live consent or real Jira reads. See [Jira](../connectors/jira.md).
 Calendar remains connected with five existing local workspaces. Teams is the next
 connector milestone; live additional-source and hosted identity gates remain.
 New work is committed/pushed on the feature branch; main remains unchanged.
@@ -55,12 +55,12 @@ implemented. The isolated browser rehearsal passed; live Supabase configuration,
 delivery and hosted identity checks remain pending. Checks pass 28 frontend/73 API
 tests and the production build (existing chunk warning). Two real Wonder cases
 passed narrow criteria without a clear advantage over Spark, which remains default.
-See [account access](account-access.md) and [model comparison](model-comparison.md).
+See [account access](../guides/account-access.md) and [model comparison](../evaluations/model-comparison.md).
 
 **October 29:** theme/profile/logo refinement and five real synthetic Meta trials
 are implemented. The $1 budget remains unchanged; the evaluation added an estimated
 $0.048114. All five met the written narrow expectations in agent inspection, with
-schema/quote validation. See [meta-evaluation.md](meta-evaluation.md); independent
+schema/quote validation. See [meta-evaluation.md](../evaluations/meta.md); independent
 owner review, live additional connectors and final delivery gates remain pending.
 
 ## October 28 local checkpoint
@@ -88,12 +88,12 @@ The normal app preserves Calendar and shows the new services awaiting authorizat
 Local checks pass 19 frontend/62 API tests; the build passes with the existing
 large-chunk warning. The isolated browser workflow passed document and message
 import, cited fake preparation, unchanged refresh and disconnect blocking.
-See [google-sources.md](google-sources.md) for setup and remaining live gates.
+See [google-sources.md](../connectors/google.md) for setup and remaining live gates.
 
 **Lifecycle checkpoint:** persisted review/completion/reopen is implemented,
 including source/draft invalidation and Active/Reviewed/Completed filters. Migration
 0004 preserves existing tasks and grants. Checks pass 23 frontend/68 API tests and
-the production build. See [task-lifecycle.md](task-lifecycle.md).
+the production build. See [task-lifecycle.md](../product/task-lifecycle.md).
 
 Next priorities: bounded Meta
 cross-source evaluation on synthetic data. Live second-source verification remains
@@ -186,8 +186,8 @@ direct command below; it has no automatic reload, so restart it after backend ed
   and `apps/web/package.json`.
 - API: `contracts.py`, `routes.py`, `tests/test_workspaces.py`,
   and `tests/browser_fixture.py`.
-- Documentation: `README.md`, `docs/architecture.md`, `docs/design.md`,
-  `docs/demo-walkthrough.md`, and this assessment.
+- Documentation: `README.md`, `docs/architecture.md`, `docs/product/design.md`,
+  `docs/guides/demo-walkthrough.md`, and this assessment.
 
 The original untracked `CODEX_HANDOFF.md` is preserved unchanged. Work is local on
 `codex/draft-safety`, carrying the existing copy/export commit from

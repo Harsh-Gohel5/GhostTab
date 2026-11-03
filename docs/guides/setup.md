@@ -1,10 +1,10 @@
 # Run the first working slice
 
-Latest live verification and remaining release work: [October 31 checkpoint](current-status.md).
+Latest live verification and remaining release work: [October 31 checkpoint](../current-status.md).
 
 Google identity login needs separate Supabase provider configuration; see
 [account access](account-access.md). Slack now has a public-thread connector flow;
-see [Slack source setup](slack-source.md). Google identity sign-in has been verified
+see [Slack source setup](../connectors/slack.md). Google identity sign-in has been verified
 by the owner; Slack live authorization remains deferred.
 
 Account creation, confirmation and password recovery now have UI/SDK flows. See
@@ -14,11 +14,11 @@ owner-run real signup/confirmation/sign-in is verified, while broad email delive
 and recovery/password update remain pending.
 
 Apply migration 0004 for saved review/completion/reopen state. Existing tasks
-remain active and unreviewed. See [task lifecycle](task-lifecycle.md).
+remain active and unreviewed. See [task lifecycle](../product/task-lifecycle.md).
 
 Docs and Gmail now have separate connection/import flows. Apply migration 0003
 with `npm run db:migrate` before restarting the API. See
-[Google source setup](google-sources.md) for the additional callback registrations,
+[Google source setup](../connectors/google.md) for the additional callback registrations,
 scopes, account authorization steps and verification boundaries. The existing
 Calendar setup remains unchanged. Docs consent/import and the two-source workflow
 have now been exercised by the owner; Gmail live consent remains pending.
@@ -173,7 +173,7 @@ then saves the brief and editable unsent draft. Inspect claims yourself: matchin
 quotes do not prove factual support. There are at most three submissions per source
 generation, including crash recovery and bounded transient retries. A timeout keeps
 the full cost reservation because billing may have occurred. No raw chain of thought
-is stored. See [model-budget.md](model-budget.md).
+is stored. See [model-budget.md](../model-budget.md).
 
 ## 4. Optional hosted identity and PostgreSQL later
 

@@ -5,7 +5,7 @@ completed real authorization and showed Connected in the normal app. The owner
 then imported Docs alongside Calendar, prepared a brief, and reported the Docs
 change/Check source/regeneration/citation sequence done. Screenshots show the
 brief and Calendar citations; final Docs citation/update states still need an
-independently captured demo record. See [current status](current-status.md).
+independently captured demo record. See [current status](../current-status.md).
 
 Gmail remains implemented and simulated-provider tested but not live-connected.
 The earlier October 28 mock/fixture results below remain distinct from this new

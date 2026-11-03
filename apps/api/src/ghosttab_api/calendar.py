@@ -41,7 +41,9 @@ def decrypt(settings, value):
 
 def begin_connection(factory, settings, owner_id):
     if not settings.google_ready:
-        raise HTTPException(503, "Google Calendar needs server configuration; see docs/setup.md")
+        raise HTTPException(
+            503, "Google Calendar needs server configuration; see docs/guides/setup.md"
+        )
     state, verifier = secrets.token_urlsafe(32), secrets.token_urlsafe(48)
     digest = hashlib.sha256(state.encode()).hexdigest()
     with factory.begin() as session:

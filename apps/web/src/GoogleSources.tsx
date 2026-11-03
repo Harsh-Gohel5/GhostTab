@@ -121,7 +121,7 @@ export function GoogleConnection({
       )}
       {status.data && !status.data.configured && (
         <p className="muted">
-          Server setup is pending. See docs/google-sources.md.
+          Server setup is pending. See docs/connectors/google.md.
         </p>
       )}
       <SourceError error={status.error || connect.error || disconnect.error} />

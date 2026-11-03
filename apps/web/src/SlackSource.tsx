@@ -100,7 +100,7 @@ export function SlackConnection({ api, owner }: { api: Api; owner: string }) {
       )}
       {status.data && !status.data.configured && (
         <p className="muted">
-          Slack setup is pending. See docs/slack-source.md.
+          Slack setup is pending. See docs/connectors/slack.md.
         </p>
       )}
       <Failure error={status.error || connect.error || disconnect.error} />

@@ -2,7 +2,7 @@
 
 This is an explanation of the **proposed architecture**, grounded in the current
 React/FastAPI foundation. Do not describe planned components as deployed or claim
-production scale before it has been measured. See [architecture](architecture.md).
+production scale before it has been measured. See [architecture](../architecture.md).
 
 ## Opening explanation
 

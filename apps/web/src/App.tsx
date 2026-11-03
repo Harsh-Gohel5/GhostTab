@@ -735,9 +735,9 @@ function Home({
                         {!config.calendar_configured && (
                           <p className="notice">
                             Calendar setup is pending. Follow{" "}
-                            <code>docs/setup.md</code> to configure Google
-                            authorization locally. You can create workspaces and
-                            add notes in the meantime.
+                            <code>docs/guides/setup.md</code> to configure
+                            Google authorization locally. You can create
+                            workspaces and add notes in the meantime.
                           </p>
                         )}
                       </>
@@ -784,7 +784,8 @@ function Home({
                     <p className="muted">
                       On this computer, start the preparation service with{" "}
                       <code>npm run dev:worker</code> after checking saved
-                      requests and the configured budget. See docs/setup.md.
+                      requests and the configured budget. See
+                      docs/guides/setup.md.
                     </p>
                   )}
                 <p>

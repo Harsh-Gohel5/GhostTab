@@ -14,7 +14,7 @@ merged as `c8e360a`; required web/API CI passed, including PostgreSQL tests and
 migrations. Owner screenshots now show the dark catalog and Google Docs Connected,
 and the owner completed connection management through the normal app. At that
 checkpoint, filter/focus/responsive verification remained pending. See
-[current status](current-status.md) for the later live workflow.
+[current status](../current-status.md) for the later live workflow.
 
 The Connections page includes 49 tools across 14 categories from the owner's
 broader product roadmap. The canonical list is `apps/web/src/catalogData.ts`.

@@ -4,7 +4,7 @@ November 1 readiness follow-up: session restoration has a ten-second UI deadline
 request credentials are bound to the active workspace account, and partial logout
 distinguishes local sign-out from remote confirmation. Disposable two-account,
 cross-tab, unsaved-draft and SDK checks are recorded in
-[release readiness](release-readiness.md). Final live-account isolation remains
+[release readiness](../quality/release-readiness.md). Final live-account isolation remains
 pending. The ignored November 1 release summary records owner confirmation of the
 recovery return-to-sign-in behavior; older pending statements below are historical.
 
@@ -48,7 +48,7 @@ On October 31, owner screenshots showed a signed-in Calendar import and prepared
 workspace, and the owner reported the Docs workflow complete in that account.
 Recovery/password update and final live account-isolation rehearsal remain pending.
 This does not replace the automated JWT/ownership tests. Provider credentials
-remain outside Git. See [current status](current-status.md).
+remain outside Git. See [current status](../current-status.md).
 
 Supabase's built-in SMTP is restricted to project-team email addresses and currently
 two messages per hour. Public signup/recovery requires suitable custom SMTP setup;

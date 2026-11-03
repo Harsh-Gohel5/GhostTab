@@ -39,7 +39,7 @@ def configured(settings):
 
 def begin(factory, settings, owner):
     if not configured(settings):
-        raise HTTPException(503, "Slack needs server configuration; see docs/slack-source.md")
+        raise HTTPException(503, "Slack needs server configuration; see docs/connectors/slack.md")
     state = secrets.token_urlsafe(32)
     digest = hashlib.sha256(state.encode()).hexdigest()
     with factory.begin() as session:
