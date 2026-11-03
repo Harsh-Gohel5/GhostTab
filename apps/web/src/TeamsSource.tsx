@@ -100,7 +100,7 @@ export function TeamsConnection({ api, owner }: { api: Api; owner: string }) {
       )}
       {status.data && !status.data.configured && (
         <p className="muted">
-          Teams setup is pending. See docs/teams-source.md.
+          Teams setup is pending. See docs/connectors/teams.md.
         </p>
       )}
       <Failure error={status.error || connect.error || disconnect.error} />

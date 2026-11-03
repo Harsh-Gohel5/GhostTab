@@ -13,7 +13,7 @@ The dated sequence below is the historical plan, not a current completion checkl
 **Owner-approved frontend showcase, October 30:** the Connections catalog lists
 49 tools across 14 categories. Six use existing connection flows; the remaining
 43 are planned previews only. This adds no live connector scope and planned cards
-must not be represented as working integrations in the demo. See [catalog](connector-catalog.md).
+must not be represented as working integrations in the demo. See [catalog](connectors/catalog.md).
 
 **Teams checkpoint:** frontend/backend selected-chat workflow is mock/browser
 verified; live consent remains pending. Additional connectors are no longer the
@@ -148,5 +148,5 @@ the event platform with a three-minute video. The supplied deadline is
 have not been independently verified here; check the organizer's final instructions.
 
 Target a complete submission on November 3. Preserve November 4 as contingency,
-not an extra feature day. See [demo-plan.md](demo-plan.md) for the evidence and
+not an extra feature day. See [demo-plan.md](submission/demo-plan.md) for the evidence and
 showcase plan.

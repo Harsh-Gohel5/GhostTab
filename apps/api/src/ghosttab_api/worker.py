@@ -202,7 +202,7 @@ def main():
     settings = Settings()
     if not settings.allow_model_requests or not settings.model_api_key.get_secret_value():
         raise SystemExit(
-            "Meta requests are disabled. See docs/setup.md before enabling the worker."
+            "Meta requests are disabled. See docs/guides/setup.md before enabling the worker."
         )
     factory = sessions(make_engine(settings.database_url))
     logging.basicConfig(level=logging.INFO)

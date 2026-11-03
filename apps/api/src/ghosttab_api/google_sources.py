@@ -83,7 +83,7 @@ def disconnect(factory, owner, provider, *, expected=None):
 def begin(factory, settings, owner, provider):
     if not settings.google_ready:
         raise HTTPException(
-            503, "Google authorization needs server configuration; see docs/setup.md"
+            503, "Google authorization needs server configuration; see docs/guides/setup.md"
         )
     state, verifier = secrets.token_urlsafe(32), secrets.token_urlsafe(48)
     digest = hashlib.sha256(state.encode()).hexdigest()

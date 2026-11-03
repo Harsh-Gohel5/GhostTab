@@ -13,7 +13,7 @@ $0.017387. The coding agent inspected the outputs against the written criteria:
 Both met these narrow expectations. This is one sample per case, not a reliability
 score or independent human evaluation. Quotes alone do not prove semantic support.
 The revised-case draft asks whether to send it; GhostTab still offers no external
-sending tool. [Sanitized trial report](evaluations/jira-trials-2026-10-29.json).
+sending tool. [Sanitized trial report](jira-trials-2026-10-29.json).
 
 A separate authorized Wonder 1.0 review received only our own Jira implementation
 source, with no credentials or user data. It failed `model_output_incomplete`
@@ -21,7 +21,7 @@ after 56.19 seconds, so no findings were accepted or acted on. Usage was unavail
 the ledger retained the $0.189828 reservation conservatively. This is **not measured
 spend**. No automatic retry was run. The result does not establish that Wonder
 cannot review code; this bounded attempt produced no usable review.
-[Failure report](evaluations/jira-review-2026-10-29.json).
+[Failure report](jira-review-2026-10-29.json).
 
 The main ledger now totals $0.387755 including the retained review reservation,
 within the unchanged $1 cap. Spark stays the app default. More requests or API keys

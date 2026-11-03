@@ -46,6 +46,6 @@ browser workflow. Estimated usage: **$0.019944**, within the unchanged $1 app ca
 the existing $0.20 hold was reconciled by the evaluation helper. No additional key
 or automatic retry was used.
 
-Sanitized fictional report: [baseline/update trials](evaluations/source-changes-2026-11-01.json).
+Sanitized fictional report: [baseline/update trials](../evaluations/source-changes-2026-11-01.json).
 Reproduce only with owner authorization:
 `.venv/Scripts/python.exe apps/api/tests/evaluate_source_changes.py --live`.

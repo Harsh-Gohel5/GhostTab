@@ -3,19 +3,19 @@
 **October 31 update:** this file retains the earlier adapter/fixture milestones.
 The complete provider flows and catalog are merged. Calendar and Docs now have
 owner-run live evidence; Gmail, Slack, Jira and Teams still need live account
-verification. See [current status](current-status.md) and
-[Google sources](google-sources.md). Statements below about deferred Docs consent
+verification. See [current status](../current-status.md) and
+[Google sources](google.md). Statements below about deferred Docs consent
 or unmerged work describe their dated historical checkpoint.
 
 **Teams checkpoint:** selected-chat connection/import/refresh/disconnect now has
 UI/API flow with simulated provider verification. All five additional readers now
 have corresponding connection flows; live Docs/Gmail/Slack/Jira/Teams consent is
-still pending. Calendar remains the sole live-verified connector. See [Teams](teams-source.md).
+still pending. Calendar remains the sole live-verified connector. See [Teams](teams.md).
 
 **Jira checkpoint, October 29:** selected-issue 3LO connection, explicit site
 selection, import, manual refresh and disconnect are implemented. The normal UI
 shows setup pending until the owner configures Jira. Mock API and isolated browser
-checks passed; no live consent or real Jira reads. See [Jira](jira-source.md).
+checks passed; no live consent or real Jira reads. See [Jira](jira.md).
 Calendar remains connected with five existing local workspaces. Teams is the next
 connector milestone; live additional-source and hosted identity gates remain.
 New work is committed/pushed on the feature branch; main remains unchanged.
@@ -23,13 +23,13 @@ New work is committed/pushed on the feature branch; main remains unchanged.
 
 **Slack update:** public-thread connection/import/refresh/disconnect UI/API now
 exists and reuses the source-grant tables. It is mock-tested, not live-authorized.
-Private channels/DMs are excluded. See [slack-source.md](slack-source.md). The older
+Private channels/DMs are excluded. See [slack-source.md](slack.md). The older
 adapter-only description below now applies to Jira/Teams.
 
 **Later October 28 update:** Docs/Gmail now have frontend and backend connection,
 selection, import, refresh and disconnect flows with an additive schema migration.
 They are tested with simulated providers; no live authorization has occurred. See
-[google-sources.md](google-sources.md). The adapter-only description below remains
+[google-sources.md](google.md). The adapter-only description below remains
 the earlier checkpoint and still describes Slack/Jira/Teams. The test app now has
 a prominent synthetic banner and simulated Docs/Gmail grants for UI verification.
 

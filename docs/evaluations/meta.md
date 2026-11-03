@@ -25,7 +25,7 @@ billing confirmation. The $1 cumulative app limit was unchanged; no second batch
 or automatic retry was run. Cumulative app estimate after evaluation: $0.101276.
 Promotional-credit expiry and overage behavior remain unconfirmed.
 
-[Sanitized results and token usage](evaluations/meta-2026-10-29.json) include the
+[Sanitized results and token usage](meta-2026-10-29.json) include the
 generated briefs and expectations. Inputs are in `apps/api/tests/evaluate_meta.py`.
 The update case tests a changed evidence packet; actual immutable revisions and
 staleness are verified separately by application tests. Provider traces remain in

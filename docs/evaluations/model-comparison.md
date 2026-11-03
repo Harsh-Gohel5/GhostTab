@@ -29,8 +29,8 @@ $0.180540 after this comparison. The $1 cumulative limit is unchanged. These are
 application estimates, not provider billing confirmation. All source material
 was fictional. No private source data was sent.
 
-[Sanitized Wonder outputs/token usage](evaluations/wonder-2026-10-29.json) complement
-the [Spark report](meta-evaluation.md). After explicit authorization, reproduce with
+[Sanitized Wonder outputs/token usage](wonder-2026-10-29.json) complement
+the [Spark report](meta.md). After explicit authorization, reproduce with
 `.venv/Scripts/python.exe apps/api/tests/evaluate_meta.py --live --model muse-wonder-1.0 --cases conflict missing_owner`.
 The existing $0.20 global hold/disposable-worker budget mechanism applies. Do not
 repeat paid inference merely to inspect the report. No other model family was

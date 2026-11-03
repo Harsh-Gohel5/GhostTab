@@ -12,13 +12,13 @@ for verification boundaries. Dated architecture checkpoints below are historical
 `Chat.Read` reuses encrypted source grants. Explicit chat selection reads metadata
 and at most 50 recent messages through Graph `/me/chats`; owner/grant checks fence
 publication, manual refresh versions evidence, and disconnect blocks dependent
-briefs. No schema migration. Live consent is deferred. See [Teams](teams-source.md).
+briefs. No schema migration. Live consent is deferred. See [Teams](connectors/teams.md).
 
 **Jira addition:** confidential 3LO, rotating encrypted refresh tokens and explicit
 site/issue selection reuse source grants and immutable evidence. Fresh site lists
 rotate the local grant epoch when membership changes, fencing in-flight reads and
 blocking affected evidence/briefs while retaining other sites. No new tables or
-worker architecture. Live consent remains deferred. See [Jira](jira-source.md).
+worker architecture. Live consent remains deferred. See [Jira](connectors/jira.md).
 
 **Slack/identity addition:** Google identity login uses Supabase's SDK with basic
 identity scopes and does not create source grants. Slack's confidential web OAuth
@@ -26,14 +26,14 @@ and selected-public-thread routes reuse the source-grant tables and immutable
 evidence flow. Imports verify public-channel metadata and grant identity before
 publication; the shared refresh endpoint dispatches Slack sources to that reader.
 No migration was added. Live provider configuration/consent remains deferred.
-See [Slack setup](slack-source.md) and [account access](account-access.md).
+See [Slack setup](connectors/slack.md) and [account access](guides/account-access.md).
 
 **Task lifecycle:** migration 0004 stores human review/completion on tasks,
 independently from evidence generations and model jobs. Review binds to a snapshot
 and is current only while that snapshot/generation remains visible; changing a
 saved draft clears it. Owner-scoped progress actions share the existing task lock.
 Completion is explicit and does not execute work, cancel existing jobs or erase
-context. See [task-lifecycle.md](task-lifecycle.md).
+context. See [task-lifecycle.md](product/task-lifecycle.md).
 
 **October 28 addition:** Docs and Gmail use the separate `google_sources.py` router,
 provider-specific encrypted grants/PKCE state, and selected resource references
@@ -41,12 +41,12 @@ provider-specific encrypted grants/PKCE state, and selected resource references
 Import/refresh checks ownership and grant identity before retrieval and again
 while committing. Disconnect blocks affected sources and derived snapshots.
 Calendar's grant and callback remain unchanged. Complete UI/API flows are
-mock-verified; live consent/reads are deferred. See [google-sources.md](google-sources.md).
+mock-verified; live consent/reads are deferred. See [google-sources.md](connectors/google.md).
 
 Updated October 27, 2026. **Current slice:** task/evidence storage, durable jobs,
 Meta adapter, Google Calendar adapter, and the broader interface are implemented
 locally. Live Calendar and synthetic Meta flows are verified; cloud deployment is
-not. Sections below describe the wider target; [setup.md](setup.md) records current limits.
+not. Sections below describe the wider target; [setup.md](guides/setup.md) records current limits.
 
 **Oct 27 verification:** local Google OAuth, event import/manual refresh and
 controlled Meta preparations using synthetic sources have succeeded. Cloud
@@ -104,7 +104,7 @@ text returns 409 without overwriting it. Retrying the same desired saved text is
 idempotent. Draft whitespace is preserved exactly. No schema migration is needed.
 The editor retains unsaved text on refetch/new briefs, requires explicit conflict
 resolution, and warns before leaving. No private drafts are written to browser
-storage. See [development priorities and browser QA](development-plan.md).
+storage. See [development priorities and browser QA](archive/development-plan.md).
 
 There is no production deployment or local Git bridge. The frontend catalog is
 implemented; its planned entries do not add backend integrations.

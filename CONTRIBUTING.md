@@ -3,6 +3,11 @@
 Use a short descriptive branch for each feature or fix. Keep changes focused and
 include a clear account of the behavior and how it was verified.
 
+Use lowercase, descriptive names: `feat/source-change-review`,
+`fix/session-recovery`, `docs/setup-guide`, or `chore/repository-organization`.
+Branch names describe the change. Keep authorship and third-party attribution
+accurate; preserve historical commits. See the [repository guide](docs/repository-guide.md).
+
 ## Protected main workflow
 
 `main` is protected by the active **Protect main — pull requests and CI** ruleset.
@@ -26,6 +31,9 @@ checks are required now and do not replace code review.
 3. Add meaningful regression tests when implementing behavior or fixing a bug.
 4. Keep credentials and real private source data out of commits and fixtures.
 5. Update the docs when setup, configuration or product behavior changes.
+
+Documentation lives in topic folders linked from [docs/README.md](docs/README.md).
+Run `npm run check:docs` when moving or editing Markdown links.
 
 Use synthetic examples until a source has been explicitly authorized for use.
 Clearly label mocks and planned capabilities. Do not claim model integration or

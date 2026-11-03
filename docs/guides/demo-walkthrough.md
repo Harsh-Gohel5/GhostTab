@@ -3,7 +3,7 @@
 Updated October 31, 2026. Rehearse the Calendar + Google Docs workflow in the normal
 signed-in local app. The owner completed the guided workflow and reported the Docs
 update test done; final before/after source-citation capture remains pending.
-See [current evidence and limitations](current-status.md). Gmail, Slack, Jira and
+See [current evidence and limitations](../current-status.md). Gmail, Slack, Jira and
 Teams remain live-unverified. No productivity or user-study result is claimed.
 
 ## Before starting
@@ -14,7 +14,7 @@ Teams remain live-unverified. No productivity or user-study result is claimed.
   is not a guarantee against provider billing. Use synthetic content only.
 - Sign in and separately connect Calendar and Docs for that account. An older
   local-mode Calendar grant is not transferred into a signed-in identity. Follow
-  [Google source setup](google-sources.md) for Docs API enablement and callbacks.
+  [Google source setup](../connectors/google.md) for Docs API enablement and callbacks.
 - Confirm both services are connected and the worker is running. Refresh the
   browser if local configuration changed. Opening Today starts no inference.
 - Use Chrome while embedded-browser local access remains unresolved. Do not use

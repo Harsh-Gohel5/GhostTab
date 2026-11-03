@@ -44,9 +44,9 @@ semantic correctness. Some unknowns remain verbose; the explicit-completion case
 includes a statement about absent open items rather than a question. Owner review
 and further real-workflow assessment remain release gates.
 
-Sanitized reports: [initial candidate](evaluations/grounding-initial-2026-10-30.json),
-[final targeted](evaluations/grounding-targeted-2026-10-30.json),
-[baseline regression](evaluations/grounding-baseline-2026-10-30.json).
+Sanitized reports: [initial candidate](grounding-initial-2026-10-30.json),
+[final targeted](grounding-targeted-2026-10-30.json),
+[baseline regression](grounding-baseline-2026-10-30.json).
 
 Reproduce the final prompt only with owner authorization:
 `.venv/Scripts/python.exe apps/api/tests/evaluate_grounding.py --live` and
